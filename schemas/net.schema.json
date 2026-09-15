@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "[net]",
+  "description": "Networking configuration.\nhttps://doc.rust-lang.org/cargo/reference/config.html#net",
+  "examples": [
+    {
+      "retry": 3,
+      "git-fetch-with-cli": true,
+      "offline": false
+    },
+    {
+      "ssh": {
+        "known-hosts": [
+          "example.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFO4Q5T0UV0SQevair9PFwoxY9dl4pQl3u5phoqJH3cF"
+        ]
+      }
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "retry": {
+      "description": "Number of times to retry possibly spurious network errors.\nhttps://doc.rust-lang.org/cargo/reference/config.html#netretry",
+      "default": 3,
+      "examples": [
+        3
+      ],
+      "type": "integer",
+      "minimum": 0
+    },
+    "git-fetch-with-cli": {
+      "description": "Use the git executable for fetching registry indexes and git dependencies.\nhttps://doc.rust-lang.org/cargo/reference/config.html#netgit-fetch-with-cli",
+      "default": false,
+      "type": "boolean"
+    },
+    "offline": {
+      "description": "Avoid accessing the network and use locally cached data where possible.\nhttps://doc.rust-lang.org/cargo/reference/config.html#netoffline",
+      "default": false,
+      "type": "boolean"
+    },
+    "ssh": {
+      "description": "SSH connection settings.\nhttps://doc.rust-lang.org/cargo/reference/config.html#netssh",
+      "type": "object",
+      "properties": {
+        "known-hosts": {
+          "description": "SSH host keys accepted by Cargo.\nhttps://doc.rust-lang.org/cargo/reference/config.html#netsshknown-hosts",
+          "examples": [
+            [
+              "example.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFO4Q5T0UV0SQevair9PFwoxY9dl4pQl3u5phoqJH3cF"
+            ]
+          ],
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "examples": [
+              "example.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFO4Q5T0UV0SQevair9PFwoxY9dl4pQl3u5phoqJH3cF"
+            ],
+            "type": "string",
+            "pattern": "^\\S+[ \\t]+\\S+[ \\t]+\\S+"
+          },
+          "x-tombi-array-values-order": "ascending"
+        }
+      },
+      "x-tombi-table-keys-order": {
+        "properties": "schema"
+      }
+    }
+  },
+  "x-taplo": {
+    "links": {
+      "key": "https://doc.rust-lang.org/cargo/reference/config.html#net"
+    }
+  },
+  "x-tombi-table-keys-order": {
+    "properties": "schema"
+  }
+}

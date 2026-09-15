@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "[install]",
+  "description": "Defaults for cargo install.\nhttps://doc.rust-lang.org/cargo/reference/config.html#install",
+  "examples": [
+    {
+      "root": "/opt/cargo"
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "root": {
+      "description": "Root directory for installed executables. Executables go into a `bin` directory underneath the root, alongside tracking files `.crates.toml` and `.crates2.json`. Defaults to Cargo's home directory (typically `~/.cargo`). Overridable with `--root` or `CARGO_INSTALL_ROOT`.\nhttps://doc.rust-lang.org/cargo/reference/config.html#installroot",
+      "examples": [
+        "/opt/cargo",
+        "~/.local"
+      ],
+      "type": "string",
+      "minLength": 1,
+      "x-taplo": {
+        "links": {
+          "key": "https://doc.rust-lang.org/cargo/reference/config.html#installroot"
+        }
+      }
+    }
+  },
+  "x-taplo": {
+    "links": {
+      "key": "https://doc.rust-lang.org/cargo/reference/config.html#install"
+    }
+  },
+  "x-tombi-table-keys-order": {
+    "properties": "schema"
+  }
+}

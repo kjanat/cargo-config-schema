@@ -1,0 +1,175 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$defs": {
+    "source": {
+      "description": "Source definition. At most one source location; crates-io can use its implicit location. Other sources require a location after merging. replace-with redirects the identified source.",
+      "examples": [
+        {
+          "replace-with": "vendored-sources"
+        },
+        {
+          "directory": "vendor"
+        },
+        {
+          "git": "https://example.com/repo.git",
+          "branch": "main"
+        }
+      ],
+      "type": "object",
+      "properties": {
+        "replace-with": {
+          "description": "Replacement source name. The source location still identifies what is replaced.",
+          "examples": [
+            "vendored-sources"
+          ],
+          "type": "string",
+          "minLength": 1
+        },
+        "directory": {
+          "description": "Path to a directory source.\nhttps://doc.rust-lang.org/cargo/reference/config.html#sourcenamedirectory",
+          "examples": [
+            "vendor"
+          ],
+          "type": "string",
+          "minLength": 1
+        },
+        "registry": {
+          "description": "URL of a registry source.\nhttps://doc.rust-lang.org/cargo/reference/config.html#sourcenameregistry",
+          "examples": [
+            "https://example.com/git/index"
+          ],
+          "type": "string",
+          "format": "uri"
+        },
+        "local-registry": {
+          "description": "Path to a local registry source.\nhttps://doc.rust-lang.org/cargo/reference/config.html#sourcenamelocal-registry",
+          "examples": [
+            "local-registry"
+          ],
+          "type": "string",
+          "minLength": 1
+        },
+        "git": {
+          "description": "URL of a git repository source.\nhttps://doc.rust-lang.org/cargo/reference/config.html#sourcenamegit",
+          "examples": [
+            "https://example.com/repo.git"
+          ],
+          "type": "string",
+          "format": "uri"
+        },
+        "branch": {
+          "description": "Git reference selector. Cargo prefers branch, then tag, then rev when multiple are present; otherwise uses the default branch.",
+          "examples": [
+            "main"
+          ],
+          "type": "string",
+          "minLength": 1
+        },
+        "tag": {
+          "description": "Git reference selector. Cargo prefers branch, then tag, then rev when multiple are present; otherwise uses the default branch.",
+          "examples": [
+            "v1.0.0"
+          ],
+          "type": "string",
+          "minLength": 1
+        },
+        "rev": {
+          "description": "Git reference selector. Cargo prefers branch, then tag, then rev when multiple are present; otherwise uses the default branch.",
+          "examples": [
+            "abcdef1234567890"
+          ],
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "allOf": [
+        {
+          "not": {
+            "required": [
+              "local-registry",
+              "registry"
+            ]
+          }
+        },
+        {
+          "not": {
+            "required": [
+              "directory",
+              "registry"
+            ]
+          }
+        },
+        {
+          "not": {
+            "required": [
+              "git",
+              "registry"
+            ]
+          }
+        },
+        {
+          "not": {
+            "required": [
+              "directory",
+              "local-registry"
+            ]
+          }
+        },
+        {
+          "not": {
+            "required": [
+              "git",
+              "local-registry"
+            ]
+          }
+        },
+        {
+          "not": {
+            "required": [
+              "directory",
+              "git"
+            ]
+          }
+        }
+      ],
+      "x-taplo": {
+        "initKeys": [
+          "replace-with"
+        ]
+      },
+      "x-tombi-table-keys-order": {
+        "properties": "schema"
+      }
+    }
+  },
+  "title": "[source.*]",
+  "description": "Named registry source definitions and source replacement.\nhttps://doc.rust-lang.org/cargo/reference/config.html#source",
+  "examples": [
+    {
+      "crates-io": {
+        "replace-with": "vendored-sources"
+      },
+      "vendored-sources": {
+        "directory": "vendor"
+      }
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "crates-io": {
+      "$ref": "#/$defs/source"
+    }
+  },
+  "additionalProperties": {
+    "$ref": "#/$defs/source"
+  },
+  "x-taplo": {
+    "links": {
+      "key": "https://doc.rust-lang.org/cargo/reference/config.html#source"
+    }
+  },
+  "x-tombi-table-keys-order": {
+    "additionalProperties": "ascending"
+  },
+  "x-tombi-additional-key-label": "source"
+}

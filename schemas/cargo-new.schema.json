@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "[cargo-new]",
+  "description": "Defaults for cargo new.\nhttps://doc.rust-lang.org/cargo/reference/config.html#cargo-new",
+  "examples": [
+    {
+      "vcs": "git"
+    },
+    {
+      "vcs": "none"
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "name": {
+      "description": "DEPRECATED. This option is unused.\nhttps://doc.rust-lang.org/cargo/reference/config.html#cargo-newname",
+      "deprecated": true,
+      "type": "string"
+    },
+    "email": {
+      "description": "DEPRECATED. This option is unused.\nhttps://doc.rust-lang.org/cargo/reference/config.html#cargo-newemail",
+      "deprecated": true,
+      "type": "string"
+    },
+    "vcs": {
+      "description": "Source control system used when initializing a new repository.\nDefaults to `git`, or `none` when run inside an existing VCS repository. Overridable via `cargo new --vcs`.\nEnvironment: `CARGO_CARGO_NEW_VCS`.\nhttps://doc.rust-lang.org/cargo/reference/config.html#cargo-newvcs",
+      "default": "git",
+      "examples": [
+        "git",
+        "hg",
+        "pijul",
+        "fossil",
+        "none"
+      ],
+      "type": "string",
+      "enum": [
+        "git",
+        "hg",
+        "pijul",
+        "fossil",
+        "none"
+      ],
+      "x-taplo": {
+        "docs": {
+          "enumValues": [
+            "Initialize a Git repository (https://git-scm.com).",
+            "Initialize a Mercurial repository (https://www.mercurial-scm.org).",
+            "Initialize a Pijul repository (https://pijul.org).",
+            "Initialize a Fossil repository (https://fossil-scm.org).",
+            "Do not initialize any VCS repository (also the implicit default when nested inside an existing repo)."
+          ]
+        },
+        "links": {
+          "enumValues": [
+            "https://git-scm.com",
+            "https://www.mercurial-scm.org",
+            "https://pijul.org",
+            "https://fossil-scm.org",
+            null
+          ]
+        }
+      },
+      "x-intellij-enum-metadata": {
+        "fossil": {
+          "description": "Initialize a Fossil repository (https://fossil-scm.org)."
+        },
+        "git": {
+          "description": "Initialize a Git repository (https://git-scm.com)."
+        },
+        "hg": {
+          "description": "Initialize a Mercurial repository (https://www.mercurial-scm.org)."
+        },
+        "none": {
+          "description": "Do not initialize any VCS repository (also the implicit default when nested inside an existing repo)."
+        },
+        "pijul": {
+          "description": "Initialize a Pijul repository (https://pijul.org)."
+        }
+      }
+    }
+  },
+  "x-taplo": {
+    "links": {
+      "key": "https://doc.rust-lang.org/cargo/reference/config.html#cargo-new"
+    }
+  },
+  "x-tombi-table-keys-order": {
+    "properties": "schema"
+  }
+}

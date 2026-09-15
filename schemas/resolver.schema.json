@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "[resolver]",
+  "description": "Dependency resolver behavior for local development.\nhttps://doc.rust-lang.org/cargo/reference/config.html#resolver",
+  "examples": [
+    {
+      "incompatible-rust-versions": "fallback"
+    },
+    {
+      "lockfile-path": "locks/Cargo.lock"
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "lockfile-path": {
+      "description": "Path to the lockfile to use when resolving dependencies. Useful with read-only source directories. The path must end with `Cargo.lock`. Requires Cargo 1.97+. Environment: `CARGO_RESOLVER_LOCKFILE_PATH`.\nhttps://doc.rust-lang.org/cargo/reference/config.html#resolverlockfile-path",
+      "examples": [
+        "Cargo.lock",
+        "locks/Cargo.lock",
+        "/abs/path/Cargo.lock"
+      ],
+      "type": "string",
+      "minLength": 1,
+      "pattern": "Cargo\\.lock$",
+      "x-taplo": {
+        "links": {
+          "key": "https://doc.rust-lang.org/cargo/reference/config.html#resolverlockfile-path"
+        }
+      }
+    },
+    "incompatible-rust-versions": {
+      "description": "How dependency versions with incompatible package.rust-version values are treated.\nhttps://doc.rust-lang.org/cargo/reference/config.html#resolverincompatible-rust-versions Default is allow for resolver 1/2 and fallback for resolver 3.",
+      "examples": [
+        "allow",
+        "fallback"
+      ],
+      "type": "string",
+      "enum": [
+        "allow",
+        "fallback"
+      ],
+      "x-taplo": {
+        "docs": {
+          "enumValues": [
+            "Treat rust-version-incompatible versions like any other version.",
+            "Only consider rust-version-incompatible versions if no compatible version matched."
+          ]
+        }
+      },
+      "x-intellij-enum-metadata": {
+        "allow": {
+          "description": "Treat rust-version-incompatible versions like any other version."
+        },
+        "fallback": {
+          "description": "Only consider rust-version-incompatible versions if no compatible version matched."
+        }
+      }
+    },
+    "incompatible-publish-age": {
+      "description": "How to handle versions younger than the minimum publish age. Requires Cargo 1.100+.",
+      "default": "deny",
+      "type": "string",
+      "enum": [
+        "allow",
+        "deny"
+      ]
+    },
+    "feature-unification": {
+      "description": "UNSTABLE: Feature unification scope; requires -Z feature-unification.",
+      "type": "string",
+      "enum": [
+        "package",
+        "selected",
+        "workspace"
+      ]
+    }
+  },
+  "x-taplo": {
+    "links": {
+      "key": "https://doc.rust-lang.org/cargo/reference/config.html#resolver"
+    }
+  },
+  "x-tombi-table-keys-order": {
+    "properties": "schema"
+  }
+}

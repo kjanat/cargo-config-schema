@@ -1,0 +1,293 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "[build]",
+  "description": "Build-time operations and compiler settings.\nhttps://doc.rust-lang.org/cargo/reference/config.html#build",
+  "examples": [
+    {
+      "jobs": 8,
+      "target": "x86_64-unknown-linux-gnu",
+      "target-dir": "target",
+      "rustflags": [
+        "-C",
+        "target-cpu=native"
+      ],
+      "incremental": true
+    },
+    {
+      "rustc-wrapper": "sccache",
+      "target": [
+        "x86_64-unknown-linux-gnu",
+        "aarch64-unknown-linux-gnu"
+      ]
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "warnings": {
+      "description": "Adjust the effective level of lint warnings for local packages. MSRV: respected as of Rust 1.97.\nhttps://doc.rust-lang.org/cargo/reference/config.html#buildwarnings",
+      "default": "warn",
+      "examples": [
+        "warn",
+        "allow",
+        "deny"
+      ],
+      "type": "string",
+      "enum": [
+        "warn",
+        "allow",
+        "deny"
+      ],
+      "x-taplo": {
+        "docs": {
+          "enumValues": [
+            "Continue to emit the lints as warnings (default).",
+            "Hide the lints.",
+            "Emit an error for a crate that has lint warnings. Use `--keep-going` to see the lint warnings for all dependent crates."
+          ]
+        },
+        "links": {
+          "key": "https://doc.rust-lang.org/cargo/reference/config.html#buildwarnings"
+        }
+      },
+      "x-intellij-enum-metadata": {
+        "allow": {
+          "description": "Hide the lints."
+        },
+        "deny": {
+          "description": "Emit an error for a crate that has lint warnings."
+        },
+        "warn": {
+          "description": "Continue to emit the lints as warnings (default)."
+        }
+      }
+    },
+    "jobs": {
+      "description": "Maximum number of compiler processes to run in parallel. Negative values are relative to the number of logical CPUs. The string \"default\" resets to Cargo defaults. Defaults to the number of logical CPUs.\nhttps://doc.rust-lang.org/cargo/reference/config.html#buildjobs",
+      "examples": [
+        8,
+        -1,
+        "default"
+      ],
+      "oneOf": [
+        {
+          "type": "integer",
+          "minimum": -2147483648,
+          "maximum": 2147483647,
+          "not": {
+            "const": 0
+          }
+        },
+        {
+          "const": "default"
+        }
+      ],
+      "x-taplo": {
+        "links": {
+          "key": "https://doc.rust-lang.org/cargo/reference/config.html#buildjobs"
+        }
+      }
+    },
+    "rustc": {
+      "description": "Executable to use for rustc.\nhttps://doc.rust-lang.org/cargo/reference/config.html#buildrustc",
+      "default": "rustc",
+      "examples": [
+        "rustc",
+        "/usr/local/bin/rustc"
+      ],
+      "type": "string",
+      "minLength": 1,
+      "x-taplo": {
+        "links": {
+          "key": "https://doc.rust-lang.org/cargo/reference/config.html#buildrustc"
+        }
+      }
+    },
+    "rustc-wrapper": {
+      "description": "Wrapper executable to run instead of rustc. The first argument passed to the wrapper is the path to the actual rustc executable.\nhttps://doc.rust-lang.org/cargo/reference/config.html#buildrustc-wrapper An empty string disables the wrapper.",
+      "examples": [
+        "sccache"
+      ],
+      "type": "string",
+      "x-taplo": {
+        "links": {
+          "key": "https://doc.rust-lang.org/cargo/reference/config.html#buildrustc-wrapper"
+        }
+      }
+    },
+    "rustc-workspace-wrapper": {
+      "description": "Wrapper executable to run instead of rustc for workspace members only. If both rustc-wrapper and rustc-workspace-wrapper are set, invocations are nested: $RUSTC_WRAPPER $RUSTC_WORKSPACE_WRAPPER $RUSTC.\nhttps://doc.rust-lang.org/cargo/reference/config.html#buildrustc-workspace-wrapper An empty string disables the wrapper.",
+      "examples": [
+        "clippy-driver"
+      ],
+      "type": "string",
+      "x-taplo": {
+        "links": {
+          "key": "https://doc.rust-lang.org/cargo/reference/config.html#buildrustc-workspace-wrapper"
+        }
+      }
+    },
+    "rustdoc": {
+      "description": "Executable to use for rustdoc.\nhttps://doc.rust-lang.org/cargo/reference/config.html#buildrustdoc",
+      "default": "rustdoc",
+      "examples": [
+        "rustdoc"
+      ],
+      "type": "string",
+      "minLength": 1,
+      "x-taplo": {
+        "links": {
+          "key": "https://doc.rust-lang.org/cargo/reference/config.html#buildrustdoc"
+        }
+      }
+    },
+    "target": {
+      "description": "Default target platform triple, custom target spec path, \"host-tuple\", or list of targets. Defaults to the host platform when unset.\nhttps://doc.rust-lang.org/cargo/reference/config.html#buildtarget",
+      "examples": [
+        "x86_64-unknown-linux-gnu",
+        "host-tuple",
+        "./custom-target.json",
+        [
+          "x86_64-unknown-linux-gnu",
+          "aarch64-unknown-linux-gnu"
+        ]
+      ],
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      ],
+      "x-taplo": {
+        "links": {
+          "key": "https://doc.rust-lang.org/cargo/reference/config.html#buildtarget"
+        }
+      }
+    },
+    "target-dir": {
+      "description": "Directory where all compiler output is placed. Defaults to a directory named `target` at the workspace root.\nhttps://doc.rust-lang.org/cargo/reference/config.html#buildtarget-dir",
+      "default": "target",
+      "examples": [
+        "target",
+        "/tmp/cargo-target"
+      ],
+      "type": "string",
+      "minLength": 1,
+      "x-taplo": {
+        "links": {
+          "key": "https://doc.rust-lang.org/cargo/reference/config.html#buildtarget-dir"
+        }
+      }
+    },
+    "build-dir": {
+      "description": "Directory where intermediate build artifacts are stored. Defaults to the value of `build.target-dir`. Supports path templating with `{workspace-root}`, `{cargo-cache-home}`, and `{workspace-path-hash}`.\nhttps://doc.rust-lang.org/cargo/reference/config.html#buildbuild-dir",
+      "examples": [
+        "{workspace-root}/target/intermediate",
+        "{cargo-cache-home}/build/{workspace-path-hash}"
+      ],
+      "type": "string",
+      "minLength": 1,
+      "x-taplo": {
+        "links": {
+          "key": "https://doc.rust-lang.org/cargo/reference/config.html#buildbuild-dir"
+        }
+      }
+    },
+    "rustflags": {
+      "$ref": "common.schema.json#/$defs/stringOrStringArray",
+      "description": "Extra command-line flags passed to rustc. May be an array of strings or a space-separated string.\nhttps://doc.rust-lang.org/cargo/reference/config.html#buildrustflags"
+    },
+    "rustdocflags": {
+      "$ref": "common.schema.json#/$defs/stringOrStringArray",
+      "description": "Extra command-line flags passed to rustdoc. May be an array of strings or a space-separated string.\nhttps://doc.rust-lang.org/cargo/reference/config.html#buildrustdocflags"
+    },
+    "incremental": {
+      "description": "Whether to enable incremental compilation. When unset, the value from the active profile is used; when set, this overrides every profile.\nhttps://doc.rust-lang.org/cargo/reference/config.html#buildincremental",
+      "examples": [
+        true,
+        false
+      ],
+      "type": "boolean",
+      "x-taplo": {
+        "links": {
+          "key": "https://doc.rust-lang.org/cargo/reference/config.html#buildincremental"
+        }
+      }
+    },
+    "dep-info-basedir": {
+      "description": "Config-relative path prefix stripped from dep-info file paths, used to convert absolute paths to relative paths for downstream tools.\nhttps://doc.rust-lang.org/cargo/reference/config.html#builddep-info-basedir",
+      "examples": [
+        ".",
+        ".."
+      ],
+      "type": "string",
+      "minLength": 1,
+      "x-taplo": {
+        "links": {
+          "key": "https://doc.rust-lang.org/cargo/reference/config.html#builddep-info-basedir"
+        }
+      }
+    },
+    "pipelining": {
+      "description": "DEPRECATED. This option is unused. Cargo always has pipelining enabled.\nhttps://doc.rust-lang.org/cargo/reference/config.html#buildpipelining",
+      "deprecated": true,
+      "type": "boolean",
+      "x-taplo": {
+        "hidden": true,
+        "links": {
+          "key": "https://doc.rust-lang.org/cargo/reference/config.html#buildpipelining"
+        }
+      }
+    },
+    "artifact-dir": {
+      "description": "UNSTABLE: Copy final artifacts to this directory; requires -Z unstable-options.",
+      "type": "string"
+    },
+    "sbom": {
+      "description": "UNSTABLE: Generate SBOM precursor files; requires -Z sbom.",
+      "type": "boolean"
+    },
+    "fingerprint": {
+      "description": "UNSTABLE: Freshness comparison method; requires -Z checksum-freshness.",
+      "type": "string",
+      "enum": [
+        "mtime",
+        "content"
+      ]
+    },
+    "analysis": {
+      "description": "UNSTABLE: Persist build metrics; requires -Z build-analysis.",
+      "type": "object",
+      "required": [
+        "enabled"
+      ],
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        }
+      },
+      "x-tombi-table-keys-order": {
+        "properties": "schema"
+      }
+    }
+  },
+  "x-taplo": {
+    "initKeys": [
+      "target",
+      "jobs",
+      "rustflags"
+    ],
+    "links": {
+      "key": "https://doc.rust-lang.org/cargo/reference/config.html#build"
+    }
+  },
+  "x-tombi-table-keys-order": {
+    "properties": "schema"
+  }
+}

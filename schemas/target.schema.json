@@ -1,0 +1,338 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$defs": {
+    "hostConfig": {
+      "type": "object",
+      "properties": {
+        "ar": {
+          "description": "DEPRECATED. This option is unused.\nhttps://doc.rust-lang.org/cargo/reference/config.html#targettriplear",
+          "deprecated": true,
+          "type": "string"
+        },
+        "linker": {
+          "description": "Linker passed to rustc for this target.\nhttps://doc.rust-lang.org/cargo/reference/config.html#targettriplelinker",
+          "examples": [
+            "clang",
+            "arm-none-eabi-gcc"
+          ],
+          "type": "string"
+        },
+        "runner": {
+          "$ref": "common.schema.json#/$defs/stringOrStringArray",
+          "description": "Runner command used to execute target binaries.\nhttps://doc.rust-lang.org/cargo/reference/config.html#targettriplerunner"
+        },
+        "rustflags": {
+          "$ref": "common.schema.json#/$defs/stringOrStringArray",
+          "description": "Extra rustc flags for this target.\nhttps://doc.rust-lang.org/cargo/reference/config.html#targettriplerustflags"
+        },
+        "rustdocflags": {
+          "$ref": "common.schema.json#/$defs/stringOrStringArray",
+          "description": "Extra rustdoc flags for this target.\nhttps://doc.rust-lang.org/cargo/reference/config.html#targettriplerustdocflags"
+        }
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/target"
+      },
+      "x-tombi-table-keys-order": {
+        "properties": "schema"
+      }
+    },
+    "target": {
+      "title": "target entry",
+      "description": "Settings applied when building for a single target. The owning key is a target triple (e.g. `x86_64-unknown-linux-gnu`), a `cfg(...)` expression, or a custom JSON target name. Recognised properties configure the linker, runner, and rustc/rustdoc flags; any additional key is treated as a `links` library override (build script metadata).\nhttps://doc.rust-lang.org/cargo/reference/config.html#target",
+      "examples": [
+        {
+          "linker": "clang",
+          "runner": "qemu-x86_64",
+          "rustflags": [
+            "-C",
+            "target-cpu=native"
+          ]
+        },
+        {
+          "runner": [
+            "qemu-arm",
+            "-L",
+            "/usr/arm-linux-gnueabihf"
+          ],
+          "rustdocflags": [
+            "--cfg",
+            "docsrs"
+          ]
+        },
+        {
+          "foo": {
+            "rustc-link-lib": [
+              "foo"
+            ],
+            "rustc-link-search": [
+              "/path/to/foo"
+            ],
+            "rustc-env": {
+              "FOO_SYS_STATIC": "1"
+            },
+            "metadata_version": "1.2.3"
+          }
+        }
+      ],
+      "type": "object",
+      "properties": {
+        "ar": {
+          "description": "DEPRECATED. This option is unused.\nhttps://doc.rust-lang.org/cargo/reference/config.html#targettriplear",
+          "deprecated": true,
+          "type": "string"
+        },
+        "linker": {
+          "description": "Linker passed to rustc for this target.\nhttps://doc.rust-lang.org/cargo/reference/config.html#targettriplelinker",
+          "examples": [
+            "clang",
+            "arm-none-eabi-gcc"
+          ],
+          "type": "string"
+        },
+        "runner": {
+          "$ref": "common.schema.json#/$defs/stringOrStringArray",
+          "description": "Runner command used to execute target binaries.\nhttps://doc.rust-lang.org/cargo/reference/config.html#targettriplerunner"
+        },
+        "rustflags": {
+          "$ref": "common.schema.json#/$defs/stringOrStringArray",
+          "description": "Extra rustc flags for this target.\nhttps://doc.rust-lang.org/cargo/reference/config.html#targettriplerustflags"
+        },
+        "rustdocflags": {
+          "$ref": "common.schema.json#/$defs/stringOrStringArray",
+          "description": "Extra rustdoc flags for this target.\nhttps://doc.rust-lang.org/cargo/reference/config.html#targettriplerustdocflags"
+        }
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/targetLinksOverride"
+      },
+      "x-taplo": {
+        "links": {
+          "key": "https://doc.rust-lang.org/cargo/reference/config.html#target"
+        }
+      },
+      "x-tombi-table-keys-order": {
+        "properties": "schema",
+        "additionalProperties": "ascending"
+      },
+      "x-tombi-additional-key-label": "links"
+    },
+    "targetLinksOverride": {
+      "title": "links library override",
+      "description": "Build script override for a target `links` library. When present, the build script for the named library is skipped and these values are used instead. Arbitrary keys beyond the recognised `rustc-*` set become opaque metadata exposed to dependents as `DEP_<links>_<KEY>` env vars.\nhttps://doc.rust-lang.org/cargo/reference/config.html#targettriplelinks",
+      "examples": [
+        {
+          "rustc-link-lib": [
+            "foo"
+          ],
+          "rustc-link-search": [
+            "/path/to/foo"
+          ],
+          "rustc-env": {
+            "FOO_SYS_STATIC": "1"
+          },
+          "metadata_version": "1.2.3"
+        }
+      ],
+      "type": "object",
+      "properties": {
+        "rustc-link-lib": {
+          "title": "rustc-link-lib",
+          "description": "Libraries to link, equivalent to passing `-l <lib>` to `rustc`. Order is preserved and may affect symbol resolution.",
+          "examples": [
+            [
+              "foo"
+            ]
+          ],
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "rustc-link-search": {
+          "title": "rustc-link-search",
+          "description": "Library search paths, equivalent to passing `-L <path>` to `rustc`. Searched in the listed order.",
+          "examples": [
+            [
+              "/path/to/foo"
+            ]
+          ],
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "rustc-flags": {
+          "title": "rustc-flags",
+          "description": "Extra `rustc` flags. Whitespace-separated string; only `-l` and `-L` flags are accepted.",
+          "examples": [
+            "-L /some/path"
+          ],
+          "type": "string"
+        },
+        "rustc-cfg": {
+          "title": "rustc-cfg",
+          "description": "Custom `--cfg` flags enabled while compiling dependents of this links library. Order is preserved.",
+          "examples": [
+            [
+              "key=\"value\""
+            ]
+          ],
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "rustc-env": {
+          "title": "rustc-env",
+          "description": "Environment variables exposed to `rustc` while compiling dependents of this links library.",
+          "examples": [
+            {
+              "FOO_SYS_STATIC": "1"
+            }
+          ],
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "x-tombi-table-keys-order": {
+            "additionalProperties": "ascending"
+          },
+          "x-tombi-additional-key-label": "variable"
+        },
+        "rustc-cdylib-link-arg": {
+          "title": "rustc-cdylib-link-arg",
+          "description": "Extra link args appended when building a `cdylib` that depends on this links library. Order is preserved (passed to the linker positionally).",
+          "examples": [
+            [
+              "-Wl,--as-needed"
+            ]
+          ],
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "rustc-check-cfg": {
+          "description": "Build-script override for rustc-check-cfg.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "rustc-link-arg": {
+          "description": "Build-script override for rustc-link-arg.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "rustc-link-arg-cdylib": {
+          "description": "Build-script override for rustc-link-arg-cdylib.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "rustc-link-arg-bins": {
+          "description": "Build-script override for rustc-link-arg-bins.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "rustc-link-arg-tests": {
+          "description": "Build-script override for rustc-link-arg-tests.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "rustc-link-arg-benches": {
+          "description": "Build-script override for rustc-link-arg-benches.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "rustc-link-arg-examples": {
+          "description": "Build-script override for rustc-link-arg-examples.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "warning": {
+          "description": "Not supported in build-script overrides.",
+          "not": {}
+        },
+        "rerun-if-changed": {
+          "description": "Not supported in build-script overrides.",
+          "not": {}
+        },
+        "rerun-if-env-changed": {
+          "description": "Not supported in build-script overrides.",
+          "not": {}
+        }
+      },
+      "additionalProperties": {
+        "description": "Build-script metadata value.",
+        "type": "string"
+      },
+      "x-taplo": {
+        "links": {
+          "key": "https://doc.rust-lang.org/cargo/reference/config.html#targettriplelinks"
+        }
+      },
+      "x-tombi-table-keys-order": {
+        "properties": "schema",
+        "additionalProperties": "ascending"
+      },
+      "x-tombi-additional-key-label": "metadata"
+    }
+  },
+  "title": "[target.*]",
+  "description": "Target-specific platform settings. Keys are target triples, cfg expressions, or custom target names.\nhttps://doc.rust-lang.org/cargo/reference/config.html#target",
+  "examples": [
+    {
+      "x86_64-unknown-linux-gnu": {
+        "linker": "clang",
+        "runner": [
+          "qemu-x86_64",
+          "-L",
+          "/usr/x86_64-linux-gnu"
+        ],
+        "rustflags": [
+          "-C",
+          "link-arg=-fuse-ld=lld"
+        ]
+      },
+      "thumbv7m-none-eabi": {
+        "linker": "arm-none-eabi-gcc"
+      }
+    }
+  ],
+  "type": "object",
+  "additionalProperties": {
+    "$ref": "#/$defs/target"
+  },
+  "propertyNames": {
+    "description": "Target triple (e.g. `x86_64-unknown-linux-gnu`), `cfg(...)` expression, or the filename stem of a custom target spec JSON file. Must be non-empty and start with a non-whitespace character.",
+    "type": "string",
+    "minLength": 1,
+    "pattern": "^\\S.*$"
+  },
+  "x-taplo": {
+    "links": {
+      "key": "https://doc.rust-lang.org/cargo/reference/config.html#target"
+    }
+  },
+  "x-tombi-table-keys-order": {
+    "additionalProperties": "ascending"
+  },
+  "x-tombi-additional-key-label": "target"
+}

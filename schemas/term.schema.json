@@ -1,0 +1,221 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$defs": {
+    "terminalWhen": {
+      "examples": [
+        "auto",
+        "always",
+        "never"
+      ],
+      "type": "string",
+      "enum": [
+        "auto",
+        "always",
+        "never"
+      ],
+      "x-taplo": {
+        "docs": {
+          "enumValues": [
+            "Automatically detect behavior.",
+            "Always enable behavior.",
+            "Never enable behavior."
+          ]
+        }
+      },
+      "x-intellij-enum-metadata": {
+        "always": {
+          "description": "Always enable behavior."
+        },
+        "auto": {
+          "description": "Automatically detect behavior."
+        },
+        "never": {
+          "description": "Never enable behavior."
+        }
+      }
+    }
+  },
+  "title": "[term]",
+  "description": "Terminal output and interaction settings.\nhttps://doc.rust-lang.org/cargo/reference/config.html#term",
+  "examples": [
+    {
+      "quiet": false,
+      "verbose": true,
+      "color": "always"
+    },
+    {
+      "unicode": true,
+      "hyperlinks": true,
+      "progress": {
+        "when": "auto",
+        "width": 80,
+        "term-integration": true
+      }
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "quiet": {
+      "description": "Whether Cargo output is quiet.\nhttps://doc.rust-lang.org/cargo/reference/config.html#termquiet",
+      "default": false,
+      "examples": [
+        false,
+        true
+      ],
+      "type": "boolean",
+      "x-taplo": {
+        "docs": {
+          "main": "Controls whether or not log messages are displayed by Cargo.\n\nMutually exclusive with `term.verbose` --- they cannot both be `true`. The `--quiet` CLI flag overrides and forces quiet output; `--verbose` overrides and disables it.\n\nDefault: `false`. Environment: `CARGO_TERM_QUIET`."
+        }
+      }
+    },
+    "verbose": {
+      "description": "Whether Cargo output is verbose.\nhttps://doc.rust-lang.org/cargo/reference/config.html#termverbose",
+      "default": false,
+      "examples": [
+        false,
+        true
+      ],
+      "type": "boolean",
+      "x-taplo": {
+        "docs": {
+          "main": "Controls whether or not extra detailed messages are displayed by Cargo.\n\nMutually exclusive with `term.quiet` --- they cannot both be `true`. The `--verbose` CLI flag overrides and forces verbose output; `--quiet` overrides and disables it.\n\nDefault: `false`. Environment: `CARGO_TERM_VERBOSE`."
+        }
+      }
+    },
+    "color": {
+      "$ref": "#/$defs/terminalWhen",
+      "description": "Whether Cargo colorizes terminal output.\nhttps://doc.rust-lang.org/cargo/reference/config.html#termcolor",
+      "default": "auto",
+      "x-taplo": {
+        "docs": {
+          "main": "Controls whether or not colored output is used in the terminal.\n\n- `\"auto\"` --- automatically detect if color support is available.\n- `\"always\"` --- always display colors.\n- `\"never\"` --- never display colors.\n\nCan be overridden with the `--color` CLI option. Default: `\"auto\"`. Environment: `CARGO_TERM_COLOR`."
+        }
+      }
+    },
+    "hyperlinks": {
+      "description": "Whether Cargo uses hyperlinks in terminal output. Auto-detected when unset.\nhttps://doc.rust-lang.org/cargo/reference/config.html#termhyperlinks",
+      "examples": [
+        true,
+        false
+      ],
+      "type": "boolean",
+      "x-taplo": {
+        "docs": {
+          "main": "Controls whether or not hyperlinks are used in the terminal.\n\nWhen unset, Cargo auto-detects terminal support --- there is no static default. Environment: `CARGO_TERM_HYPERLINKS`."
+        }
+      }
+    },
+    "unicode": {
+      "description": "Whether Cargo can render non-ASCII Unicode characters. Auto-detected when unset.\nhttps://doc.rust-lang.org/cargo/reference/config.html#termunicode",
+      "examples": [
+        true,
+        false
+      ],
+      "type": "boolean",
+      "x-taplo": {
+        "docs": {
+          "main": "Controls whether output can be rendered using non-ASCII Unicode characters.\n\nWhen unset, Cargo auto-detects terminal support --- there is no static default. Environment: `CARGO_TERM_UNICODE`."
+        }
+      }
+    },
+    "progress": {
+      "description": "Progress bar configuration.\nhttps://doc.rust-lang.org/cargo/reference/config.html#termprogresswhen",
+      "examples": [
+        {
+          "when": "auto",
+          "width": 80,
+          "term-integration": true
+        },
+        {
+          "when": "never"
+        }
+      ],
+      "type": "object",
+      "properties": {
+        "when": {
+          "$ref": "#/$defs/terminalWhen",
+          "description": "Whether Cargo shows a progress bar.\nhttps://doc.rust-lang.org/cargo/reference/config.html#termprogresswhen",
+          "default": "auto",
+          "x-taplo": {
+            "docs": {
+              "main": "Controls whether or not the progress bar is shown in the terminal.\n\n- `\"auto\"` --- intelligently guess whether to show the progress bar.\n- `\"always\"` --- always show the progress bar.\n- `\"never\"` --- never show the progress bar; `term.progress.width` then has no effect.\n\nDefault: `\"auto\"`. Environment: `CARGO_TERM_PROGRESS_WHEN`."
+            }
+          }
+        },
+        "width": {
+          "description": "Progress width in columns (non-negative). Required when when = \"always\".",
+          "examples": [
+            80,
+            100,
+            120
+          ],
+          "type": "integer",
+          "minimum": 0
+        },
+        "term-integration": {
+          "description": "Whether Cargo reports progress to the terminal emulator (e.g. taskbar). Auto-detected when unset.\nhttps://doc.rust-lang.org/cargo/reference/config.html#termprogressterm-integration",
+          "examples": [
+            true,
+            false
+          ],
+          "type": "boolean",
+          "x-taplo": {
+            "docs": {
+              "main": "Reports progress to the terminal emulator for display in places like the taskbar.\n\nWhen unset, Cargo auto-detects terminal support --- there is no static default. Environment: `CARGO_TERM_PROGRESS_TERM_INTEGRATION`."
+            }
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "required": [
+              "when"
+            ],
+            "properties": {
+              "when": {
+                "const": "always"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "width"
+            ]
+          }
+        }
+      ],
+      "x-taplo": {
+        "links": {
+          "key": "https://doc.rust-lang.org/cargo/reference/config.html#termprogresswhen"
+        }
+      },
+      "x-tombi-table-keys-order": {
+        "properties": "schema"
+      }
+    }
+  },
+  "not": {
+    "required": [
+      "quiet",
+      "verbose"
+    ],
+    "properties": {
+      "quiet": {
+        "const": true
+      },
+      "verbose": {
+        "const": true
+      }
+    }
+  },
+  "x-taplo": {
+    "links": {
+      "key": "https://doc.rust-lang.org/cargo/reference/config.html#term"
+    }
+  },
+  "x-tombi-table-keys-order": {
+    "properties": "schema"
+  }
+}

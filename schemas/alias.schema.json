@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "[alias]",
+  "description": "Cargo command aliases. Each key is a subcommand name; the value is the command to run, either a single string (split on whitespace) or an array of arguments. Aliases are recursive and may not redefine existing built-in Cargo commands. Per-alias values can also be set via the `CARGO_ALIAS_<name>` environment variable.\nhttps://doc.rust-lang.org/cargo/reference/config.html#alias",
+  "default": {
+    "b": "build",
+    "c": "check",
+    "d": "doc",
+    "t": "test",
+    "r": "run",
+    "rm": "remove"
+  },
+  "examples": [
+    {
+      "b": "build",
+      "rr": "run --release",
+      "recursive_example": "rr --example recursions",
+      "space_example": [
+        "run",
+        "--release",
+        "--",
+        "argument with spaces"
+      ]
+    }
+  ],
+  "type": "object",
+  "additionalProperties": {
+    "$ref": "common.schema.json#/$defs/stringOrStringArray",
+    "title": "alias expansion",
+    "description": "Command the alias expands to. A string is split on whitespace; an array is passed through verbatim (use the array form to preserve arguments containing spaces)."
+  },
+  "propertyNames": {
+    "description": "Cargo subcommand name. Must be a non-empty token containing no whitespace.",
+    "type": "string",
+    "minLength": 1,
+    "pattern": "^[^\\s]+$"
+  },
+  "x-taplo": {
+    "docs": {
+      "main": "Defines [Cargo command aliases](https://doc.rust-lang.org/cargo/reference/config.html#alias).\n\nEach key is the subcommand name and the value is what `cargo <key>` expands to. Use a string (split on whitespace) or an array (preserves whitespace inside arguments).\n\n**Built-in aliases** (may be overridden): `b` → `build`, `c` → `check`, `d` → `doc`, `t` → `test`, `r` → `run`, `rm` → `remove`.\n\nAliases are recursive — one alias may invoke another. Aliases may **not** redefine existing built-in Cargo commands.\n\nEach alias may also be set via the `CARGO_ALIAS_<name>` environment variable."
+    },
+    "links": {
+      "key": "https://doc.rust-lang.org/cargo/reference/config.html#alias"
+    }
+  },
+  "x-tombi-table-keys-order": {
+    "additionalProperties": "ascending"
+  },
+  "x-tombi-additional-key-label": "alias"
+}

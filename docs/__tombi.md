@@ -1,0 +1,306 @@
+---
+source: https://tombi-toml.github.io/tombi/docs/json-schema/
+created: 2026-05-05T17:52
+_meta:
+  extension: https://github.com/kjanat/snipsnip
+---
+
+# JSON Schema
+
+## JSON Schema
+
+While TOML itself may introduce [schema specifications](https://github.com/toml-lang/toml/issues/792) in the future, Tombi, like Taplo, is implementing validation features in its linter that support [JSON Schema](https://json-schema.org/).
+
+Currently, we are extending JSON Schema with special annotations using the `x-tombi-*` prefix.
+
+## Schema Priority
+
+This section explains how Tombi prioritizes the application of `x-tombi-*` keys in your JSON Schema:
+
+1. `#:schema` directive in the TOML file's top comment (compatible with [Taplo](https://taplo.tamasfe.dev/configuration/directives.html#the-schema-directive))
+2. JSON Schema specified in [the Tombi configuration file](https://tombi-toml.github.io/tombi/docs/configuration#search-priority)
+3. JSON Schema from the [JSON Schema Store](https://www.schemastore.org/)
+
+## Built-in schemas
+
+Tombi embeds a subset of JSON Schema Store schemas into the binary. To use an embedded schema, replace the `https://` scheme with `tombi://`.
+
+For example, use `tombi://www.schemastore.org/cargo.json` instead of `https://www.schemastore.org/cargo.json`.
+
+The authoritative list of embedded schemas is available from the embedded catalog:
+
+- `tombi://www.schemastore.org/api/json/catalog.json`
+
+Some common embedded schema URIs include:
+
+- `tombi://www.schemastore.org/cargo.json`
+- `tombi://www.schemastore.org/pyproject.json`
+- `tombi://www.schemastore.org/tombi.json`
+
+🗒️Note
+
+Built-in schemas are useful when you want schema validation and completion to work offline, or when you want to avoid fetching schemas over the network. The embedded catalog above is the source of truth for which schemas are built into the current binary.
+
+Tombi supports the following metadata keys in your JSON Schema.
+
+### x-tombi-toml-version
+
+This key automatically determines the TOML version to use. Currently, we support:
+
+- `v1.0.0` (stable)
+- `v1.1.0` (latest)
+
+The preview version includes exciting features like trailing comma support in Inline Tables.
+
+🗒️Note
+
+`v1.1.0` has only just been released and is not yet supported by many tools. Therefore, `v1.0.0` will be used as the default TOML version for the time being.
+
+If you want to use `v1.1.0`, please specify `toml-version = "v1.1.0"` in your `tombi.toml`, or set `x-tombi-toml-version = "v1.1.0"` in your JSON Schema.
+
+For example, the JSON Schema for `tombi.toml` specifies `v1.1.0`.
+
+### x-tombi-additional-key-label
+
+This key specifies the label to use for additional keys.
+
+This allows the label displayed in the completion candidates for additionalProperties keys to be `$crate_name`.\
+If you don't specify this key, the label will be `$key`.
+
+![](https://tombi-toml.github.io/tombi/x-tombi-additional-key-label.png)
+
+## Formatting
+
+### x-tombi-table-keys-order
+
+This key controls the automatic sorting of table keys (e.g., `[dependencies]`).
+
+Available sorting strategies:
+
+- `ascending`
+- `descending`
+- `version-sort`
+- `schema`
+
+By specifying object instead of string, you can individually define sorting methods for the different groups: `properties`, `additionalProperties`, and `patternProperties`.
+
+The order of the object's properties is significant. Sorting is performed sequentially for each group starting from the first property, and the results are then combined.
+
+🗒️Note
+
+The `schema` strategy can only be used for `properties`.
+
+### x-tombi-array-values-order
+
+This key controls the automatic sorting of array values.
+
+Available sorting strategies:
+
+- `ascending`
+- `descending`
+- `version-sort`
+
+⚠️Warning
+
+`Float` and `Array` cannot be sorted. To sort `Table`, you need to use `x-tombi-array-values-order-by`.
+
+By specifying object instead of string, you can individually define sorting methods for the different groups: `oneOf`, `anyOf`.
+
+The following example, sorts the first schema of oneOf with `version-sort`, and the second schema with `ascending` after that.
+
+The following is the sorting result.
+
+⚠️Warning
+
+`oneOf` and `anyOf` cannot sort nested schemas. `oneOf` and `anyOf` must be flattened.
+
+### x-tombi-array-values-order-by
+
+This key specifies which key to use as the sorting key when the array element is a table.
+
+The following is the sorting result.
+
+## Linting
+
+### Validation Score
+
+For complex JSON Schemas, validation failures can produce many error messages. To help users identify the most relevant errors, Tombi uses a scoring system to filter out less important validation failures.
+
+The currently implemented points are as follows:
+
+- Type matching: 1 point is added for the value that matches the type defined in the JSON Schema.
+- Required key matching: 1 point is added for each required key present in the table schema.
+
+More details are [here](https://github.com/tombi-toml/tombi/issues/1021#issuecomment-3338983593).
+
+### Strict Mode
+
+By default, Tombi operates in `strict` mode. In this mode, objects without `additionalProperties` are treated as if `additionalProperties: false` was specified. This differs from the standard JSON Schema specification but provides more precise validation by eliminating ambiguity.
+
+To disable strict mode, add `schema.strict = false` to your `tombi.toml` configuration.
+
+### x-tombi-string-formats
+
+In Tombi default behavior, the `format` used in JSON Schema's `“type”: “string"` only recognizes conversions to the following built-in types:
+
+- `date-time`
+- `date-time-local`
+- `date`
+- `time-local`
+
+By adding the `x-tombi-string-formats` key to the root of the JSON Schema, you can add the `format` of the string to the validation target.
+
+Currently supported `format` targets are as follows:
+
+| **format**        | **Specification**                                                                         | **TOML Type**    |
+| ----------------- | ----------------------------------------------------------------------------------------- | ---------------- |
+| `email`           | [RFC 5322](https://datatracker.ietf.org/doc/html/rfc5322)                                 |                  |
+| `hostname`        | [RFC 1034](https://datatracker.ietf.org/doc/html/rfc1034)                                 |                  |
+| `uri`             | [RFC 3986](https://datatracker.ietf.org/doc/html/rfc3986)                                 |                  |
+| `uri-reference`   | [RFC 3986](https://datatracker.ietf.org/doc/html/rfc3986)                                 |                  |
+| `uuid`            | [RFC 4122](https://datatracker.ietf.org/doc/html/rfc4122)                                 |                  |
+| `ipv4`            | [RFC 2673 §3.2](https://datatracker.ietf.org/doc/html/rfc2673#section-3.2)                |                  |
+| `ipv6`            | [RFC 4291 §2.2](https://datatracker.ietf.org/doc/html/rfc4291#section-2.2)                |                  |
+| `date-time`       | [RFC 3339 §5.6](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6)                | Offset Date-Time |
+| `date-time-local` | [OpenAPI Format Registry](https://spec.openapis.org/registry/format/date-time-local.html) | Local Date-Time  |
+| `date`            | [RFC 3339 §5.6](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6) full-date      | Local Date       |
+| `time`            | [RFC 3339 §5.6](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6) full-time      |                  |
+| `time-local`      | [OpenAPI Format Registry](https://spec.openapis.org/registry/format/time-local.html)      | Local Time       |
+| `regex`           | [ECMA-262](https://262.ecma-international.org/)                                           |                  |
+| `json-pointer`    | [RFC 6901](https://datatracker.ietf.org/doc/html/rfc6901)                                 |                  |
+
+## Language Gap
+
+While TOML and JSON are different languages, JSON Schema remains a valuable tool for representing TOML structures, especially given the abundance of existing schema assets.
+
+Tombi bridges this language gap by using abbreviations to represent JSON Schema concepts that don't have direct equivalents in TOML.
+
+For more details on how Tombi represents these concepts, check out the Hover section.
+
+## JSON Catalog/Schema Cache
+
+Tombi caches JSON Catalog/Schemas in the file system to avoid unnecessary network requests.
+
+### Cache Expiration
+
+Cached schemas expire after **24 hours** by default. When a cached schema expires, Tombi automatically fetches the latest version from the remote source.
+
+You can customize the cache expiration time using the `TOMBI_CACHE_TTL` environment variable. See [Environment Variables](https://tombi-toml.github.io/tombi/docs/environment-variables#tombi-cache-ttl) for details.
+
+### How to Clear Cache
+
+#### CLI
+
+Use `--no-cache` option to disable using caches for a CLI command.
+
+⚠️Warning
+
+`--no-cache` option does not use caches, but **saves the latest catalogs/schemas** to the file caches.\
+(This behavior is the same as HTTP's `Cache-Control: no-cache`)
+
+It only applies to catalogs/schemas used by the command, and does not update other files.
+
+#### Language Server
+
+Use `RefreshCache` command to clear the cache.
+
+⚠️Warning
+
+It removes **all file caches** and fetches the latest schema over the network for the editing TOML file.
+
+### Cache Location Search Priority
+
+1. `$TOMBI_CACHE_HOME`
+2. `$XDG_CACHE_HOME/tombi`
+3. `~/.cache/tombi`
+
+## Associate Schema
+
+VSCode supports associating a TOML schema with a file match pattern. See [VSCode Extension](https://tombi-toml.github.io/tombi/docs/editors/vscode-extension#json-schema-association) for details.
+
+## Compliance Status
+
+The table below summarizes keyword membership in each JSON Schema dialect and whether Tombi implements the keyword when that dialect defines it.
+
+`✅`: supported in the dialect\
+`❌`: not implemented in Tombi\
+`-`: not used by that dialect
+
+| **Keyword**             | **draft-07** | **draft-2019-09** | **draft-2020-12** |
+| ----------------------- | ------------ | ----------------- | ----------------- |
+| `$id`                   | ✅           | ✅                | ✅                |
+| `$schema`               | ✅           | ✅                | ✅                |
+| `$ref`                  | ✅           | ✅                | ✅                |
+| `$defs`                 | ✅           | ✅                | ✅                |
+| `definitions`           | ✅           | \-                | \-                |
+| `$anchor`               | \-           | ✅                | ✅                |
+| `$dynamicRef`           | \-           | \-                | ✅                |
+| `$dynamicAnchor`        | \-           | \-                | ✅                |
+| `$recursiveRef`         | \-           | ✅                | \-                |
+| `$recursiveAnchor`      | \-           | ✅                | \-                |
+| `$vocabulary`           | \-           | ✅                | ✅                |
+| `allOf`                 | ✅           | ✅                | ✅                |
+| `anyOf`                 | ✅           | ✅                | ✅                |
+| `oneOf`                 | ✅           | ✅                | ✅                |
+| `not`                   | ✅           | ✅                | ✅                |
+| `if`                    | ✅           | ✅                | ✅                |
+| `then`                  | ✅           | ✅                | ✅                |
+| `else`                  | ✅           | ✅                | ✅                |
+| `properties`            | ✅           | ✅                | ✅                |
+| `patternProperties`     | ✅           | ✅                | ✅                |
+| `additionalProperties`  | ✅           | ✅                | ✅                |
+| `propertyNames`         | ✅           | ✅                | ✅                |
+| `items`                 | ✅           | ✅                | ✅                |
+| `additionalItems`       | ✅           | ✅                | \-                |
+| `prefixItems`           | \-           | \-                | ✅                |
+| `contains`              | ✅           | ✅                | ✅                |
+| `dependentSchemas`      | \-           | ✅                | ✅                |
+| `unevaluatedProperties` | \-           | ✅                | ✅                |
+| `unevaluatedItems`      | \-           | ✅                | ✅                |
+| `type`                  | ✅           | ✅                | ✅                |
+| `enum`                  | ✅           | ✅                | ✅                |
+| `const`                 | ✅           | ✅                | ✅                |
+| `multipleOf`            | ✅           | ✅                | ✅                |
+| `maximum`               | ✅           | ✅                | ✅                |
+| `minimum`               | ✅           | ✅                | ✅                |
+| `exclusiveMaximum`      | ✅           | ✅                | ✅                |
+| `exclusiveMinimum`      | ✅           | ✅                | ✅                |
+| `maxLength`             | ✅           | ✅                | ✅                |
+| `minLength`             | ✅           | ✅                | ✅                |
+| `pattern`               | ✅           | ✅                | ✅                |
+| `format`                | ✅           | ✅                | ✅                |
+| `maxItems`              | ✅           | ✅                | ✅                |
+| `minItems`              | ✅           | ✅                | ✅                |
+| `uniqueItems`           | ✅           | ✅                | ✅                |
+| `maxProperties`         | ✅           | ✅                | ✅                |
+| `minProperties`         | ✅           | ✅                | ✅                |
+| `required`              | ✅           | ✅                | ✅                |
+| `dependencies`          | ✅           | ✅                | \-                |
+| `dependentRequired`     | \-           | ✅                | ✅                |
+| `minContains`           | \-           | ✅                | ✅                |
+| `maxContains`           | \-           | ✅                | ✅                |
+| `title`                 | ✅           | ✅                | ✅                |
+| `description`           | ✅           | ✅                | ✅                |
+| `default`               | ✅           | ✅                | ✅                |
+| `examples`              | ✅           | ✅                | ✅                |
+| `deprecated`            | ✅           | ✅                | ✅                |
+| `$comment`              | ❌           | ❌                | ❌                |
+| `readOnly`              | ❌           | ❌                | ❌                |
+| `writeOnly`             | ❌           | ❌                | ❌                |
+| `contentEncoding`       | ✅           | ✅                | ✅                |
+| `contentMediaType`      | ✅           | ✅                | ✅                |
+| `contentSchema`         | ✅           | ✅                | ✅                |
+
+🗒️Note
+
+Tombi also accepts some legacy keywords for compatibility even when they are not part of the selected dialect. For example, `definitions` is still loaded alongside `$defs` in draft-2019-09 and draft-2020-12, `dependencies` is still honored in draft-2020-12, and `prefixItems` is accepted even before draft-2020-12.
+
+🗒️Note
+
+`format`, `title`, `description`, `default`, `examples`, `deprecated`, `contentEncoding`, `contentMediaType`, and `contentSchema` are not all treated as pure assertion keywords. Some are used as annotations for validation behavior, hover, completion, or diagnostics.
+
+🗒️Note
+
+Tombi defaults to a non-standard `strict` behavior: when `additionalProperties` is omitted, objects are treated as closed unless you disable `schema.strict`.
+
+[Environment Variables](https://tombi-toml.github.io/tombi/docs/environment-variables) [Comment Directive](https://tombi-toml.github.io/tombi/docs/comment-directive)

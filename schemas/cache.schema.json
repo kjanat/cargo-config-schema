@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "[cache]",
+  "description": "Settings for Cargo caches.\nhttps://doc.rust-lang.org/cargo/reference/config.html#cache",
+  "examples": [
+    {
+      "auto-clean-frequency": "1 day"
+    },
+    {
+      "auto-clean-frequency": "never"
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "auto-clean-frequency": {
+      "description": "How often Cargo checks whether unused global cache files should be deleted. Accepts \"never\", \"always\", or an integer followed by \"seconds\", \"minutes\", \"hours\", \"days\", \"weeks\", or \"months\" (e.g. \"1 day\", \"2 weeks\").\nhttps://doc.rust-lang.org/cargo/reference/config.html#cacheauto-clean-frequency",
+      "default": "1 day",
+      "examples": [
+        "never",
+        "always",
+        "1 day",
+        "2 weeks",
+        "3 months"
+      ],
+      "type": "string",
+      "pattern": "^(never|always|[0-9]+ (second|minute|hour|day|week|month)s?)$",
+      "x-taplo": {
+        "docs": {
+          "main": "How often Cargo checks whether unused global cache files should be deleted.\n\nAccepts:\n- `\"never\"` --- never delete old files.\n- `\"always\"` --- check on every Cargo run.\n- `<integer> <unit>` where unit is one of `seconds`, `minutes`, `hours`, `days`, `weeks`, or `months` (e.g. `\"1 day\"`, `\"2 weeks\"`).\n\nDefault: `\"1 day\"`. Environment: `CARGO_CACHE_AUTO_CLEAN_FREQUENCY`."
+        }
+      }
+    },
+    "global-clean": {
+      "description": "UNSTABLE: Global cache retention; requires -Z gc.",
+      "type": "object",
+      "properties": {
+        "max-src-age": {
+          "type": "string"
+        },
+        "max-crate-age": {
+          "type": "string"
+        },
+        "max-index-age": {
+          "type": "string"
+        },
+        "max-git-co-age": {
+          "type": "string"
+        },
+        "max-git-db-age": {
+          "type": "string"
+        }
+      },
+      "x-tombi-table-keys-order": {
+        "properties": "schema"
+      }
+    }
+  },
+  "x-taplo": {
+    "links": {
+      "key": "https://doc.rust-lang.org/cargo/reference/config.html#cache"
+    }
+  },
+  "x-tombi-table-keys-order": {
+    "properties": "schema"
+  }
+}

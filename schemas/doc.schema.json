@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "[doc]",
+  "description": "Options for cargo doc.\nhttps://doc.rust-lang.org/cargo/reference/config.html#doc",
+  "examples": [
+    {
+      "browser": "chromium"
+    },
+    {
+      "browser": [
+        "firefox",
+        "--new-window"
+      ]
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "browser": {
+      "$ref": "common.schema.json#/$defs/stringOrStringArray",
+      "description": "Browser command used by cargo doc --open, overriding the BROWSER environment variable. Either a single program path or an array of [program, ...args].\nhttps://doc.rust-lang.org/cargo/reference/config.html#docbrowser",
+      "examples": [
+        "firefox",
+        "chromium",
+        [
+          "firefox",
+          "--new-window"
+        ],
+        [
+          "google-chrome",
+          "--incognito"
+        ]
+      ]
+    },
+    "extern-map": {
+      "description": "UNSTABLE: External rustdoc links; requires -Z rustdoc-map.",
+      "type": "object",
+      "properties": {
+        "std": {
+          "type": "string"
+        },
+        "registries": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      },
+      "x-tombi-table-keys-order": {
+        "properties": "schema"
+      }
+    }
+  },
+  "x-taplo": {
+    "links": {
+      "key": "https://doc.rust-lang.org/cargo/reference/config.html#doc"
+    }
+  },
+  "x-tombi-table-keys-order": {
+    "properties": "schema"
+  }
+}

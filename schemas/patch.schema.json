@@ -1,0 +1,189 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$defs": {
+    "dep-spec": {
+      "description": "Replacement dependency: version string or dependency table. Cargo validates source conflicts and resolves the replacement crate.",
+      "examples": [
+        {
+          "path": "../foo"
+        },
+        {
+          "git": "https://github.com/serde-rs/serde.git",
+          "branch": "master"
+        },
+        {
+          "version": "1.0",
+          "registry": "my-registry"
+        }
+      ],
+      "type": [
+        "object",
+        "string"
+      ],
+      "properties": {
+        "version": {
+          "description": "Semver requirement matched against the patched package.\nhttps://doc.rust-lang.org/cargo/reference/specifying-dependencies.html",
+          "examples": [
+            "1.0",
+            "^1.2.3",
+            "=0.5.0"
+          ],
+          "type": "string"
+        },
+        "path": {
+          "description": "Filesystem path to the replacement crate. Relative paths resolve relative to the config file containing this `[patch]` section.\nhttps://doc.rust-lang.org/cargo/reference/config.html#patch",
+          "examples": [
+            "../foo"
+          ],
+          "type": "string"
+        },
+        "git": {
+          "description": "Git repository URL providing the replacement crate.\nhttps://doc.rust-lang.org/cargo/reference/specifying-dependencies.html#specifying-dependencies-from-git-repositories",
+          "examples": [
+            "https://github.com/serde-rs/serde.git"
+          ],
+          "type": "string",
+          "format": "uri"
+        },
+        "branch": {
+          "description": "Git branch to use. Mutually exclusive with `tag` and `rev`.",
+          "examples": [
+            "main",
+            "master"
+          ],
+          "type": "string"
+        },
+        "tag": {
+          "description": "Git tag to use. Mutually exclusive with `branch` and `rev`.",
+          "examples": [
+            "v1.0.0"
+          ],
+          "type": "string"
+        },
+        "rev": {
+          "description": "Git revision (commit-ish) to use. Mutually exclusive with `branch` and `tag`.",
+          "examples": [
+            "abcdef1234567890"
+          ],
+          "type": "string"
+        },
+        "package": {
+          "description": "Real package name when the patch entry's key is a rename. Lets you patch a crate while referring to it under a different name in your manifest.\nhttps://doc.rust-lang.org/cargo/reference/specifying-dependencies.html#renaming-dependencies-in-cargotoml",
+          "type": "string"
+        },
+        "registry": {
+          "description": "Name of the registry the replacement is fetched from when using `version`. Refers to a key under `[registries]`.",
+          "examples": [
+            "crates-io"
+          ],
+          "type": "string"
+        },
+        "default-features": {
+          "description": "Parsed but ignored for patch selection; configure features on the dependency that uses this patch.",
+          "default": true,
+          "type": "boolean"
+        },
+        "features": {
+          "description": "Parsed but ignored for patch selection; configure features on the dependency that uses this patch.",
+          "examples": [
+            [
+              "serde",
+              "std"
+            ]
+          ],
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "x-tombi-array-values-order": "ascending"
+        },
+        "optional": {
+          "description": "Whether the dependency is optional. Rarely meaningful inside `[patch]`; included for parity with the dependency-table format.",
+          "default": false,
+          "type": "boolean"
+        },
+        "public": {
+          "description": "Whether the dependency is part of the public API (unstable nightly feature).",
+          "default": false,
+          "type": "boolean"
+        },
+        "registry-index": {
+          "description": "Internal registry index URL used by Cargo when publishing.",
+          "type": "string"
+        },
+        "base": {
+          "description": "UNSTABLE: Named path base; requires path-bases support.",
+          "type": "string"
+        },
+        "artifact": {
+          "description": "UNSTABLE: Artifact dependency; requires -Z bindeps.",
+          "type": [
+            "array",
+            "string"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
+        "lib": {
+          "description": "UNSTABLE: Also use the artifact dependency as a library; requires -Z bindeps.",
+          "type": "boolean"
+        },
+        "target": {
+          "description": "UNSTABLE: Artifact target platform; requires -Z bindeps.",
+          "type": "string"
+        },
+        "default_features": {
+          "description": "Deprecated underscore spelling of default-features.",
+          "deprecated": true,
+          "type": "boolean"
+        }
+      },
+      "x-taplo": {
+        "initKeys": [
+          "version"
+        ]
+      },
+      "x-tombi-table-keys-order": {
+        "properties": "schema",
+        "additionalProperties": "ascending"
+      }
+    }
+  },
+  "title": "[patch]",
+  "description": "Dependency patch overrides. Outer key is the registry name being patched (typically `crates-io`, or a name from `[registries]`); inner key is the package name being replaced; innermost table is the replacement dependency specification, using the same format as Cargo.toml `[patch]`.\nhttps://doc.rust-lang.org/cargo/reference/config.html#patch",
+  "examples": [
+    {
+      "crates-io": {
+        "foo": {
+          "path": "../foo"
+        },
+        "serde": {
+          "git": "https://github.com/serde-rs/serde.git",
+          "branch": "master"
+        }
+      }
+    }
+  ],
+  "type": "object",
+  "additionalProperties": {
+    "description": "Patches keyed by registry name. The conventional key is `crates-io`; user-defined registry names from `[registries]` are also valid.\nhttps://doc.rust-lang.org/cargo/reference/overriding-dependencies.html#the-patch-section",
+    "type": "object",
+    "additionalProperties": {
+      "$ref": "#/$defs/dep-spec"
+    },
+    "x-tombi-table-keys-order": {
+      "additionalProperties": "ascending"
+    },
+    "x-tombi-additional-key-label": "dependency"
+  },
+  "x-taplo": {
+    "links": {
+      "key": "https://doc.rust-lang.org/cargo/reference/config.html#patch"
+    }
+  },
+  "x-tombi-table-keys-order": {
+    "additionalProperties": "ascending"
+  },
+  "x-tombi-additional-key-label": "registry"
+}

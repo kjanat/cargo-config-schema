@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "[future-incompat-report]",
+  "description": "Settings for future incompatibility reports.\nhttps://doc.rust-lang.org/cargo/reference/config.html#future-incompat-report",
+  "examples": [
+    {
+      "frequency": "always"
+    },
+    {
+      "frequency": "never"
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "frequency": {
+      "description": "How often Cargo displays future incompatibility report notifications.\nhttps://doc.rust-lang.org/cargo/reference/config.html#future-incompat-reportfrequency",
+      "default": "always",
+      "examples": [
+        "always",
+        "never"
+      ],
+      "type": "string",
+      "enum": [
+        "always",
+        "never"
+      ],
+      "x-taplo": {
+        "docs": {
+          "enumValues": [
+            "Always display a notification.",
+            "Never display a notification."
+          ],
+          "main": "Controls how often Cargo displays a notification to the terminal when a future incompat report is available.\n\nPossible values:\n- `\"always\"` --- always display a notification when a command (e.g. `cargo build`) produces a future incompat report.\n- `\"never\"` --- never display a notification.\n\nDefault: `\"always\"`. Environment: `CARGO_FUTURE_INCOMPAT_REPORT_FREQUENCY`."
+        }
+      },
+      "x-intellij-enum-metadata": {
+        "always": {
+          "description": "Always display a notification."
+        },
+        "never": {
+          "description": "Never display a notification."
+        }
+      }
+    }
+  },
+  "x-taplo": {
+    "initKeys": [
+      "frequency"
+    ],
+    "links": {
+      "key": "https://doc.rust-lang.org/cargo/reference/config.html#future-incompat-report"
+    }
+  },
+  "x-tombi-table-keys-order": {
+    "properties": "schema"
+  }
+}

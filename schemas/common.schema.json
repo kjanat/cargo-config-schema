@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$defs": {
+    "credentialProvider": {
+      "$ref": "#/$defs/stringOrStringArray",
+      "description": "Credential provider name, command string, or command with arguments.\nhttps://doc.rust-lang.org/cargo/reference/registry-authentication.html",
+      "examples": [
+        "cargo:token",
+        [
+          "cargo-credential-example",
+          "--flag"
+        ]
+      ]
+    },
+    "stringOrStringArray": {
+      "examples": [
+        "run --release",
+        [
+          "run",
+          "--release",
+          "--",
+          "argument with spaces"
+        ]
+      ],
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      ]
+    }
+  },
+  "title": "Cargo configuration shared definitions",
+  "description": "Reusable type definitions shared across the section-specific schemas."
+}

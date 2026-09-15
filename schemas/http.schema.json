@@ -1,0 +1,213 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$defs": {
+    "sslVersion": {
+      "examples": [
+        "tlsv1.3",
+        {
+          "min": "tlsv1.2",
+          "max": "tlsv1.3"
+        }
+      ],
+      "oneOf": [
+        {
+          "$ref": "#/$defs/tlsVersion",
+          "title": "Minimum TLS version",
+          "description": "Minimum TLS version to use; cargo accepts any newer version up to the platform maximum."
+        },
+        {
+          "title": "TLS version range",
+          "description": "Explicit minimum/maximum TLS version bounds.",
+          "examples": [
+            {
+              "min": "tlsv1.2",
+              "max": "tlsv1.3"
+            },
+            {
+              "min": "tlsv1.2"
+            },
+            {
+              "max": "tlsv1.3"
+            }
+          ],
+          "type": "object",
+          "properties": {
+            "min": {
+              "$ref": "#/$defs/tlsVersion",
+              "description": "Minimum TLS version to negotiate."
+            },
+            "max": {
+              "$ref": "#/$defs/tlsVersion",
+              "description": "Maximum TLS version to negotiate."
+            }
+          },
+          "x-tombi-table-keys-order": {
+            "properties": "schema"
+          }
+        }
+      ]
+    },
+    "tlsVersion": {
+      "examples": [
+        "default",
+        "tlsv1.2",
+        "tlsv1.3"
+      ],
+      "type": "string",
+      "enum": [
+        "default",
+        "tlsv1",
+        "tlsv1.0",
+        "tlsv1.1",
+        "tlsv1.2",
+        "tlsv1.3"
+      ],
+      "x-taplo": {
+        "docs": {
+          "enumValues": [
+            "System-default TLS version selection (cargo's built-in defaults: min `tlsv1.0`, max newest supported).",
+            "TLS 1.x family (system-chosen minor version). Prefer an explicit `tlsv1.2` or `tlsv1.3`.",
+            "TLS 1.0 (deprecated by RFC 8996; insecure — avoid).",
+            "TLS 1.1 (deprecated by RFC 8996; insecure — avoid).",
+            "TLS 1.2 (recommended minimum).",
+            "TLS 1.3 (recommended)."
+          ]
+        }
+      },
+      "x-intellij-enum-metadata": {
+        "default": {
+          "description": "System-default TLS version selection (cargo's built-in defaults: min `tlsv1.0`, max newest supported)."
+        },
+        "tlsv1": {
+          "description": "TLS 1.x family (system-chosen minor version). Prefer an explicit `tlsv1.2` or `tlsv1.3`."
+        },
+        "tlsv1.0": {
+          "description": "TLS 1.0 (deprecated by RFC 8996; insecure — avoid)."
+        },
+        "tlsv1.1": {
+          "description": "TLS 1.1 (deprecated by RFC 8996; insecure — avoid)."
+        },
+        "tlsv1.2": {
+          "description": "TLS 1.2 (recommended minimum)."
+        },
+        "tlsv1.3": {
+          "description": "TLS 1.3 (recommended)."
+        }
+      }
+    }
+  },
+  "title": "[http]",
+  "description": "HTTP behavior for fetching crates and accessing remote git repositories.\nhttps://doc.rust-lang.org/cargo/reference/config.html#http",
+  "examples": [
+    {
+      "timeout": 60,
+      "multiplexing": true,
+      "user-agent": "my-cargo-wrapper/1.0"
+    },
+    {
+      "proxy": "http://proxy.example.com:8080",
+      "cainfo": "certs/ca.pem",
+      "ssl-version": {
+        "min": "tlsv1.2",
+        "max": "tlsv1.3"
+      }
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "debug": {
+      "description": "Enable HTTP debugging. Combine with `CARGO_LOG=network=debug` (or `network=trace`) to see request details. Logs may contain authentication tokens, do not share publicly.\nhttps://doc.rust-lang.org/cargo/reference/config.html#httpdebug",
+      "default": false,
+      "examples": [
+        false,
+        true
+      ],
+      "type": "boolean"
+    },
+    "proxy": {
+      "description": "HTTP and HTTPS proxy in libcurl format `[protocol://]host[:port]`. Falls back to git's `http.proxy`, then to `HTTPS_PROXY`/`https_proxy`/`http_proxy` env vars.\nhttps://doc.rust-lang.org/cargo/reference/config.html#httpproxy An empty string disables proxy use.",
+      "examples": [
+        "http://proxy.example.com:8080",
+        "https://user:pass@proxy.example.com:8443",
+        "proxy.example.com:8080"
+      ],
+      "type": "string"
+    },
+    "timeout": {
+      "description": "Timeout for each HTTP request, in seconds.\nhttps://doc.rust-lang.org/cargo/reference/config.html#httptimeout",
+      "default": 30,
+      "examples": [
+        30,
+        60,
+        120
+      ],
+      "type": "integer",
+      "minimum": 0
+    },
+    "cainfo": {
+      "description": "Path to a Certificate Authority (CA) bundle file used to verify TLS certificates. If unset, Cargo uses the system trust store.\nhttps://doc.rust-lang.org/cargo/reference/config.html#httpcainfo",
+      "examples": [
+        "certs/ca.pem",
+        "/etc/ssl/certs/ca-bundle.crt"
+      ],
+      "type": "string",
+      "minLength": 1
+    },
+    "proxy-cainfo": {
+      "description": "Path to a Certificate Authority (CA) bundle file used to verify proxy TLS certificates. Falls back to `http.cainfo` if unset.\nhttps://doc.rust-lang.org/cargo/reference/config.html#httpproxy-cainfo",
+      "examples": [
+        "certs/proxy-ca.pem"
+      ],
+      "type": "string",
+      "minLength": 1
+    },
+    "check-revoke": {
+      "description": "Whether TLS certificate revocation checks are performed. Only works on Windows. Default: `true` on Windows, `false` elsewhere.\nhttps://doc.rust-lang.org/cargo/reference/config.html#httpcheck-revoke",
+      "examples": [
+        true,
+        false
+      ],
+      "type": "boolean"
+    },
+    "ssl-version": {
+      "$ref": "#/$defs/sslVersion",
+      "description": "Minimum TLS version, or a table with `min`/`max` TLS version bounds. Cargo's default range is `min = \"tlsv1.0\"`, `max` = newest supported (typically `tlsv1.3`).\nhttps://doc.rust-lang.org/cargo/reference/config.html#httpssl-version"
+    },
+    "low-speed-limit": {
+      "description": "Average transfer speed threshold, in bytes per second. If the transfer rate stays below this for `http.timeout` seconds, Cargo aborts and retries.\nhttps://doc.rust-lang.org/cargo/reference/config.html#httplow-speed-limit",
+      "default": 10,
+      "examples": [
+        10,
+        1024
+      ],
+      "type": "integer",
+      "minimum": 0
+    },
+    "multiplexing": {
+      "description": "Whether Cargo attempts to use HTTP/2 with multiplexing. If `false`, falls back to HTTP/1.1 without pipelining.\nhttps://doc.rust-lang.org/cargo/reference/config.html#httpmultiplexing",
+      "default": true,
+      "examples": [
+        true,
+        false
+      ],
+      "type": "boolean"
+    },
+    "user-agent": {
+      "description": "Custom HTTP user-agent header. Default is a string including Cargo's version.\nhttps://doc.rust-lang.org/cargo/reference/config.html#httpuser-agent",
+      "examples": [
+        "my-cargo-wrapper/1.0",
+        "ci-runner (+https://example.com/ci)"
+      ],
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "x-taplo": {
+    "links": {
+      "key": "https://doc.rust-lang.org/cargo/reference/config.html#http"
+    }
+  },
+  "x-tombi-table-keys-order": {
+    "properties": "schema"
+  }
+}

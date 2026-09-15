@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "[registry]",
+  "description": "Default registry and crates.io credential settings.\nhttps://doc.rust-lang.org/cargo/reference/config.html#registry",
+  "examples": [
+    {
+      "default": "my-registry"
+    },
+    {
+      "token": "example-crates-io-token",
+      "credential-provider": "cargo:token",
+      "global-credential-providers": [
+        "cargo:token"
+      ]
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "index": {
+      "description": "REMOVED: registry.index is no longer accepted. Use registries.<name>.index or source configuration.",
+      "not": {}
+    },
+    "default": {
+      "description": "Name of the registry (from the `registries` table) to use by default for registry commands like `cargo publish`. Can be overridden with `--registry`. Environment: `CARGO_REGISTRY_DEFAULT`.\nhttps://doc.rust-lang.org/cargo/reference/config.html#registrydefault",
+      "default": "crates-io",
+      "examples": [
+        "crates-io",
+        "my-registry"
+      ],
+      "type": "string",
+      "x-taplo": {
+        "links": {
+          "key": "https://doc.rust-lang.org/cargo/reference/config.html#registrydefault"
+        }
+      }
+    },
+    "credential-provider": {
+      "$ref": "common.schema.json#/$defs/credentialProvider",
+      "description": "Credential provider for crates.io. If unset, falls back to `registry.global-credential-providers`. If the value matches a key in `[credential-alias]`, the alias is used. Environment: `CARGO_REGISTRY_CREDENTIAL_PROVIDER`.\nhttps://doc.rust-lang.org/cargo/reference/config.html#registrycredential-provider",
+      "x-taplo": {
+        "links": {
+          "key": "https://doc.rust-lang.org/cargo/reference/config.html#registrycredential-provider"
+        }
+      }
+    },
+    "token": {
+      "description": "Authentication token for crates.io. Should normally only appear in `credentials.toml`. Can be overridden with `--token`. Environment: `CARGO_REGISTRY_TOKEN`.\nhttps://doc.rust-lang.org/cargo/reference/config.html#registrytoken",
+      "examples": [
+        "example-crates-io-token"
+      ],
+      "type": "string",
+      "x-taplo": {
+        "links": {
+          "key": "https://doc.rust-lang.org/cargo/reference/config.html#registrytoken"
+        }
+      }
+    },
+    "global-credential-providers": {
+      "description": "Ordered list of global credential providers used when a registry does not configure its own. Order is significant: providers toward the END of the list have precedence. Path and arguments split on spaces; for paths/args containing spaces, define an alias in `[credential-alias]` and reference it here. Environment: `CARGO_REGISTRY_GLOBAL_CREDENTIAL_PROVIDERS`.\nhttps://doc.rust-lang.org/cargo/reference/config.html#registryglobal-credential-providers",
+      "default": [
+        "cargo:token"
+      ],
+      "examples": [
+        [
+          "cargo:token"
+        ],
+        [
+          "cargo:token",
+          "my-alias"
+        ]
+      ],
+      "type": "array",
+      "items": {
+        "$ref": "common.schema.json#/$defs/credentialProvider"
+      },
+      "x-taplo": {
+        "links": {
+          "key": "https://doc.rust-lang.org/cargo/reference/config.html#registryglobal-credential-providers"
+        }
+      }
+    },
+    "global-min-publish-age": {
+      "description": "Minimum publish age, for example \"7 days\" or \"0\". Requires Cargo 1.100+.",
+      "default": "0",
+      "type": "string"
+    },
+    "secret-key": {
+      "description": "UNSTABLE: Asymmetric credential secret key; requires -Z asymmetric-token. Store in credentials.toml.",
+      "type": "string"
+    },
+    "secret-key-subject": {
+      "description": "UNSTABLE: Subject for asymmetric credentials; requires -Z asymmetric-token.",
+      "type": "string"
+    }
+  },
+  "x-taplo": {
+    "links": {
+      "key": "https://doc.rust-lang.org/cargo/reference/config.html#registry"
+    }
+  },
+  "x-tombi-table-keys-order": {
+    "properties": "schema"
+  }
+}

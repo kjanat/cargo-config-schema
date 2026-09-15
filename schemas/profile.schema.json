@@ -1,0 +1,740 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$defs": {
+    "buildOverride": {
+      "description": "Override profile settings for build scripts, proc-macros, and their dependencies. Accepts the same keys as a normal profile (excluding nested `package` and `build-override`).\nhttps://doc.rust-lang.org/cargo/reference/profiles.html#overrides",
+      "examples": [
+        {
+          "opt-level": 0,
+          "codegen-units": 256
+        }
+      ],
+      "type": "object",
+      "properties": {
+        "opt-level": {
+          "$ref": "#/$defs/optLevel"
+        },
+        "debug": {
+          "$ref": "#/$defs/debugLevel"
+        },
+        "split-debuginfo": {
+          "$ref": "#/$defs/splitDebuginfo"
+        },
+        "strip": {
+          "$ref": "#/$defs/strip"
+        },
+        "debug-assertions": {
+          "$ref": "#/$defs/debugAssertions"
+        },
+        "overflow-checks": {
+          "$ref": "#/$defs/overflowChecks"
+        },
+        "lto": {
+          "description": "Not permitted in profile overrides.",
+          "not": {}
+        },
+        "panic": {
+          "description": "Not permitted in profile overrides.",
+          "not": {}
+        },
+        "incremental": {
+          "$ref": "#/$defs/incremental"
+        },
+        "codegen-units": {
+          "$ref": "#/$defs/codegenUnits"
+        },
+        "rpath": {
+          "description": "Not permitted in profile overrides.",
+          "not": {}
+        },
+        "rustflags": {
+          "description": "UNSTABLE: Extra compiler flags; requires -Z profile-rustflags.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "codegen-backend": {
+          "description": "UNSTABLE: Compiler codegen backend; requires -Z codegen-backend.",
+          "type": "string"
+        },
+        "trim-paths": {
+          "description": "UNSTABLE: Trim filesystem paths; requires -Z trim-paths.",
+          "type": "string",
+          "enum": [
+            "none",
+            "object",
+            "all"
+          ]
+        },
+        "hint-mostly-unused": {
+          "description": "UNSTABLE: Mark crates mostly unused; requires -Z profile-hint-mostly-unused.",
+          "type": "boolean"
+        },
+        "package": {
+          "description": "Not permitted in profile overrides.",
+          "not": {}
+        },
+        "build-override": {
+          "description": "Not permitted in profile overrides.",
+          "not": {}
+        },
+        "dir-name": {
+          "description": "Removed: directory names follow the profile name.",
+          "not": {}
+        }
+      },
+      "x-tombi-table-keys-order": {
+        "properties": "schema"
+      }
+    },
+    "builtinProfile": {
+      "description": "Settings for one of the four built-in Cargo profiles. Cargo errors out if `inherits` is set on a built-in profile.\nhttps://doc.rust-lang.org/cargo/reference/profiles.html",
+      "type": "object",
+      "properties": {
+        "opt-level": {
+          "$ref": "#/$defs/optLevel"
+        },
+        "debug": {
+          "$ref": "#/$defs/debugLevel"
+        },
+        "split-debuginfo": {
+          "$ref": "#/$defs/splitDebuginfo"
+        },
+        "strip": {
+          "$ref": "#/$defs/strip"
+        },
+        "debug-assertions": {
+          "$ref": "#/$defs/debugAssertions"
+        },
+        "overflow-checks": {
+          "$ref": "#/$defs/overflowChecks"
+        },
+        "lto": {
+          "$ref": "#/$defs/lto"
+        },
+        "panic": {
+          "$ref": "#/$defs/panic"
+        },
+        "incremental": {
+          "$ref": "#/$defs/incremental"
+        },
+        "codegen-units": {
+          "$ref": "#/$defs/codegenUnits"
+        },
+        "rpath": {
+          "$ref": "#/$defs/rpath"
+        },
+        "build-override": {
+          "$ref": "#/$defs/buildOverride"
+        },
+        "package": {
+          "$ref": "#/$defs/packageOverrides"
+        },
+        "rustflags": {
+          "description": "UNSTABLE: Extra compiler flags; requires -Z profile-rustflags.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "codegen-backend": {
+          "description": "UNSTABLE: Compiler codegen backend; requires -Z codegen-backend.",
+          "type": "string"
+        },
+        "trim-paths": {
+          "description": "UNSTABLE: Trim filesystem paths; requires -Z trim-paths.",
+          "type": "string",
+          "enum": [
+            "none",
+            "object",
+            "all"
+          ]
+        },
+        "hint-mostly-unused": {
+          "description": "UNSTABLE: Mark crates mostly unused; requires -Z profile-hint-mostly-unused.",
+          "type": "boolean"
+        },
+        "dir-name": {
+          "description": "Removed: directory names follow the profile name.",
+          "not": {}
+        }
+      },
+      "not": {
+        "required": [
+          "inherits"
+        ]
+      },
+      "x-tombi-table-keys-order": {
+        "properties": "schema"
+      }
+    },
+    "codegenUnits": {
+      "title": "codegen-units",
+      "description": "Number of parallel code generation units per crate. Defaults depend on incremental compilation: 256 when enabled, 16 otherwise.",
+      "examples": [
+        1,
+        16,
+        256
+      ],
+      "type": "integer",
+      "minimum": 1
+    },
+    "customProfile": {
+      "description": "Settings for a user-defined Cargo profile. Custom profiles must declare `inherits` naming an existing (built-in or previously-defined) profile.\nhttps://doc.rust-lang.org/cargo/reference/profiles.html#custom-profiles",
+      "type": "object",
+      "properties": {
+        "inherits": {
+          "description": "Name of the profile this one inherits from. Required for every custom profile. The four built-ins (`dev`, `release`, `test`, `bench`) are always valid; you may also inherit from another custom profile.\nhttps://doc.rust-lang.org/cargo/reference/profiles.html#custom-profiles",
+          "examples": [
+            "dev",
+            "release",
+            "test",
+            "bench"
+          ],
+          "type": "string",
+          "x-intellij-enum-metadata": {
+            "bench": {
+              "description": "Inherit from the built-in `bench` profile."
+            },
+            "dev": {
+              "description": "Inherit from the built-in `dev` profile."
+            },
+            "release": {
+              "description": "Inherit from the built-in `release` profile."
+            },
+            "test": {
+              "description": "Inherit from the built-in `test` profile."
+            }
+          }
+        },
+        "opt-level": {
+          "$ref": "#/$defs/optLevel"
+        },
+        "debug": {
+          "$ref": "#/$defs/debugLevel"
+        },
+        "split-debuginfo": {
+          "$ref": "#/$defs/splitDebuginfo"
+        },
+        "strip": {
+          "$ref": "#/$defs/strip"
+        },
+        "debug-assertions": {
+          "$ref": "#/$defs/debugAssertions"
+        },
+        "overflow-checks": {
+          "$ref": "#/$defs/overflowChecks"
+        },
+        "lto": {
+          "$ref": "#/$defs/lto"
+        },
+        "panic": {
+          "$ref": "#/$defs/panic"
+        },
+        "incremental": {
+          "$ref": "#/$defs/incremental"
+        },
+        "codegen-units": {
+          "$ref": "#/$defs/codegenUnits"
+        },
+        "rpath": {
+          "$ref": "#/$defs/rpath"
+        },
+        "build-override": {
+          "$ref": "#/$defs/buildOverride"
+        },
+        "package": {
+          "$ref": "#/$defs/packageOverrides"
+        },
+        "rustflags": {
+          "description": "UNSTABLE: Extra compiler flags; requires -Z profile-rustflags.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "codegen-backend": {
+          "description": "UNSTABLE: Compiler codegen backend; requires -Z codegen-backend.",
+          "type": "string"
+        },
+        "trim-paths": {
+          "description": "UNSTABLE: Trim filesystem paths; requires -Z trim-paths.",
+          "type": "string",
+          "enum": [
+            "none",
+            "object",
+            "all"
+          ]
+        },
+        "hint-mostly-unused": {
+          "description": "UNSTABLE: Mark crates mostly unused; requires -Z profile-hint-mostly-unused.",
+          "type": "boolean"
+        },
+        "dir-name": {
+          "description": "Removed: directory names follow the profile name.",
+          "not": {}
+        }
+      },
+      "x-tombi-table-keys-order": {
+        "properties": "schema"
+      }
+    },
+    "debugAssertions": {
+      "title": "debug-assertions",
+      "description": "Whether `debug_assert!` and related checks are compiled in.\nDefaults: `true` for `dev`/`test`, `false` for `release`/`bench`.\nhttps://doc.rust-lang.org/cargo/reference/profiles.html#debug-assertions",
+      "examples": [
+        true,
+        false
+      ],
+      "type": "boolean"
+    },
+    "debugLevel": {
+      "title": "debug",
+      "description": "Debug information: false/0/none disables it; 1/limited includes limited information; line-tables-only and line-directives-only are distinct modes; true/2/full includes full information.",
+      "examples": [
+        true,
+        false,
+        0,
+        1,
+        2,
+        "none",
+        "line-tables-only",
+        "line-directives-only",
+        "limited",
+        "full"
+      ],
+      "oneOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2
+        },
+        {
+          "type": "string",
+          "enum": [
+            "none",
+            "line-directives-only",
+            "line-tables-only",
+            "limited",
+            "full"
+          ],
+          "x-intellij-enum-metadata": {
+            "full": {
+              "description": "Full debug info."
+            },
+            "limited": {
+              "description": "Limited debug information, equivalent to integer 1; distinct from line-tables-only."
+            },
+            "line-directives-only": {
+              "description": "Line info directives only (useful for profilers)."
+            },
+            "line-tables-only": {
+              "description": "Line tables only — backtraces with file/line, no variables/types."
+            },
+            "none": {
+              "description": "No debug info."
+            }
+          }
+        }
+      ]
+    },
+    "incremental": {
+      "title": "incremental",
+      "description": "Whether incremental compilation is enabled. May be overridden by the `CARGO_INCREMENTAL` env var or `build.incremental`.\nDefaults: `true` for `dev`/`test`, `false` for `release`/`bench`.\nhttps://doc.rust-lang.org/cargo/reference/profiles.html#incremental",
+      "examples": [
+        true,
+        false
+      ],
+      "type": "boolean"
+    },
+    "lto": {
+      "title": "lto",
+      "description": "Link-time optimization. `false` disables LTO with the local ThinLTO equivalent; `true`/`\"fat\"` performs fat LTO over the full dependency graph; `\"thin\"` is faster cross-crate ThinLTO; `\"off\"` disables LTO entirely (including local ThinLTO).\nDefault: `false`.\nhttps://doc.rust-lang.org/cargo/reference/profiles.html#lto",
+      "examples": [
+        true,
+        false,
+        "off",
+        "thin",
+        "fat"
+      ],
+      "oneOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "string",
+          "enum": [
+            "off",
+            "thin",
+            "fat"
+          ],
+          "x-taplo": {
+            "docs": {
+              "enumValues": [
+                "Disable link-time optimization (including local ThinLTO).",
+                "Thin LTO across crates — faster than fat, similar runtime gains.",
+                "Fat LTO across the whole dependency graph — slowest build, smallest/fastest binary."
+              ]
+            }
+          },
+          "x-intellij-enum-metadata": {
+            "fat": {
+              "description": "Fat LTO across the whole dependency graph — slowest build, smallest/fastest binary."
+            },
+            "off": {
+              "description": "Disable link-time optimization (including local ThinLTO)."
+            },
+            "thin": {
+              "description": "Thin LTO across crates — faster than fat, similar runtime gains."
+            }
+          }
+        }
+      ]
+    },
+    "optLevel": {
+      "title": "opt-level",
+      "description": "Optimization level. Integers `0`-`3` set increasing optimization; `\"s\"` optimizes for binary size; `\"z\"` optimizes for size while disabling loop vectorization.\nDefaults: `0` for `dev`/`test`, `3` for `release`/`bench`.\nhttps://doc.rust-lang.org/cargo/reference/profiles.html#opt-level",
+      "examples": [
+        0,
+        1,
+        2,
+        3,
+        "s",
+        "z"
+      ],
+      "oneOf": [
+        {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3
+        },
+        {
+          "type": "string",
+          "enum": [
+            "s",
+            "z"
+          ],
+          "x-taplo": {
+            "docs": {
+              "enumValues": [
+                "Optimize for binary size.",
+                "Optimize for binary size, disabling loop vectorization."
+              ]
+            }
+          },
+          "x-intellij-enum-metadata": {
+            "s": {
+              "description": "Optimize for binary size."
+            },
+            "z": {
+              "description": "Optimize for binary size, disabling loop vectorization."
+            }
+          }
+        }
+      ]
+    },
+    "overflowChecks": {
+      "title": "overflow-checks",
+      "description": "Whether runtime integer overflow checks are emitted.\nDefaults: `true` for `dev`/`test`, `false` for `release`/`bench`.\nhttps://doc.rust-lang.org/cargo/reference/profiles.html#overflow-checks",
+      "examples": [
+        true,
+        false
+      ],
+      "type": "boolean"
+    },
+    "packageOverrides": {
+      "description": "Per-package profile overrides. Each key is a package name (or `\"*\"` for all dependencies, or a [`PackageId` spec](https://doc.rust-lang.org/cargo/reference/pkgid-spec.html) like `\"serde@1.0.0\"`).\nhttps://doc.rust-lang.org/cargo/reference/profiles.html#overrides",
+      "examples": [
+        {
+          "image": {
+            "opt-level": 3
+          }
+        },
+        {
+          "*": {
+            "opt-level": 2
+          }
+        }
+      ],
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/profilePackageSettings"
+      },
+      "propertyNames": {
+        "pattern": "^(\\*|[A-Za-z0-9_][A-Za-z0-9_+.@:-]*)$"
+      },
+      "x-tombi-table-keys-order": {
+        "additionalProperties": "ascending"
+      },
+      "x-tombi-additional-key-label": "package"
+    },
+    "panic": {
+      "title": "panic",
+      "description": "Panic strategy: unwind or abort. immediate-abort requires unstable panic-immediate-abort support. Ignored for test/bench profiles.",
+      "examples": [
+        "unwind",
+        "abort"
+      ],
+      "type": "string",
+      "enum": [
+        "unwind",
+        "abort",
+        "immediate-abort"
+      ],
+      "x-taplo": {
+        "docs": {
+          "enumValues": [
+            "Unwind the stack on panic, running destructors.",
+            "Terminate the process on panic without unwinding."
+          ]
+        }
+      },
+      "x-intellij-enum-metadata": {
+        "abort": {
+          "description": "Terminate the process on panic without unwinding."
+        },
+        "unwind": {
+          "description": "Unwind the stack on panic, running destructors."
+        }
+      }
+    },
+    "profilePackageSettings": {
+      "description": "Per-package profile override. Cargo does not support `panic`, `lto`, or `rpath` here, and nested `build-override`/`package` are not allowed.\nhttps://doc.rust-lang.org/cargo/reference/profiles.html#overrides",
+      "examples": [
+        {
+          "opt-level": 3,
+          "debug": false,
+          "codegen-units": 1
+        }
+      ],
+      "type": "object",
+      "properties": {
+        "opt-level": {
+          "$ref": "#/$defs/optLevel"
+        },
+        "debug": {
+          "$ref": "#/$defs/debugLevel"
+        },
+        "split-debuginfo": {
+          "$ref": "#/$defs/splitDebuginfo"
+        },
+        "strip": {
+          "$ref": "#/$defs/strip"
+        },
+        "debug-assertions": {
+          "$ref": "#/$defs/debugAssertions"
+        },
+        "overflow-checks": {
+          "$ref": "#/$defs/overflowChecks"
+        },
+        "incremental": {
+          "$ref": "#/$defs/incremental"
+        },
+        "codegen-units": {
+          "$ref": "#/$defs/codegenUnits"
+        },
+        "rustflags": {
+          "description": "UNSTABLE: Extra compiler flags; requires -Z profile-rustflags.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "codegen-backend": {
+          "description": "UNSTABLE: Compiler codegen backend; requires -Z codegen-backend.",
+          "type": "string"
+        },
+        "trim-paths": {
+          "description": "UNSTABLE: Trim filesystem paths; requires -Z trim-paths.",
+          "type": "string",
+          "enum": [
+            "none",
+            "object",
+            "all"
+          ]
+        },
+        "hint-mostly-unused": {
+          "description": "UNSTABLE: Mark crates mostly unused; requires -Z profile-hint-mostly-unused.",
+          "type": "boolean"
+        },
+        "panic": {
+          "description": "Not permitted in profile overrides.",
+          "not": {}
+        },
+        "lto": {
+          "description": "Not permitted in profile overrides.",
+          "not": {}
+        },
+        "rpath": {
+          "description": "Not permitted in profile overrides.",
+          "not": {}
+        },
+        "package": {
+          "description": "Not permitted in profile overrides.",
+          "not": {}
+        },
+        "build-override": {
+          "description": "Not permitted in profile overrides.",
+          "not": {}
+        },
+        "dir-name": {
+          "description": "Removed: directory names follow the profile name.",
+          "not": {}
+        }
+      },
+      "x-tombi-table-keys-order": {
+        "properties": "schema"
+      }
+    },
+    "rpath": {
+      "title": "rpath",
+      "description": "Whether the compiler embeds an `rpath` into the final binary.\nDefault: `false`.\nhttps://doc.rust-lang.org/cargo/reference/profiles.html#rpath",
+      "examples": [
+        true,
+        false
+      ],
+      "type": "boolean"
+    },
+    "splitDebuginfo": {
+      "title": "split-debuginfo",
+      "description": "Whether and how debug information is split out of the main executable.\nPlatform defaults: `\"unpacked\"` on macOS, `\"packed\"` on Windows MSVC, `\"off\"` elsewhere.\nhttps://doc.rust-lang.org/cargo/reference/profiles.html#split-debuginfo",
+      "examples": [
+        "off",
+        "packed",
+        "unpacked"
+      ],
+      "type": "string",
+      "enum": [
+        "off",
+        "packed",
+        "unpacked"
+      ],
+      "x-taplo": {
+        "docs": {
+          "enumValues": [
+            "Debug info embedded in the main artifact (or omitted on macOS).",
+            "Debug info packaged into a single separate file (`.dwp`/`.dSYM`/`.pdb`).",
+            "Debug info left in per-object files alongside the artifact."
+          ]
+        }
+      },
+      "x-intellij-enum-metadata": {
+        "off": {
+          "description": "Debug info embedded in the main artifact (or omitted on macOS)."
+        },
+        "packed": {
+          "description": "Debug info packaged into a single separate file (`.dwp`/`.dSYM`/`.pdb`)."
+        },
+        "unpacked": {
+          "description": "Debug info left in per-object files alongside the artifact."
+        }
+      }
+    },
+    "strip": {
+      "title": "strip",
+      "description": "Whether to strip symbols and/or debug info from the final binary. `true` is equivalent to `\"symbols\"`; `false` to `\"none\"`.\nDefault: `\"none\"`.\nhttps://doc.rust-lang.org/cargo/reference/profiles.html#strip",
+      "examples": [
+        true,
+        false,
+        "none",
+        "debuginfo",
+        "symbols"
+      ],
+      "oneOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "string",
+          "enum": [
+            "none",
+            "debuginfo",
+            "symbols"
+          ],
+          "x-taplo": {
+            "docs": {
+              "enumValues": [
+                "Do not strip anything.",
+                "Strip debug information.",
+                "Strip both debug info and symbols."
+              ]
+            }
+          },
+          "x-intellij-enum-metadata": {
+            "debuginfo": {
+              "description": "Strip debug information."
+            },
+            "none": {
+              "description": "Do not strip anything."
+            },
+            "symbols": {
+              "description": "Strip both debug info and symbols."
+            }
+          }
+        }
+      ]
+    }
+  },
+  "title": "[profile.*]",
+  "description": "Profile configuration overlays workspace/manifest profiles. Custom profiles require inherits after merging, but a configuration overlay may omit it. https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/profiles.rs",
+  "examples": [
+    {
+      "release": {
+        "opt-level": 3,
+        "lto": "thin",
+        "codegen-units": 1
+      },
+      "dev": {
+        "debug": true,
+        "incremental": true
+      }
+    },
+    {
+      "release-lto": {
+        "inherits": "release",
+        "lto": "fat",
+        "codegen-units": 1,
+        "strip": "symbols"
+      }
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "dev": {
+      "$ref": "#/$defs/builtinProfile",
+      "description": "Built-in `dev` profile (used by `cargo build` and `cargo run`).\nDefaults: `opt-level = 0`, `debug = true`, `debug-assertions = true`, `overflow-checks = true`, `lto = false`, `panic = \"unwind\"`, `incremental = true`, `codegen-units = 256`, `rpath = false`.\nhttps://doc.rust-lang.org/cargo/reference/profiles.html#dev"
+    },
+    "release": {
+      "$ref": "#/$defs/builtinProfile",
+      "description": "Built-in `release` profile (used by `cargo build --release`, `cargo install`).\nDefaults: `opt-level = 3`, `debug = false`, `debug-assertions = false`, `overflow-checks = false`, `lto = false`, `panic = \"unwind\"`, `incremental = false`, `codegen-units = 16`, `rpath = false`.\nhttps://doc.rust-lang.org/cargo/reference/profiles.html#release"
+    },
+    "test": {
+      "$ref": "#/$defs/builtinProfile",
+      "description": "Built-in `test` profile (used by `cargo test`). Inherits from `dev`.\nhttps://doc.rust-lang.org/cargo/reference/profiles.html#test"
+    },
+    "bench": {
+      "$ref": "#/$defs/builtinProfile",
+      "description": "Built-in `bench` profile (used by `cargo bench`). Inherits from `release`.\nhttps://doc.rust-lang.org/cargo/reference/profiles.html#bench"
+    }
+  },
+  "additionalProperties": {
+    "$ref": "#/$defs/customProfile"
+  },
+  "propertyNames": {
+    "description": "Cargo profile name: Unicode letters/numbers, underscore or hyphen; Cargo checks reserved names."
+  },
+  "x-taplo": {
+    "links": {
+      "key": "https://doc.rust-lang.org/cargo/reference/config.html#profile"
+    }
+  },
+  "x-tombi-table-keys-order": {
+    "properties": "schema",
+    "additionalProperties": "ascending"
+  },
+  "x-tombi-additional-key-label": "profile name"
+}

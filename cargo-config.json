@@ -1,0 +1,3674 @@
+{
+  "$id": "https://raw.githubusercontent.com/kjanat/cargo-config-schema/master/cargo-config.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$comment": "Audited against https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/doc/book/src/reference/config.md and source. Unstable options are labelled; defaults depend on Cargo version, environment and merged configuration. Unknown keys remain permitted for forward compatibility.",
+  "$defs": {
+    "includeEntry": {
+      "examples": [
+        "shared.toml",
+        {
+          "path": "optional-local.toml",
+          "optional": true
+        }
+      ],
+      "oneOf": [
+        {
+          "description": "Path to a Cargo configuration file to include.",
+          "type": "string",
+          "pattern": "\\.toml$"
+        },
+        {
+          "description": "Inline include table. Use optional = true to silently ignore missing files.",
+          "type": "object",
+          "required": [
+            "path"
+          ],
+          "properties": {
+            "path": {
+              "type": "string",
+              "pattern": "\\.toml$"
+            },
+            "optional": {
+              "default": false,
+              "type": "boolean"
+            }
+          },
+          "x-tombi-table-keys-order": {
+            "properties": "schema"
+          }
+        }
+      ]
+    },
+    "credentialProvider": {
+      "$ref": "#/$defs/stringOrStringArray",
+      "description": "Credential provider name, command string, or command with arguments.\nhttps://doc.rust-lang.org/cargo/reference/registry-authentication.html",
+      "examples": [
+        "cargo:token",
+        [
+          "cargo-credential-example",
+          "--flag"
+        ]
+      ]
+    },
+    "stringOrStringArray": {
+      "examples": [
+        "run --release",
+        [
+          "run",
+          "--release",
+          "--",
+          "argument with spaces"
+        ]
+      ],
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "alias": {
+      "title": "[alias]",
+      "description": "Cargo command aliases. Each key is a subcommand name; the value is the command to run, either a single string (split on whitespace) or an array of arguments. Aliases are recursive and may not redefine existing built-in Cargo commands. Per-alias values can also be set via the `CARGO_ALIAS_<name>` environment variable.\nhttps://doc.rust-lang.org/cargo/reference/config.html#alias",
+      "default": {
+        "b": "build",
+        "c": "check",
+        "d": "doc",
+        "t": "test",
+        "r": "run",
+        "rm": "remove"
+      },
+      "examples": [
+        {
+          "b": "build",
+          "rr": "run --release",
+          "recursive_example": "rr --example recursions",
+          "space_example": [
+            "run",
+            "--release",
+            "--",
+            "argument with spaces"
+          ]
+        }
+      ],
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/stringOrStringArray",
+        "title": "alias expansion",
+        "description": "Command the alias expands to. A string is split on whitespace; an array is passed through verbatim (use the array form to preserve arguments containing spaces)."
+      },
+      "propertyNames": {
+        "description": "Cargo subcommand name. Must be a non-empty token containing no whitespace.",
+        "type": "string",
+        "minLength": 1,
+        "pattern": "^[^\\s]+$"
+      },
+      "x-taplo": {
+        "docs": {
+          "main": "Defines [Cargo command aliases](https://doc.rust-lang.org/cargo/reference/config.html#alias).\n\nEach key is the subcommand name and the value is what `cargo <key>` expands to. Use a string (split on whitespace) or an array (preserves whitespace inside arguments).\n\n**Built-in aliases** (may be overridden): `b` → `build`, `c` → `check`, `d` → `doc`, `t` → `test`, `r` → `run`, `rm` → `remove`.\n\nAliases are recursive — one alias may invoke another. Aliases may **not** redefine existing built-in Cargo commands.\n\nEach alias may also be set via the `CARGO_ALIAS_<name>` environment variable."
+        },
+        "links": {
+          "key": "https://doc.rust-lang.org/cargo/reference/config.html#alias"
+        }
+      },
+      "x-tombi-table-keys-order": {
+        "additionalProperties": "ascending"
+      },
+      "x-tombi-additional-key-label": "alias"
+    },
+    "build": {
+      "title": "[build]",
+      "description": "Build-time operations and compiler settings.\nhttps://doc.rust-lang.org/cargo/reference/config.html#build",
+      "examples": [
+        {
+          "jobs": 8,
+          "target": "x86_64-unknown-linux-gnu",
+          "target-dir": "target",
+          "rustflags": [
+            "-C",
+            "target-cpu=native"
+          ],
+          "incremental": true
+        },
+        {
+          "rustc-wrapper": "sccache",
+          "target": [
+            "x86_64-unknown-linux-gnu",
+            "aarch64-unknown-linux-gnu"
+          ]
+        }
+      ],
+      "type": "object",
+      "properties": {
+        "warnings": {
+          "description": "Adjust the effective level of lint warnings for local packages. MSRV: respected as of Rust 1.97.\nhttps://doc.rust-lang.org/cargo/reference/config.html#buildwarnings",
+          "default": "warn",
+          "examples": [
+            "warn",
+            "allow",
+            "deny"
+          ],
+          "type": "string",
+          "enum": [
+            "warn",
+            "allow",
+            "deny"
+          ],
+          "x-taplo": {
+            "docs": {
+              "enumValues": [
+                "Continue to emit the lints as warnings (default).",
+                "Hide the lints.",
+                "Emit an error for a crate that has lint warnings. Use `--keep-going` to see the lint warnings for all dependent crates."
+              ]
+            },
+            "links": {
+              "key": "https://doc.rust-lang.org/cargo/reference/config.html#buildwarnings"
+            }
+          },
+          "x-intellij-enum-metadata": {
+            "allow": {
+              "description": "Hide the lints."
+            },
+            "deny": {
+              "description": "Emit an error for a crate that has lint warnings."
+            },
+            "warn": {
+              "description": "Continue to emit the lints as warnings (default)."
+            }
+          }
+        },
+        "jobs": {
+          "description": "Maximum number of compiler processes to run in parallel. Negative values are relative to the number of logical CPUs. The string \"default\" resets to Cargo defaults. Defaults to the number of logical CPUs.\nhttps://doc.rust-lang.org/cargo/reference/config.html#buildjobs",
+          "examples": [
+            8,
+            -1,
+            "default"
+          ],
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": -2147483648,
+              "maximum": 2147483647,
+              "not": {
+                "const": 0
+              }
+            },
+            {
+              "const": "default"
+            }
+          ],
+          "x-taplo": {
+            "links": {
+              "key": "https://doc.rust-lang.org/cargo/reference/config.html#buildjobs"
+            }
+          }
+        },
+        "rustc": {
+          "description": "Executable to use for rustc.\nhttps://doc.rust-lang.org/cargo/reference/config.html#buildrustc",
+          "default": "rustc",
+          "examples": [
+            "rustc",
+            "/usr/local/bin/rustc"
+          ],
+          "type": "string",
+          "minLength": 1,
+          "x-taplo": {
+            "links": {
+              "key": "https://doc.rust-lang.org/cargo/reference/config.html#buildrustc"
+            }
+          }
+        },
+        "rustc-wrapper": {
+          "description": "Wrapper executable to run instead of rustc. The first argument passed to the wrapper is the path to the actual rustc executable.\nhttps://doc.rust-lang.org/cargo/reference/config.html#buildrustc-wrapper An empty string disables the wrapper.",
+          "examples": [
+            "sccache"
+          ],
+          "type": "string",
+          "x-taplo": {
+            "links": {
+              "key": "https://doc.rust-lang.org/cargo/reference/config.html#buildrustc-wrapper"
+            }
+          }
+        },
+        "rustc-workspace-wrapper": {
+          "description": "Wrapper executable to run instead of rustc for workspace members only. If both rustc-wrapper and rustc-workspace-wrapper are set, invocations are nested: $RUSTC_WRAPPER $RUSTC_WORKSPACE_WRAPPER $RUSTC.\nhttps://doc.rust-lang.org/cargo/reference/config.html#buildrustc-workspace-wrapper An empty string disables the wrapper.",
+          "examples": [
+            "clippy-driver"
+          ],
+          "type": "string",
+          "x-taplo": {
+            "links": {
+              "key": "https://doc.rust-lang.org/cargo/reference/config.html#buildrustc-workspace-wrapper"
+            }
+          }
+        },
+        "rustdoc": {
+          "description": "Executable to use for rustdoc.\nhttps://doc.rust-lang.org/cargo/reference/config.html#buildrustdoc",
+          "default": "rustdoc",
+          "examples": [
+            "rustdoc"
+          ],
+          "type": "string",
+          "minLength": 1,
+          "x-taplo": {
+            "links": {
+              "key": "https://doc.rust-lang.org/cargo/reference/config.html#buildrustdoc"
+            }
+          }
+        },
+        "target": {
+          "description": "Default target platform triple, custom target spec path, \"host-tuple\", or list of targets. Defaults to the host platform when unset.\nhttps://doc.rust-lang.org/cargo/reference/config.html#buildtarget",
+          "examples": [
+            "x86_64-unknown-linux-gnu",
+            "host-tuple",
+            "./custom-target.json",
+            [
+              "x86_64-unknown-linux-gnu",
+              "aarch64-unknown-linux-gnu"
+            ]
+          ],
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          ],
+          "x-taplo": {
+            "links": {
+              "key": "https://doc.rust-lang.org/cargo/reference/config.html#buildtarget"
+            }
+          }
+        },
+        "target-dir": {
+          "description": "Directory where all compiler output is placed. Defaults to a directory named `target` at the workspace root.\nhttps://doc.rust-lang.org/cargo/reference/config.html#buildtarget-dir",
+          "default": "target",
+          "examples": [
+            "target",
+            "/tmp/cargo-target"
+          ],
+          "type": "string",
+          "minLength": 1,
+          "x-taplo": {
+            "links": {
+              "key": "https://doc.rust-lang.org/cargo/reference/config.html#buildtarget-dir"
+            }
+          }
+        },
+        "build-dir": {
+          "description": "Directory where intermediate build artifacts are stored. Defaults to the value of `build.target-dir`. Supports path templating with `{workspace-root}`, `{cargo-cache-home}`, and `{workspace-path-hash}`.\nhttps://doc.rust-lang.org/cargo/reference/config.html#buildbuild-dir",
+          "examples": [
+            "{workspace-root}/target/intermediate",
+            "{cargo-cache-home}/build/{workspace-path-hash}"
+          ],
+          "type": "string",
+          "minLength": 1,
+          "x-taplo": {
+            "links": {
+              "key": "https://doc.rust-lang.org/cargo/reference/config.html#buildbuild-dir"
+            }
+          }
+        },
+        "rustflags": {
+          "$ref": "#/$defs/stringOrStringArray",
+          "description": "Extra command-line flags passed to rustc. May be an array of strings or a space-separated string.\nhttps://doc.rust-lang.org/cargo/reference/config.html#buildrustflags"
+        },
+        "rustdocflags": {
+          "$ref": "#/$defs/stringOrStringArray",
+          "description": "Extra command-line flags passed to rustdoc. May be an array of strings or a space-separated string.\nhttps://doc.rust-lang.org/cargo/reference/config.html#buildrustdocflags"
+        },
+        "incremental": {
+          "description": "Whether to enable incremental compilation. When unset, the value from the active profile is used; when set, this overrides every profile.\nhttps://doc.rust-lang.org/cargo/reference/config.html#buildincremental",
+          "examples": [
+            true,
+            false
+          ],
+          "type": "boolean",
+          "x-taplo": {
+            "links": {
+              "key": "https://doc.rust-lang.org/cargo/reference/config.html#buildincremental"
+            }
+          }
+        },
+        "dep-info-basedir": {
+          "description": "Config-relative path prefix stripped from dep-info file paths, used to convert absolute paths to relative paths for downstream tools.\nhttps://doc.rust-lang.org/cargo/reference/config.html#builddep-info-basedir",
+          "examples": [
+            ".",
+            ".."
+          ],
+          "type": "string",
+          "minLength": 1,
+          "x-taplo": {
+            "links": {
+              "key": "https://doc.rust-lang.org/cargo/reference/config.html#builddep-info-basedir"
+            }
+          }
+        },
+        "pipelining": {
+          "description": "DEPRECATED. This option is unused. Cargo always has pipelining enabled.\nhttps://doc.rust-lang.org/cargo/reference/config.html#buildpipelining",
+          "deprecated": true,
+          "type": "boolean",
+          "x-taplo": {
+            "hidden": true,
+            "links": {
+              "key": "https://doc.rust-lang.org/cargo/reference/config.html#buildpipelining"
+            }
+          }
+        },
+        "artifact-dir": {
+          "description": "UNSTABLE: Copy final artifacts to this directory; requires -Z unstable-options.",
+          "type": "string"
+        },
+        "sbom": {
+          "description": "UNSTABLE: Generate SBOM precursor files; requires -Z sbom.",
+          "type": "boolean"
+        },
+        "fingerprint": {
+          "description": "UNSTABLE: Freshness comparison method; requires -Z checksum-freshness.",
+          "type": "string",
+          "enum": [
+            "mtime",
+            "content"
+          ]
+        },
+        "analysis": {
+          "description": "UNSTABLE: Persist build metrics; requires -Z build-analysis.",
+          "type": "object",
+          "required": [
+            "enabled"
+          ],
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            }
+          },
+          "x-tombi-table-keys-order": {
+            "properties": "schema"
+          }
+        }
+      },
+      "x-taplo": {
+        "initKeys": [
+          "target",
+          "jobs",
+          "rustflags"
+        ],
+        "links": {
+          "key": "https://doc.rust-lang.org/cargo/reference/config.html#build"
+        }
+      },
+      "x-tombi-table-keys-order": {
+        "properties": "schema"
+      }
+    },
+    "cache": {
+      "title": "[cache]",
+      "description": "Settings for Cargo caches.\nhttps://doc.rust-lang.org/cargo/reference/config.html#cache",
+      "examples": [
+        {
+          "auto-clean-frequency": "1 day"
+        },
+        {
+          "auto-clean-frequency": "never"
+        }
+      ],
+      "type": "object",
+      "properties": {
+        "auto-clean-frequency": {
+          "description": "How often Cargo checks whether unused global cache files should be deleted. Accepts \"never\", \"always\", or an integer followed by \"seconds\", \"minutes\", \"hours\", \"days\", \"weeks\", or \"months\" (e.g. \"1 day\", \"2 weeks\").\nhttps://doc.rust-lang.org/cargo/reference/config.html#cacheauto-clean-frequency",
+          "default": "1 day",
+          "examples": [
+            "never",
+            "always",
+            "1 day",
+            "2 weeks",
+            "3 months"
+          ],
+          "type": "string",
+          "pattern": "^(never|always|[0-9]+ (second|minute|hour|day|week|month)s?)$",
+          "x-taplo": {
+            "docs": {
+              "main": "How often Cargo checks whether unused global cache files should be deleted.\n\nAccepts:\n- `\"never\"` --- never delete old files.\n- `\"always\"` --- check on every Cargo run.\n- `<integer> <unit>` where unit is one of `seconds`, `minutes`, `hours`, `days`, `weeks`, or `months` (e.g. `\"1 day\"`, `\"2 weeks\"`).\n\nDefault: `\"1 day\"`. Environment: `CARGO_CACHE_AUTO_CLEAN_FREQUENCY`."
+            }
+          }
+        },
+        "global-clean": {
+          "description": "UNSTABLE: Global cache retention; requires -Z gc.",
+          "type": "object",
+          "properties": {
+            "max-src-age": {
+              "type": "string"
+            },
+            "max-crate-age": {
+              "type": "string"
+            },
+            "max-index-age": {
+              "type": "string"
+            },
+            "max-git-co-age": {
+              "type": "string"
+            },
+            "max-git-db-age": {
+              "type": "string"
+            }
+          },
+          "x-tombi-table-keys-order": {
+            "properties": "schema"
+          }
+        }
+      },
+      "x-taplo": {
+        "links": {
+          "key": "https://doc.rust-lang.org/cargo/reference/config.html#cache"
+        }
+      },
+      "x-tombi-table-keys-order": {
+        "properties": "schema"
+      }
+    },
+    "cargoNew": {
+      "title": "[cargo-new]",
+      "description": "Defaults for cargo new.\nhttps://doc.rust-lang.org/cargo/reference/config.html#cargo-new",
+      "examples": [
+        {
+          "vcs": "git"
+        },
+        {
+          "vcs": "none"
+        }
+      ],
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "DEPRECATED. This option is unused.\nhttps://doc.rust-lang.org/cargo/reference/config.html#cargo-newname",
+          "deprecated": true,
+          "type": "string"
+        },
+        "email": {
+          "description": "DEPRECATED. This option is unused.\nhttps://doc.rust-lang.org/cargo/reference/config.html#cargo-newemail",
+          "deprecated": true,
+          "type": "string"
+        },
+        "vcs": {
+          "description": "Source control system used when initializing a new repository.\nDefaults to `git`, or `none` when run inside an existing VCS repository. Overridable via `cargo new --vcs`.\nEnvironment: `CARGO_CARGO_NEW_VCS`.\nhttps://doc.rust-lang.org/cargo/reference/config.html#cargo-newvcs",
+          "default": "git",
+          "examples": [
+            "git",
+            "hg",
+            "pijul",
+            "fossil",
+            "none"
+          ],
+          "type": "string",
+          "enum": [
+            "git",
+            "hg",
+            "pijul",
+            "fossil",
+            "none"
+          ],
+          "x-taplo": {
+            "docs": {
+              "enumValues": [
+                "Initialize a Git repository (https://git-scm.com).",
+                "Initialize a Mercurial repository (https://www.mercurial-scm.org).",
+                "Initialize a Pijul repository (https://pijul.org).",
+                "Initialize a Fossil repository (https://fossil-scm.org).",
+                "Do not initialize any VCS repository (also the implicit default when nested inside an existing repo)."
+              ]
+            },
+            "links": {
+              "enumValues": [
+                "https://git-scm.com",
+                "https://www.mercurial-scm.org",
+                "https://pijul.org",
+                "https://fossil-scm.org",
+                null
+              ]
+            }
+          },
+          "x-intellij-enum-metadata": {
+            "fossil": {
+              "description": "Initialize a Fossil repository (https://fossil-scm.org)."
+            },
+            "git": {
+              "description": "Initialize a Git repository (https://git-scm.com)."
+            },
+            "hg": {
+              "description": "Initialize a Mercurial repository (https://www.mercurial-scm.org)."
+            },
+            "none": {
+              "description": "Do not initialize any VCS repository (also the implicit default when nested inside an existing repo)."
+            },
+            "pijul": {
+              "description": "Initialize a Pijul repository (https://pijul.org)."
+            }
+          }
+        }
+      },
+      "x-taplo": {
+        "links": {
+          "key": "https://doc.rust-lang.org/cargo/reference/config.html#cargo-new"
+        }
+      },
+      "x-tombi-table-keys-order": {
+        "properties": "schema"
+      }
+    },
+    "credentialAlias": {
+      "title": "[credential-alias]",
+      "description": "Credential provider aliases.\nhttps://doc.rust-lang.org/cargo/reference/config.html#credential-alias",
+      "examples": [
+        {
+          "my-alias": [
+            "/usr/bin/cargo-credential-example",
+            "--argument",
+            "value",
+            "--flag"
+          ],
+          "my-alias-string": "/usr/bin/cargo-credential-example --flag"
+        }
+      ],
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/stringOrStringArray",
+        "description": "Credential provider command for this alias: an executable path with optional arguments. If given as a string, it is split on spaces into path and arguments. Reference the alias name from `registry.global-credential-providers` or `registries.<NAME>.credential-provider`.\nhttps://doc.rust-lang.org/cargo/reference/config.html#credential-alias"
+      },
+      "x-taplo": {
+        "links": {
+          "key": "https://doc.rust-lang.org/cargo/reference/config.html#credential-alias"
+        }
+      },
+      "x-tombi-table-keys-order": {
+        "additionalProperties": "ascending"
+      },
+      "x-tombi-additional-key-label": "credential-alias"
+    },
+    "doc": {
+      "title": "[doc]",
+      "description": "Options for cargo doc.\nhttps://doc.rust-lang.org/cargo/reference/config.html#doc",
+      "examples": [
+        {
+          "browser": "chromium"
+        },
+        {
+          "browser": [
+            "firefox",
+            "--new-window"
+          ]
+        }
+      ],
+      "type": "object",
+      "properties": {
+        "browser": {
+          "$ref": "#/$defs/stringOrStringArray",
+          "description": "Browser command used by cargo doc --open, overriding the BROWSER environment variable. Either a single program path or an array of [program, ...args].\nhttps://doc.rust-lang.org/cargo/reference/config.html#docbrowser",
+          "examples": [
+            "firefox",
+            "chromium",
+            [
+              "firefox",
+              "--new-window"
+            ],
+            [
+              "google-chrome",
+              "--incognito"
+            ]
+          ]
+        },
+        "extern-map": {
+          "description": "UNSTABLE: External rustdoc links; requires -Z rustdoc-map.",
+          "type": "object",
+          "properties": {
+            "std": {
+              "type": "string"
+            },
+            "registries": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          },
+          "x-tombi-table-keys-order": {
+            "properties": "schema"
+          }
+        }
+      },
+      "x-taplo": {
+        "links": {
+          "key": "https://doc.rust-lang.org/cargo/reference/config.html#doc"
+        }
+      },
+      "x-tombi-table-keys-order": {
+        "properties": "schema"
+      }
+    },
+    "env": {
+      "title": "[env]",
+      "description": "Environment variables set for build scripts, rustc invocations, cargo run, and cargo build.\nhttps://doc.rust-lang.org/cargo/reference/config.html#env",
+      "examples": [
+        {
+          "RUST_LOG": "info",
+          "OPENSSL_DIR": {
+            "value": "vendor/openssl",
+            "relative": true
+          },
+          "TMPDIR": {
+            "value": "/tmp/cargo",
+            "force": true
+          }
+        }
+      ],
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/envEntry"
+      },
+      "propertyNames": {
+        "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+      },
+      "x-taplo": {
+        "links": {
+          "key": "https://doc.rust-lang.org/cargo/reference/config.html#env"
+        }
+      },
+      "x-tombi-table-keys-order": {
+        "additionalProperties": "ascending"
+      },
+      "x-tombi-additional-key-label": "variable"
+    },
+    "envEntry": {
+      "title": "env entry",
+      "description": "Value for an environment variable injected into build scripts, rustc, `cargo run`, and `cargo build`. Either a bare string or an inline table that opts into `force` (override an existing env var) or `relative` (resolve `value` relative to the config file's directory).\nhttps://doc.rust-lang.org/cargo/reference/config.html#env",
+      "examples": [
+        "value",
+        {
+          "value": "vendor/openssl",
+          "relative": true
+        },
+        {
+          "value": "/tmp/cargo",
+          "force": true
+        }
+      ],
+      "oneOf": [
+        {
+          "title": "literal value",
+          "description": "Literal string assigned to the environment variable.",
+          "type": "string"
+        },
+        {
+          "title": "expanded value",
+          "description": "Inline table form. Required: `value`. Optional flags: `force`, `relative`.",
+          "type": "object",
+          "required": [
+            "value"
+          ],
+          "properties": {
+            "value": {
+              "title": "variable value",
+              "description": "String exported as the variable's value. When `relative = true`, this is interpreted as a path relative to the parent directory of the `.cargo/` directory containing this config file, and the exported value is the resolved absolute path.",
+              "type": "string"
+            },
+            "force": {
+              "title": "force",
+              "description": "When `true`, override the variable even if it is already present in the parent environment. Defaults to `false` (existing values win).",
+              "default": false,
+              "type": "boolean"
+            },
+            "relative": {
+              "title": "relative",
+              "description": "When `true`, treat `value` as a path relative to the parent directory of the `.cargo/` directory containing this config file. Cargo resolves it to an absolute path before exporting. Defaults to `false`.",
+              "default": false,
+              "type": "boolean"
+            }
+          },
+          "additionalProperties": false,
+          "x-taplo": {
+            "initKeys": [
+              "value"
+            ]
+          },
+          "x-tombi-table-keys-order": {
+            "properties": "schema"
+          }
+        }
+      ],
+      "x-taplo": {
+        "docs": {
+          "main": "Environment variable value.\n\nUse a bare string for a literal value, or an inline table to opt into:\n\n- `force = true` — override an existing variable in the parent environment (default leaves it untouched).\n- `relative = true` — resolve `value` as a path relative to the parent directory of the `.cargo/` directory containing this config file; the exported variable holds the resulting absolute path.\n\n[Cargo reference](https://doc.rust-lang.org/cargo/reference/config.html#env)"
+        }
+      },
+      "x-tombi-table-keys-order": {
+        "properties": "schema"
+      }
+    },
+    "futureIncompatReport": {
+      "title": "[future-incompat-report]",
+      "description": "Settings for future incompatibility reports.\nhttps://doc.rust-lang.org/cargo/reference/config.html#future-incompat-report",
+      "examples": [
+        {
+          "frequency": "always"
+        },
+        {
+          "frequency": "never"
+        }
+      ],
+      "type": "object",
+      "properties": {
+        "frequency": {
+          "description": "How often Cargo displays future incompatibility report notifications.\nhttps://doc.rust-lang.org/cargo/reference/config.html#future-incompat-reportfrequency",
+          "default": "always",
+          "examples": [
+            "always",
+            "never"
+          ],
+          "type": "string",
+          "enum": [
+            "always",
+            "never"
+          ],
+          "x-taplo": {
+            "docs": {
+              "enumValues": [
+                "Always display a notification.",
+                "Never display a notification."
+              ],
+              "main": "Controls how often Cargo displays a notification to the terminal when a future incompat report is available.\n\nPossible values:\n- `\"always\"` --- always display a notification when a command (e.g. `cargo build`) produces a future incompat report.\n- `\"never\"` --- never display a notification.\n\nDefault: `\"always\"`. Environment: `CARGO_FUTURE_INCOMPAT_REPORT_FREQUENCY`."
+            }
+          },
+          "x-intellij-enum-metadata": {
+            "always": {
+              "description": "Always display a notification."
+            },
+            "never": {
+              "description": "Never display a notification."
+            }
+          }
+        }
+      },
+      "x-taplo": {
+        "initKeys": [
+          "frequency"
+        ],
+        "links": {
+          "key": "https://doc.rust-lang.org/cargo/reference/config.html#future-incompat-report"
+        }
+      },
+      "x-tombi-table-keys-order": {
+        "properties": "schema"
+      }
+    },
+    "http": {
+      "title": "[http]",
+      "description": "HTTP behavior for fetching crates and accessing remote git repositories.\nhttps://doc.rust-lang.org/cargo/reference/config.html#http",
+      "examples": [
+        {
+          "timeout": 60,
+          "multiplexing": true,
+          "user-agent": "my-cargo-wrapper/1.0"
+        },
+        {
+          "proxy": "http://proxy.example.com:8080",
+          "cainfo": "certs/ca.pem",
+          "ssl-version": {
+            "min": "tlsv1.2",
+            "max": "tlsv1.3"
+          }
+        }
+      ],
+      "type": "object",
+      "properties": {
+        "debug": {
+          "description": "Enable HTTP debugging. Combine with `CARGO_LOG=network=debug` (or `network=trace`) to see request details. Logs may contain authentication tokens, do not share publicly.\nhttps://doc.rust-lang.org/cargo/reference/config.html#httpdebug",
+          "default": false,
+          "examples": [
+            false,
+            true
+          ],
+          "type": "boolean"
+        },
+        "proxy": {
+          "description": "HTTP and HTTPS proxy in libcurl format `[protocol://]host[:port]`. Falls back to git's `http.proxy`, then to `HTTPS_PROXY`/`https_proxy`/`http_proxy` env vars.\nhttps://doc.rust-lang.org/cargo/reference/config.html#httpproxy An empty string disables proxy use.",
+          "examples": [
+            "http://proxy.example.com:8080",
+            "https://user:pass@proxy.example.com:8443",
+            "proxy.example.com:8080"
+          ],
+          "type": "string"
+        },
+        "timeout": {
+          "description": "Timeout for each HTTP request, in seconds.\nhttps://doc.rust-lang.org/cargo/reference/config.html#httptimeout",
+          "default": 30,
+          "examples": [
+            30,
+            60,
+            120
+          ],
+          "type": "integer",
+          "minimum": 0
+        },
+        "cainfo": {
+          "description": "Path to a Certificate Authority (CA) bundle file used to verify TLS certificates. If unset, Cargo uses the system trust store.\nhttps://doc.rust-lang.org/cargo/reference/config.html#httpcainfo",
+          "examples": [
+            "certs/ca.pem",
+            "/etc/ssl/certs/ca-bundle.crt"
+          ],
+          "type": "string",
+          "minLength": 1
+        },
+        "proxy-cainfo": {
+          "description": "Path to a Certificate Authority (CA) bundle file used to verify proxy TLS certificates. Falls back to `http.cainfo` if unset.\nhttps://doc.rust-lang.org/cargo/reference/config.html#httpproxy-cainfo",
+          "examples": [
+            "certs/proxy-ca.pem"
+          ],
+          "type": "string",
+          "minLength": 1
+        },
+        "check-revoke": {
+          "description": "Whether TLS certificate revocation checks are performed. Only works on Windows. Default: `true` on Windows, `false` elsewhere.\nhttps://doc.rust-lang.org/cargo/reference/config.html#httpcheck-revoke",
+          "examples": [
+            true,
+            false
+          ],
+          "type": "boolean"
+        },
+        "ssl-version": {
+          "$ref": "#/$defs/sslVersion",
+          "description": "Minimum TLS version, or a table with `min`/`max` TLS version bounds. Cargo's default range is `min = \"tlsv1.0\"`, `max` = newest supported (typically `tlsv1.3`).\nhttps://doc.rust-lang.org/cargo/reference/config.html#httpssl-version"
+        },
+        "low-speed-limit": {
+          "description": "Average transfer speed threshold, in bytes per second. If the transfer rate stays below this for `http.timeout` seconds, Cargo aborts and retries.\nhttps://doc.rust-lang.org/cargo/reference/config.html#httplow-speed-limit",
+          "default": 10,
+          "examples": [
+            10,
+            1024
+          ],
+          "type": "integer",
+          "minimum": 0
+        },
+        "multiplexing": {
+          "description": "Whether Cargo attempts to use HTTP/2 with multiplexing. If `false`, falls back to HTTP/1.1 without pipelining.\nhttps://doc.rust-lang.org/cargo/reference/config.html#httpmultiplexing",
+          "default": true,
+          "examples": [
+            true,
+            false
+          ],
+          "type": "boolean"
+        },
+        "user-agent": {
+          "description": "Custom HTTP user-agent header. Default is a string including Cargo's version.\nhttps://doc.rust-lang.org/cargo/reference/config.html#httpuser-agent",
+          "examples": [
+            "my-cargo-wrapper/1.0",
+            "ci-runner (+https://example.com/ci)"
+          ],
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "x-taplo": {
+        "links": {
+          "key": "https://doc.rust-lang.org/cargo/reference/config.html#http"
+        }
+      },
+      "x-tombi-table-keys-order": {
+        "properties": "schema"
+      }
+    },
+    "sslVersion": {
+      "examples": [
+        "tlsv1.3",
+        {
+          "min": "tlsv1.2",
+          "max": "tlsv1.3"
+        }
+      ],
+      "oneOf": [
+        {
+          "$ref": "#/$defs/tlsVersion",
+          "title": "Minimum TLS version",
+          "description": "Minimum TLS version to use; cargo accepts any newer version up to the platform maximum."
+        },
+        {
+          "title": "TLS version range",
+          "description": "Explicit minimum/maximum TLS version bounds.",
+          "examples": [
+            {
+              "min": "tlsv1.2",
+              "max": "tlsv1.3"
+            },
+            {
+              "min": "tlsv1.2"
+            },
+            {
+              "max": "tlsv1.3"
+            }
+          ],
+          "type": "object",
+          "properties": {
+            "min": {
+              "$ref": "#/$defs/tlsVersion",
+              "description": "Minimum TLS version to negotiate."
+            },
+            "max": {
+              "$ref": "#/$defs/tlsVersion",
+              "description": "Maximum TLS version to negotiate."
+            }
+          },
+          "x-tombi-table-keys-order": {
+            "properties": "schema"
+          }
+        }
+      ]
+    },
+    "tlsVersion": {
+      "examples": [
+        "default",
+        "tlsv1.2",
+        "tlsv1.3"
+      ],
+      "type": "string",
+      "enum": [
+        "default",
+        "tlsv1",
+        "tlsv1.0",
+        "tlsv1.1",
+        "tlsv1.2",
+        "tlsv1.3"
+      ],
+      "x-taplo": {
+        "docs": {
+          "enumValues": [
+            "System-default TLS version selection (cargo's built-in defaults: min `tlsv1.0`, max newest supported).",
+            "TLS 1.x family (system-chosen minor version). Prefer an explicit `tlsv1.2` or `tlsv1.3`.",
+            "TLS 1.0 (deprecated by RFC 8996; insecure — avoid).",
+            "TLS 1.1 (deprecated by RFC 8996; insecure — avoid).",
+            "TLS 1.2 (recommended minimum).",
+            "TLS 1.3 (recommended)."
+          ]
+        }
+      },
+      "x-intellij-enum-metadata": {
+        "default": {
+          "description": "System-default TLS version selection (cargo's built-in defaults: min `tlsv1.0`, max newest supported)."
+        },
+        "tlsv1": {
+          "description": "TLS 1.x family (system-chosen minor version). Prefer an explicit `tlsv1.2` or `tlsv1.3`."
+        },
+        "tlsv1.0": {
+          "description": "TLS 1.0 (deprecated by RFC 8996; insecure — avoid)."
+        },
+        "tlsv1.1": {
+          "description": "TLS 1.1 (deprecated by RFC 8996; insecure — avoid)."
+        },
+        "tlsv1.2": {
+          "description": "TLS 1.2 (recommended minimum)."
+        },
+        "tlsv1.3": {
+          "description": "TLS 1.3 (recommended)."
+        }
+      }
+    },
+    "install": {
+      "title": "[install]",
+      "description": "Defaults for cargo install.\nhttps://doc.rust-lang.org/cargo/reference/config.html#install",
+      "examples": [
+        {
+          "root": "/opt/cargo"
+        }
+      ],
+      "type": "object",
+      "properties": {
+        "root": {
+          "description": "Root directory for installed executables. Executables go into a `bin` directory underneath the root, alongside tracking files `.crates.toml` and `.crates2.json`. Defaults to Cargo's home directory (typically `~/.cargo`). Overridable with `--root` or `CARGO_INSTALL_ROOT`.\nhttps://doc.rust-lang.org/cargo/reference/config.html#installroot",
+          "examples": [
+            "/opt/cargo",
+            "~/.local"
+          ],
+          "type": "string",
+          "minLength": 1,
+          "x-taplo": {
+            "links": {
+              "key": "https://doc.rust-lang.org/cargo/reference/config.html#installroot"
+            }
+          }
+        }
+      },
+      "x-taplo": {
+        "links": {
+          "key": "https://doc.rust-lang.org/cargo/reference/config.html#install"
+        }
+      },
+      "x-tombi-table-keys-order": {
+        "properties": "schema"
+      }
+    },
+    "net": {
+      "title": "[net]",
+      "description": "Networking configuration.\nhttps://doc.rust-lang.org/cargo/reference/config.html#net",
+      "examples": [
+        {
+          "retry": 3,
+          "git-fetch-with-cli": true,
+          "offline": false
+        },
+        {
+          "ssh": {
+            "known-hosts": [
+              "example.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFO4Q5T0UV0SQevair9PFwoxY9dl4pQl3u5phoqJH3cF"
+            ]
+          }
+        }
+      ],
+      "type": "object",
+      "properties": {
+        "retry": {
+          "description": "Number of times to retry possibly spurious network errors.\nhttps://doc.rust-lang.org/cargo/reference/config.html#netretry",
+          "default": 3,
+          "examples": [
+            3
+          ],
+          "type": "integer",
+          "minimum": 0
+        },
+        "git-fetch-with-cli": {
+          "description": "Use the git executable for fetching registry indexes and git dependencies.\nhttps://doc.rust-lang.org/cargo/reference/config.html#netgit-fetch-with-cli",
+          "default": false,
+          "type": "boolean"
+        },
+        "offline": {
+          "description": "Avoid accessing the network and use locally cached data where possible.\nhttps://doc.rust-lang.org/cargo/reference/config.html#netoffline",
+          "default": false,
+          "type": "boolean"
+        },
+        "ssh": {
+          "description": "SSH connection settings.\nhttps://doc.rust-lang.org/cargo/reference/config.html#netssh",
+          "type": "object",
+          "properties": {
+            "known-hosts": {
+              "description": "SSH host keys accepted by Cargo.\nhttps://doc.rust-lang.org/cargo/reference/config.html#netsshknown-hosts",
+              "examples": [
+                [
+                  "example.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFO4Q5T0UV0SQevair9PFwoxY9dl4pQl3u5phoqJH3cF"
+                ]
+              ],
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "examples": [
+                  "example.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFO4Q5T0UV0SQevair9PFwoxY9dl4pQl3u5phoqJH3cF"
+                ],
+                "type": "string",
+                "pattern": "^\\S+[ \\t]+\\S+[ \\t]+\\S+"
+              },
+              "x-tombi-array-values-order": "ascending"
+            }
+          },
+          "x-tombi-table-keys-order": {
+            "properties": "schema"
+          }
+        }
+      },
+      "x-taplo": {
+        "links": {
+          "key": "https://doc.rust-lang.org/cargo/reference/config.html#net"
+        }
+      },
+      "x-tombi-table-keys-order": {
+        "properties": "schema"
+      }
+    },
+    "patch": {
+      "title": "[patch]",
+      "description": "Dependency patch overrides. Outer key is the registry name being patched (typically `crates-io`, or a name from `[registries]`); inner key is the package name being replaced; innermost table is the replacement dependency specification, using the same format as Cargo.toml `[patch]`.\nhttps://doc.rust-lang.org/cargo/reference/config.html#patch",
+      "examples": [
+        {
+          "crates-io": {
+            "foo": {
+              "path": "../foo"
+            },
+            "serde": {
+              "git": "https://github.com/serde-rs/serde.git",
+              "branch": "master"
+            }
+          }
+        }
+      ],
+      "type": "object",
+      "additionalProperties": {
+        "description": "Patches keyed by registry name. The conventional key is `crates-io`; user-defined registry names from `[registries]` are also valid.\nhttps://doc.rust-lang.org/cargo/reference/overriding-dependencies.html#the-patch-section",
+        "type": "object",
+        "additionalProperties": {
+          "$ref": "#/$defs/dep-spec"
+        },
+        "x-tombi-table-keys-order": {
+          "additionalProperties": "ascending"
+        },
+        "x-tombi-additional-key-label": "dependency"
+      },
+      "x-taplo": {
+        "links": {
+          "key": "https://doc.rust-lang.org/cargo/reference/config.html#patch"
+        }
+      },
+      "x-tombi-table-keys-order": {
+        "additionalProperties": "ascending"
+      },
+      "x-tombi-additional-key-label": "registry"
+    },
+    "dep-spec": {
+      "description": "Replacement dependency: version string or dependency table. Cargo validates source conflicts and resolves the replacement crate.",
+      "examples": [
+        {
+          "path": "../foo"
+        },
+        {
+          "git": "https://github.com/serde-rs/serde.git",
+          "branch": "master"
+        },
+        {
+          "version": "1.0",
+          "registry": "my-registry"
+        }
+      ],
+      "type": [
+        "object",
+        "string"
+      ],
+      "properties": {
+        "version": {
+          "description": "Semver requirement matched against the patched package.\nhttps://doc.rust-lang.org/cargo/reference/specifying-dependencies.html",
+          "examples": [
+            "1.0",
+            "^1.2.3",
+            "=0.5.0"
+          ],
+          "type": "string"
+        },
+        "path": {
+          "description": "Filesystem path to the replacement crate. Relative paths resolve relative to the config file containing this `[patch]` section.\nhttps://doc.rust-lang.org/cargo/reference/config.html#patch",
+          "examples": [
+            "../foo"
+          ],
+          "type": "string"
+        },
+        "git": {
+          "description": "Git repository URL providing the replacement crate.\nhttps://doc.rust-lang.org/cargo/reference/specifying-dependencies.html#specifying-dependencies-from-git-repositories",
+          "examples": [
+            "https://github.com/serde-rs/serde.git"
+          ],
+          "type": "string",
+          "format": "uri"
+        },
+        "branch": {
+          "description": "Git branch to use. Mutually exclusive with `tag` and `rev`.",
+          "examples": [
+            "main",
+            "master"
+          ],
+          "type": "string"
+        },
+        "tag": {
+          "description": "Git tag to use. Mutually exclusive with `branch` and `rev`.",
+          "examples": [
+            "v1.0.0"
+          ],
+          "type": "string"
+        },
+        "rev": {
+          "description": "Git revision (commit-ish) to use. Mutually exclusive with `branch` and `tag`.",
+          "examples": [
+            "abcdef1234567890"
+          ],
+          "type": "string"
+        },
+        "package": {
+          "description": "Real package name when the patch entry's key is a rename. Lets you patch a crate while referring to it under a different name in your manifest.\nhttps://doc.rust-lang.org/cargo/reference/specifying-dependencies.html#renaming-dependencies-in-cargotoml",
+          "type": "string"
+        },
+        "registry": {
+          "description": "Name of the registry the replacement is fetched from when using `version`. Refers to a key under `[registries]`.",
+          "examples": [
+            "crates-io"
+          ],
+          "type": "string"
+        },
+        "default-features": {
+          "description": "Parsed but ignored for patch selection; configure features on the dependency that uses this patch.",
+          "default": true,
+          "type": "boolean"
+        },
+        "features": {
+          "description": "Parsed but ignored for patch selection; configure features on the dependency that uses this patch.",
+          "examples": [
+            [
+              "serde",
+              "std"
+            ]
+          ],
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "x-tombi-array-values-order": "ascending"
+        },
+        "optional": {
+          "description": "Whether the dependency is optional. Rarely meaningful inside `[patch]`; included for parity with the dependency-table format.",
+          "default": false,
+          "type": "boolean"
+        },
+        "public": {
+          "description": "Whether the dependency is part of the public API (unstable nightly feature).",
+          "default": false,
+          "type": "boolean"
+        },
+        "registry-index": {
+          "description": "Internal registry index URL used by Cargo when publishing.",
+          "type": "string"
+        },
+        "base": {
+          "description": "UNSTABLE: Named path base; requires path-bases support.",
+          "type": "string"
+        },
+        "artifact": {
+          "description": "UNSTABLE: Artifact dependency; requires -Z bindeps.",
+          "type": [
+            "array",
+            "string"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
+        "lib": {
+          "description": "UNSTABLE: Also use the artifact dependency as a library; requires -Z bindeps.",
+          "type": "boolean"
+        },
+        "target": {
+          "description": "UNSTABLE: Artifact target platform; requires -Z bindeps.",
+          "type": "string"
+        },
+        "default_features": {
+          "description": "Deprecated underscore spelling of default-features.",
+          "deprecated": true,
+          "type": "boolean"
+        }
+      },
+      "x-taplo": {
+        "initKeys": [
+          "version"
+        ]
+      },
+      "x-tombi-table-keys-order": {
+        "properties": "schema",
+        "additionalProperties": "ascending"
+      }
+    },
+    "profiles": {
+      "title": "[profile.*]",
+      "description": "Profile configuration overlays workspace/manifest profiles. Custom profiles require inherits after merging, but a configuration overlay may omit it. https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/profiles.rs",
+      "examples": [
+        {
+          "release": {
+            "opt-level": 3,
+            "lto": "thin",
+            "codegen-units": 1
+          },
+          "dev": {
+            "debug": true,
+            "incremental": true
+          }
+        },
+        {
+          "release-lto": {
+            "inherits": "release",
+            "lto": "fat",
+            "codegen-units": 1,
+            "strip": "symbols"
+          }
+        }
+      ],
+      "type": "object",
+      "properties": {
+        "dev": {
+          "$ref": "#/$defs/builtinProfile",
+          "description": "Built-in `dev` profile (used by `cargo build` and `cargo run`).\nDefaults: `opt-level = 0`, `debug = true`, `debug-assertions = true`, `overflow-checks = true`, `lto = false`, `panic = \"unwind\"`, `incremental = true`, `codegen-units = 256`, `rpath = false`.\nhttps://doc.rust-lang.org/cargo/reference/profiles.html#dev"
+        },
+        "release": {
+          "$ref": "#/$defs/builtinProfile",
+          "description": "Built-in `release` profile (used by `cargo build --release`, `cargo install`).\nDefaults: `opt-level = 3`, `debug = false`, `debug-assertions = false`, `overflow-checks = false`, `lto = false`, `panic = \"unwind\"`, `incremental = false`, `codegen-units = 16`, `rpath = false`.\nhttps://doc.rust-lang.org/cargo/reference/profiles.html#release"
+        },
+        "test": {
+          "$ref": "#/$defs/builtinProfile",
+          "description": "Built-in `test` profile (used by `cargo test`). Inherits from `dev`.\nhttps://doc.rust-lang.org/cargo/reference/profiles.html#test"
+        },
+        "bench": {
+          "$ref": "#/$defs/builtinProfile",
+          "description": "Built-in `bench` profile (used by `cargo bench`). Inherits from `release`.\nhttps://doc.rust-lang.org/cargo/reference/profiles.html#bench"
+        }
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/customProfile"
+      },
+      "propertyNames": {
+        "description": "Cargo profile name: Unicode letters/numbers, underscore or hyphen; Cargo checks reserved names."
+      },
+      "x-taplo": {
+        "links": {
+          "key": "https://doc.rust-lang.org/cargo/reference/config.html#profile"
+        }
+      },
+      "x-tombi-table-keys-order": {
+        "properties": "schema",
+        "additionalProperties": "ascending"
+      },
+      "x-tombi-additional-key-label": "profile name"
+    },
+    "buildOverride": {
+      "description": "Override profile settings for build scripts, proc-macros, and their dependencies. Accepts the same keys as a normal profile (excluding nested `package` and `build-override`).\nhttps://doc.rust-lang.org/cargo/reference/profiles.html#overrides",
+      "examples": [
+        {
+          "opt-level": 0,
+          "codegen-units": 256
+        }
+      ],
+      "type": "object",
+      "properties": {
+        "opt-level": {
+          "$ref": "#/$defs/optLevel"
+        },
+        "debug": {
+          "$ref": "#/$defs/debugLevel"
+        },
+        "split-debuginfo": {
+          "$ref": "#/$defs/splitDebuginfo"
+        },
+        "strip": {
+          "$ref": "#/$defs/strip"
+        },
+        "debug-assertions": {
+          "$ref": "#/$defs/debugAssertions"
+        },
+        "overflow-checks": {
+          "$ref": "#/$defs/overflowChecks"
+        },
+        "lto": {
+          "description": "Not permitted in profile overrides.",
+          "not": {}
+        },
+        "panic": {
+          "description": "Not permitted in profile overrides.",
+          "not": {}
+        },
+        "incremental": {
+          "$ref": "#/$defs/incremental"
+        },
+        "codegen-units": {
+          "$ref": "#/$defs/codegenUnits"
+        },
+        "rpath": {
+          "description": "Not permitted in profile overrides.",
+          "not": {}
+        },
+        "rustflags": {
+          "description": "UNSTABLE: Extra compiler flags; requires -Z profile-rustflags.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "codegen-backend": {
+          "description": "UNSTABLE: Compiler codegen backend; requires -Z codegen-backend.",
+          "type": "string"
+        },
+        "trim-paths": {
+          "description": "UNSTABLE: Trim filesystem paths; requires -Z trim-paths.",
+          "type": "string",
+          "enum": [
+            "none",
+            "object",
+            "all"
+          ]
+        },
+        "hint-mostly-unused": {
+          "description": "UNSTABLE: Mark crates mostly unused; requires -Z profile-hint-mostly-unused.",
+          "type": "boolean"
+        },
+        "package": {
+          "description": "Not permitted in profile overrides.",
+          "not": {}
+        },
+        "build-override": {
+          "description": "Not permitted in profile overrides.",
+          "not": {}
+        },
+        "dir-name": {
+          "description": "Removed: directory names follow the profile name.",
+          "not": {}
+        }
+      },
+      "x-tombi-table-keys-order": {
+        "properties": "schema"
+      }
+    },
+    "builtinProfile": {
+      "description": "Settings for one of the four built-in Cargo profiles. Cargo errors out if `inherits` is set on a built-in profile.\nhttps://doc.rust-lang.org/cargo/reference/profiles.html",
+      "type": "object",
+      "properties": {
+        "opt-level": {
+          "$ref": "#/$defs/optLevel"
+        },
+        "debug": {
+          "$ref": "#/$defs/debugLevel"
+        },
+        "split-debuginfo": {
+          "$ref": "#/$defs/splitDebuginfo"
+        },
+        "strip": {
+          "$ref": "#/$defs/strip"
+        },
+        "debug-assertions": {
+          "$ref": "#/$defs/debugAssertions"
+        },
+        "overflow-checks": {
+          "$ref": "#/$defs/overflowChecks"
+        },
+        "lto": {
+          "$ref": "#/$defs/lto"
+        },
+        "panic": {
+          "$ref": "#/$defs/panic"
+        },
+        "incremental": {
+          "$ref": "#/$defs/incremental"
+        },
+        "codegen-units": {
+          "$ref": "#/$defs/codegenUnits"
+        },
+        "rpath": {
+          "$ref": "#/$defs/rpath"
+        },
+        "build-override": {
+          "$ref": "#/$defs/buildOverride"
+        },
+        "package": {
+          "$ref": "#/$defs/packageOverrides"
+        },
+        "rustflags": {
+          "description": "UNSTABLE: Extra compiler flags; requires -Z profile-rustflags.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "codegen-backend": {
+          "description": "UNSTABLE: Compiler codegen backend; requires -Z codegen-backend.",
+          "type": "string"
+        },
+        "trim-paths": {
+          "description": "UNSTABLE: Trim filesystem paths; requires -Z trim-paths.",
+          "type": "string",
+          "enum": [
+            "none",
+            "object",
+            "all"
+          ]
+        },
+        "hint-mostly-unused": {
+          "description": "UNSTABLE: Mark crates mostly unused; requires -Z profile-hint-mostly-unused.",
+          "type": "boolean"
+        },
+        "dir-name": {
+          "description": "Removed: directory names follow the profile name.",
+          "not": {}
+        }
+      },
+      "not": {
+        "required": [
+          "inherits"
+        ]
+      },
+      "x-tombi-table-keys-order": {
+        "properties": "schema"
+      }
+    },
+    "codegenUnits": {
+      "title": "codegen-units",
+      "description": "Number of parallel code generation units per crate. Defaults depend on incremental compilation: 256 when enabled, 16 otherwise.",
+      "examples": [
+        1,
+        16,
+        256
+      ],
+      "type": "integer",
+      "minimum": 1
+    },
+    "customProfile": {
+      "description": "Settings for a user-defined Cargo profile. Custom profiles must declare `inherits` naming an existing (built-in or previously-defined) profile.\nhttps://doc.rust-lang.org/cargo/reference/profiles.html#custom-profiles",
+      "type": "object",
+      "properties": {
+        "inherits": {
+          "description": "Name of the profile this one inherits from. Required for every custom profile. The four built-ins (`dev`, `release`, `test`, `bench`) are always valid; you may also inherit from another custom profile.\nhttps://doc.rust-lang.org/cargo/reference/profiles.html#custom-profiles",
+          "examples": [
+            "dev",
+            "release",
+            "test",
+            "bench"
+          ],
+          "type": "string",
+          "x-intellij-enum-metadata": {
+            "bench": {
+              "description": "Inherit from the built-in `bench` profile."
+            },
+            "dev": {
+              "description": "Inherit from the built-in `dev` profile."
+            },
+            "release": {
+              "description": "Inherit from the built-in `release` profile."
+            },
+            "test": {
+              "description": "Inherit from the built-in `test` profile."
+            }
+          }
+        },
+        "opt-level": {
+          "$ref": "#/$defs/optLevel"
+        },
+        "debug": {
+          "$ref": "#/$defs/debugLevel"
+        },
+        "split-debuginfo": {
+          "$ref": "#/$defs/splitDebuginfo"
+        },
+        "strip": {
+          "$ref": "#/$defs/strip"
+        },
+        "debug-assertions": {
+          "$ref": "#/$defs/debugAssertions"
+        },
+        "overflow-checks": {
+          "$ref": "#/$defs/overflowChecks"
+        },
+        "lto": {
+          "$ref": "#/$defs/lto"
+        },
+        "panic": {
+          "$ref": "#/$defs/panic"
+        },
+        "incremental": {
+          "$ref": "#/$defs/incremental"
+        },
+        "codegen-units": {
+          "$ref": "#/$defs/codegenUnits"
+        },
+        "rpath": {
+          "$ref": "#/$defs/rpath"
+        },
+        "build-override": {
+          "$ref": "#/$defs/buildOverride"
+        },
+        "package": {
+          "$ref": "#/$defs/packageOverrides"
+        },
+        "rustflags": {
+          "description": "UNSTABLE: Extra compiler flags; requires -Z profile-rustflags.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "codegen-backend": {
+          "description": "UNSTABLE: Compiler codegen backend; requires -Z codegen-backend.",
+          "type": "string"
+        },
+        "trim-paths": {
+          "description": "UNSTABLE: Trim filesystem paths; requires -Z trim-paths.",
+          "type": "string",
+          "enum": [
+            "none",
+            "object",
+            "all"
+          ]
+        },
+        "hint-mostly-unused": {
+          "description": "UNSTABLE: Mark crates mostly unused; requires -Z profile-hint-mostly-unused.",
+          "type": "boolean"
+        },
+        "dir-name": {
+          "description": "Removed: directory names follow the profile name.",
+          "not": {}
+        }
+      },
+      "x-tombi-table-keys-order": {
+        "properties": "schema"
+      }
+    },
+    "debugAssertions": {
+      "title": "debug-assertions",
+      "description": "Whether `debug_assert!` and related checks are compiled in.\nDefaults: `true` for `dev`/`test`, `false` for `release`/`bench`.\nhttps://doc.rust-lang.org/cargo/reference/profiles.html#debug-assertions",
+      "examples": [
+        true,
+        false
+      ],
+      "type": "boolean"
+    },
+    "debugLevel": {
+      "title": "debug",
+      "description": "Debug information: false/0/none disables it; 1/limited includes limited information; line-tables-only and line-directives-only are distinct modes; true/2/full includes full information.",
+      "examples": [
+        true,
+        false,
+        0,
+        1,
+        2,
+        "none",
+        "line-tables-only",
+        "line-directives-only",
+        "limited",
+        "full"
+      ],
+      "oneOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2
+        },
+        {
+          "type": "string",
+          "enum": [
+            "none",
+            "line-directives-only",
+            "line-tables-only",
+            "limited",
+            "full"
+          ],
+          "x-intellij-enum-metadata": {
+            "full": {
+              "description": "Full debug info."
+            },
+            "limited": {
+              "description": "Limited debug information, equivalent to integer 1; distinct from line-tables-only."
+            },
+            "line-directives-only": {
+              "description": "Line info directives only (useful for profilers)."
+            },
+            "line-tables-only": {
+              "description": "Line tables only — backtraces with file/line, no variables/types."
+            },
+            "none": {
+              "description": "No debug info."
+            }
+          }
+        }
+      ]
+    },
+    "incremental": {
+      "title": "incremental",
+      "description": "Whether incremental compilation is enabled. May be overridden by the `CARGO_INCREMENTAL` env var or `build.incremental`.\nDefaults: `true` for `dev`/`test`, `false` for `release`/`bench`.\nhttps://doc.rust-lang.org/cargo/reference/profiles.html#incremental",
+      "examples": [
+        true,
+        false
+      ],
+      "type": "boolean"
+    },
+    "lto": {
+      "title": "lto",
+      "description": "Link-time optimization. `false` disables LTO with the local ThinLTO equivalent; `true`/`\"fat\"` performs fat LTO over the full dependency graph; `\"thin\"` is faster cross-crate ThinLTO; `\"off\"` disables LTO entirely (including local ThinLTO).\nDefault: `false`.\nhttps://doc.rust-lang.org/cargo/reference/profiles.html#lto",
+      "examples": [
+        true,
+        false,
+        "off",
+        "thin",
+        "fat"
+      ],
+      "oneOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "string",
+          "enum": [
+            "off",
+            "thin",
+            "fat"
+          ],
+          "x-taplo": {
+            "docs": {
+              "enumValues": [
+                "Disable link-time optimization (including local ThinLTO).",
+                "Thin LTO across crates — faster than fat, similar runtime gains.",
+                "Fat LTO across the whole dependency graph — slowest build, smallest/fastest binary."
+              ]
+            }
+          },
+          "x-intellij-enum-metadata": {
+            "fat": {
+              "description": "Fat LTO across the whole dependency graph — slowest build, smallest/fastest binary."
+            },
+            "off": {
+              "description": "Disable link-time optimization (including local ThinLTO)."
+            },
+            "thin": {
+              "description": "Thin LTO across crates — faster than fat, similar runtime gains."
+            }
+          }
+        }
+      ]
+    },
+    "optLevel": {
+      "title": "opt-level",
+      "description": "Optimization level. Integers `0`-`3` set increasing optimization; `\"s\"` optimizes for binary size; `\"z\"` optimizes for size while disabling loop vectorization.\nDefaults: `0` for `dev`/`test`, `3` for `release`/`bench`.\nhttps://doc.rust-lang.org/cargo/reference/profiles.html#opt-level",
+      "examples": [
+        0,
+        1,
+        2,
+        3,
+        "s",
+        "z"
+      ],
+      "oneOf": [
+        {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3
+        },
+        {
+          "type": "string",
+          "enum": [
+            "s",
+            "z"
+          ],
+          "x-taplo": {
+            "docs": {
+              "enumValues": [
+                "Optimize for binary size.",
+                "Optimize for binary size, disabling loop vectorization."
+              ]
+            }
+          },
+          "x-intellij-enum-metadata": {
+            "s": {
+              "description": "Optimize for binary size."
+            },
+            "z": {
+              "description": "Optimize for binary size, disabling loop vectorization."
+            }
+          }
+        }
+      ]
+    },
+    "overflowChecks": {
+      "title": "overflow-checks",
+      "description": "Whether runtime integer overflow checks are emitted.\nDefaults: `true` for `dev`/`test`, `false` for `release`/`bench`.\nhttps://doc.rust-lang.org/cargo/reference/profiles.html#overflow-checks",
+      "examples": [
+        true,
+        false
+      ],
+      "type": "boolean"
+    },
+    "packageOverrides": {
+      "description": "Per-package profile overrides. Each key is a package name (or `\"*\"` for all dependencies, or a [`PackageId` spec](https://doc.rust-lang.org/cargo/reference/pkgid-spec.html) like `\"serde@1.0.0\"`).\nhttps://doc.rust-lang.org/cargo/reference/profiles.html#overrides",
+      "examples": [
+        {
+          "image": {
+            "opt-level": 3
+          }
+        },
+        {
+          "*": {
+            "opt-level": 2
+          }
+        }
+      ],
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/profilePackageSettings"
+      },
+      "propertyNames": {
+        "pattern": "^(\\*|[A-Za-z0-9_][A-Za-z0-9_+.@:-]*)$"
+      },
+      "x-tombi-table-keys-order": {
+        "additionalProperties": "ascending"
+      },
+      "x-tombi-additional-key-label": "package"
+    },
+    "panic": {
+      "title": "panic",
+      "description": "Panic strategy: unwind or abort. immediate-abort requires unstable panic-immediate-abort support. Ignored for test/bench profiles.",
+      "examples": [
+        "unwind",
+        "abort"
+      ],
+      "type": "string",
+      "enum": [
+        "unwind",
+        "abort",
+        "immediate-abort"
+      ],
+      "x-taplo": {
+        "docs": {
+          "enumValues": [
+            "Unwind the stack on panic, running destructors.",
+            "Terminate the process on panic without unwinding."
+          ]
+        }
+      },
+      "x-intellij-enum-metadata": {
+        "abort": {
+          "description": "Terminate the process on panic without unwinding."
+        },
+        "unwind": {
+          "description": "Unwind the stack on panic, running destructors."
+        }
+      }
+    },
+    "profilePackageSettings": {
+      "description": "Per-package profile override. Cargo does not support `panic`, `lto`, or `rpath` here, and nested `build-override`/`package` are not allowed.\nhttps://doc.rust-lang.org/cargo/reference/profiles.html#overrides",
+      "examples": [
+        {
+          "opt-level": 3,
+          "debug": false,
+          "codegen-units": 1
+        }
+      ],
+      "type": "object",
+      "properties": {
+        "opt-level": {
+          "$ref": "#/$defs/optLevel"
+        },
+        "debug": {
+          "$ref": "#/$defs/debugLevel"
+        },
+        "split-debuginfo": {
+          "$ref": "#/$defs/splitDebuginfo"
+        },
+        "strip": {
+          "$ref": "#/$defs/strip"
+        },
+        "debug-assertions": {
+          "$ref": "#/$defs/debugAssertions"
+        },
+        "overflow-checks": {
+          "$ref": "#/$defs/overflowChecks"
+        },
+        "incremental": {
+          "$ref": "#/$defs/incremental"
+        },
+        "codegen-units": {
+          "$ref": "#/$defs/codegenUnits"
+        },
+        "rustflags": {
+          "description": "UNSTABLE: Extra compiler flags; requires -Z profile-rustflags.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "codegen-backend": {
+          "description": "UNSTABLE: Compiler codegen backend; requires -Z codegen-backend.",
+          "type": "string"
+        },
+        "trim-paths": {
+          "description": "UNSTABLE: Trim filesystem paths; requires -Z trim-paths.",
+          "type": "string",
+          "enum": [
+            "none",
+            "object",
+            "all"
+          ]
+        },
+        "hint-mostly-unused": {
+          "description": "UNSTABLE: Mark crates mostly unused; requires -Z profile-hint-mostly-unused.",
+          "type": "boolean"
+        },
+        "panic": {
+          "description": "Not permitted in profile overrides.",
+          "not": {}
+        },
+        "lto": {
+          "description": "Not permitted in profile overrides.",
+          "not": {}
+        },
+        "rpath": {
+          "description": "Not permitted in profile overrides.",
+          "not": {}
+        },
+        "package": {
+          "description": "Not permitted in profile overrides.",
+          "not": {}
+        },
+        "build-override": {
+          "description": "Not permitted in profile overrides.",
+          "not": {}
+        },
+        "dir-name": {
+          "description": "Removed: directory names follow the profile name.",
+          "not": {}
+        }
+      },
+      "x-tombi-table-keys-order": {
+        "properties": "schema"
+      }
+    },
+    "rpath": {
+      "title": "rpath",
+      "description": "Whether the compiler embeds an `rpath` into the final binary.\nDefault: `false`.\nhttps://doc.rust-lang.org/cargo/reference/profiles.html#rpath",
+      "examples": [
+        true,
+        false
+      ],
+      "type": "boolean"
+    },
+    "splitDebuginfo": {
+      "title": "split-debuginfo",
+      "description": "Whether and how debug information is split out of the main executable.\nPlatform defaults: `\"unpacked\"` on macOS, `\"packed\"` on Windows MSVC, `\"off\"` elsewhere.\nhttps://doc.rust-lang.org/cargo/reference/profiles.html#split-debuginfo",
+      "examples": [
+        "off",
+        "packed",
+        "unpacked"
+      ],
+      "type": "string",
+      "enum": [
+        "off",
+        "packed",
+        "unpacked"
+      ],
+      "x-taplo": {
+        "docs": {
+          "enumValues": [
+            "Debug info embedded in the main artifact (or omitted on macOS).",
+            "Debug info packaged into a single separate file (`.dwp`/`.dSYM`/`.pdb`).",
+            "Debug info left in per-object files alongside the artifact."
+          ]
+        }
+      },
+      "x-intellij-enum-metadata": {
+        "off": {
+          "description": "Debug info embedded in the main artifact (or omitted on macOS)."
+        },
+        "packed": {
+          "description": "Debug info packaged into a single separate file (`.dwp`/`.dSYM`/`.pdb`)."
+        },
+        "unpacked": {
+          "description": "Debug info left in per-object files alongside the artifact."
+        }
+      }
+    },
+    "strip": {
+      "title": "strip",
+      "description": "Whether to strip symbols and/or debug info from the final binary. `true` is equivalent to `\"symbols\"`; `false` to `\"none\"`.\nDefault: `\"none\"`.\nhttps://doc.rust-lang.org/cargo/reference/profiles.html#strip",
+      "examples": [
+        true,
+        false,
+        "none",
+        "debuginfo",
+        "symbols"
+      ],
+      "oneOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "string",
+          "enum": [
+            "none",
+            "debuginfo",
+            "symbols"
+          ],
+          "x-taplo": {
+            "docs": {
+              "enumValues": [
+                "Do not strip anything.",
+                "Strip debug information.",
+                "Strip both debug info and symbols."
+              ]
+            }
+          },
+          "x-intellij-enum-metadata": {
+            "debuginfo": {
+              "description": "Strip debug information."
+            },
+            "none": {
+              "description": "Do not strip anything."
+            },
+            "symbols": {
+              "description": "Strip both debug info and symbols."
+            }
+          }
+        }
+      ]
+    },
+    "registries": {
+      "title": "[registries.*]",
+      "description": "Additional registries and crates.io registry protocol settings.\nhttps://doc.rust-lang.org/cargo/reference/config.html#registries",
+      "examples": [
+        {
+          "my-registry": {
+            "index": "https://example.com/git/index",
+            "credential-provider": "cargo:token"
+          },
+          "crates-io": {
+            "protocol": "sparse"
+          }
+        }
+      ],
+      "type": "object",
+      "properties": {
+        "crates-io": {
+          "$ref": "#/$defs/cratesIoRegistryConfig"
+        }
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/customRegistryConfig"
+      },
+      "x-taplo": {
+        "links": {
+          "key": "https://doc.rust-lang.org/cargo/reference/config.html#registries"
+        }
+      },
+      "x-tombi-table-keys-order": {
+        "properties": "schema",
+        "additionalProperties": "ascending"
+      },
+      "x-tombi-additional-key-label": "registry"
+    },
+    "cratesIoRegistryConfig": {
+      "description": "Settings for the official `crates-io` registry. Adds the `protocol` key (sparse vs. git index) on top of the shared registry properties. The default index URL is built into Cargo, so `index` is rarely set here.\nhttps://doc.rust-lang.org/cargo/reference/config.html#registriescrates-ioprotocol",
+      "examples": [
+        {
+          "protocol": "sparse"
+        },
+        {
+          "protocol": "sparse",
+          "credential-provider": "cargo:token"
+        }
+      ],
+      "type": "object",
+      "properties": {
+        "index": {
+          "description": "URL of the registry index. Rarely set under `[registries.crates-io]` because Cargo ships the canonical URL. Environment: `CARGO_REGISTRIES_CRATES_IO_INDEX`.\nhttps://doc.rust-lang.org/cargo/reference/config.html#registriesnameindex",
+          "examples": [
+            "https://github.com/rust-lang/crates.io-index"
+          ],
+          "type": "string",
+          "format": "uri"
+        },
+        "token": {
+          "description": "Authentication token for crates.io. Normally lives in `credentials.toml`, not `config.toml`. Environment: `CARGO_REGISTRIES_CRATES_IO_TOKEN`.\nhttps://doc.rust-lang.org/cargo/reference/config.html#registriesnametoken",
+          "examples": [
+            "example-private-registry-token"
+          ],
+          "type": "string"
+        },
+        "credential-provider": {
+          "$ref": "#/$defs/credentialProvider",
+          "description": "Credential provider for crates.io. If unset, falls back to `registry.global-credential-providers`. Environment: `CARGO_REGISTRIES_CRATES_IO_CREDENTIAL_PROVIDER`.\nhttps://doc.rust-lang.org/cargo/reference/config.html#registriesnamecredential-provider"
+        },
+        "protocol": {
+          "description": "Protocol used to access crates.io. Only valid under `[registries.crates-io]`; user-defined registries advertise their protocol via the index URL itself (`sparse+https://...` or a git URL). Defaults to `\"sparse\"` since Cargo 1.70.\nhttps://doc.rust-lang.org/cargo/reference/config.html#registriescrates-ioprotocol",
+          "default": "sparse",
+          "examples": [
+            "sparse",
+            "git"
+          ],
+          "type": "string",
+          "enum": [
+            "git",
+            "sparse"
+          ],
+          "x-taplo": {
+            "docs": {
+              "enumValues": [
+                "Clone the full git index from https://github.com/rust-lang/crates.io-index/. Slower for fresh resolves but mirrors the legacy behaviour.",
+                "Use the sparse HTTP index at https://index.crates.io/, fetching only the crates needed. Default since Cargo 1.70."
+              ]
+            }
+          },
+          "x-intellij-enum-metadata": {
+            "git": {
+              "description": "Clone the full git index from https://github.com/rust-lang/crates.io-index/. Slower for fresh resolves but mirrors the legacy behaviour."
+            },
+            "sparse": {
+              "description": "Use the sparse HTTP index at https://index.crates.io/, fetching only the crates needed. Default since Cargo 1.70."
+            }
+          }
+        },
+        "min-publish-age": {
+          "description": "Minimum publish age, for example \"7 days\" or \"0\". Requires Cargo 1.100+.",
+          "type": "string"
+        },
+        "secret-key": {
+          "description": "UNSTABLE: Asymmetric credential secret key; requires -Z asymmetric-token. Store in credentials.toml.",
+          "type": "string"
+        },
+        "secret-key-subject": {
+          "description": "UNSTABLE: Subject for asymmetric credentials; requires -Z asymmetric-token.",
+          "type": "string"
+        }
+      },
+      "x-tombi-table-keys-order": {
+        "properties": "schema"
+      }
+    },
+    "customRegistryConfig": {
+      "description": "Settings for a user-defined registry (any name other than `crates-io`). `protocol` is omitted: non-crates.io registries select their protocol through the `index` URL scheme (`sparse+https://...` for sparse, plain URL for git).\nhttps://doc.rust-lang.org/cargo/reference/config.html#registriesname",
+      "examples": [
+        {
+          "index": "https://example.com/git/index",
+          "credential-provider": "cargo:token"
+        },
+        {
+          "index": "sparse+https://example.com/index/",
+          "token": "example-private-registry-token"
+        }
+      ],
+      "type": "object",
+      "properties": {
+        "index": {
+          "description": "URL of the registry index. For sparse registries use `sparse+https://...`; for git registries use a plain `https://...` URL. Environment: `CARGO_REGISTRIES_<NAME>_INDEX`.\nhttps://doc.rust-lang.org/cargo/reference/config.html#registriesnameindex",
+          "examples": [
+            "https://example.com/git/index",
+            "sparse+https://example.com/index/"
+          ],
+          "type": "string",
+          "format": "uri"
+        },
+        "token": {
+          "description": "Authentication token for the registry. Normally lives in `credentials.toml`, not `config.toml`. Environment: `CARGO_REGISTRIES_<NAME>_TOKEN`.\nhttps://doc.rust-lang.org/cargo/reference/config.html#registriesnametoken",
+          "examples": [
+            "example-private-registry-token"
+          ],
+          "type": "string"
+        },
+        "credential-provider": {
+          "$ref": "#/$defs/credentialProvider",
+          "description": "Credential provider for this registry. If unset, falls back to `registry.global-credential-providers`. Environment: `CARGO_REGISTRIES_<NAME>_CREDENTIAL_PROVIDER`.\nhttps://doc.rust-lang.org/cargo/reference/config.html#registriesnamecredential-provider"
+        },
+        "min-publish-age": {
+          "description": "Minimum publish age, for example \"7 days\" or \"0\". Requires Cargo 1.100+.",
+          "type": "string"
+        },
+        "secret-key": {
+          "description": "UNSTABLE: Asymmetric credential secret key; requires -Z asymmetric-token. Store in credentials.toml.",
+          "type": "string"
+        },
+        "secret-key-subject": {
+          "description": "UNSTABLE: Subject for asymmetric credentials; requires -Z asymmetric-token.",
+          "type": "string"
+        }
+      },
+      "x-taplo": {
+        "initKeys": [
+          "index"
+        ]
+      },
+      "x-tombi-table-keys-order": {
+        "properties": "schema"
+      }
+    },
+    "registry": {
+      "title": "[registry]",
+      "description": "Default registry and crates.io credential settings.\nhttps://doc.rust-lang.org/cargo/reference/config.html#registry",
+      "examples": [
+        {
+          "default": "my-registry"
+        },
+        {
+          "token": "example-crates-io-token",
+          "credential-provider": "cargo:token",
+          "global-credential-providers": [
+            "cargo:token"
+          ]
+        }
+      ],
+      "type": "object",
+      "properties": {
+        "index": {
+          "description": "REMOVED: registry.index is no longer accepted. Use registries.<name>.index or source configuration.",
+          "not": {}
+        },
+        "default": {
+          "description": "Name of the registry (from the `registries` table) to use by default for registry commands like `cargo publish`. Can be overridden with `--registry`. Environment: `CARGO_REGISTRY_DEFAULT`.\nhttps://doc.rust-lang.org/cargo/reference/config.html#registrydefault",
+          "default": "crates-io",
+          "examples": [
+            "crates-io",
+            "my-registry"
+          ],
+          "type": "string",
+          "x-taplo": {
+            "links": {
+              "key": "https://doc.rust-lang.org/cargo/reference/config.html#registrydefault"
+            }
+          }
+        },
+        "credential-provider": {
+          "$ref": "#/$defs/credentialProvider",
+          "description": "Credential provider for crates.io. If unset, falls back to `registry.global-credential-providers`. If the value matches a key in `[credential-alias]`, the alias is used. Environment: `CARGO_REGISTRY_CREDENTIAL_PROVIDER`.\nhttps://doc.rust-lang.org/cargo/reference/config.html#registrycredential-provider",
+          "x-taplo": {
+            "links": {
+              "key": "https://doc.rust-lang.org/cargo/reference/config.html#registrycredential-provider"
+            }
+          }
+        },
+        "token": {
+          "description": "Authentication token for crates.io. Should normally only appear in `credentials.toml`. Can be overridden with `--token`. Environment: `CARGO_REGISTRY_TOKEN`.\nhttps://doc.rust-lang.org/cargo/reference/config.html#registrytoken",
+          "examples": [
+            "example-crates-io-token"
+          ],
+          "type": "string",
+          "x-taplo": {
+            "links": {
+              "key": "https://doc.rust-lang.org/cargo/reference/config.html#registrytoken"
+            }
+          }
+        },
+        "global-credential-providers": {
+          "description": "Ordered list of global credential providers used when a registry does not configure its own. Order is significant: providers toward the END of the list have precedence. Path and arguments split on spaces; for paths/args containing spaces, define an alias in `[credential-alias]` and reference it here. Environment: `CARGO_REGISTRY_GLOBAL_CREDENTIAL_PROVIDERS`.\nhttps://doc.rust-lang.org/cargo/reference/config.html#registryglobal-credential-providers",
+          "default": [
+            "cargo:token"
+          ],
+          "examples": [
+            [
+              "cargo:token"
+            ],
+            [
+              "cargo:token",
+              "my-alias"
+            ]
+          ],
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/credentialProvider"
+          },
+          "x-taplo": {
+            "links": {
+              "key": "https://doc.rust-lang.org/cargo/reference/config.html#registryglobal-credential-providers"
+            }
+          }
+        },
+        "global-min-publish-age": {
+          "description": "Minimum publish age, for example \"7 days\" or \"0\". Requires Cargo 1.100+.",
+          "default": "0",
+          "type": "string"
+        },
+        "secret-key": {
+          "description": "UNSTABLE: Asymmetric credential secret key; requires -Z asymmetric-token. Store in credentials.toml.",
+          "type": "string"
+        },
+        "secret-key-subject": {
+          "description": "UNSTABLE: Subject for asymmetric credentials; requires -Z asymmetric-token.",
+          "type": "string"
+        }
+      },
+      "x-taplo": {
+        "links": {
+          "key": "https://doc.rust-lang.org/cargo/reference/config.html#registry"
+        }
+      },
+      "x-tombi-table-keys-order": {
+        "properties": "schema"
+      }
+    },
+    "resolver": {
+      "title": "[resolver]",
+      "description": "Dependency resolver behavior for local development.\nhttps://doc.rust-lang.org/cargo/reference/config.html#resolver",
+      "examples": [
+        {
+          "incompatible-rust-versions": "fallback"
+        },
+        {
+          "lockfile-path": "locks/Cargo.lock"
+        }
+      ],
+      "type": "object",
+      "properties": {
+        "lockfile-path": {
+          "description": "Path to the lockfile to use when resolving dependencies. Useful with read-only source directories. The path must end with `Cargo.lock`. Requires Cargo 1.97+. Environment: `CARGO_RESOLVER_LOCKFILE_PATH`.\nhttps://doc.rust-lang.org/cargo/reference/config.html#resolverlockfile-path",
+          "examples": [
+            "Cargo.lock",
+            "locks/Cargo.lock",
+            "/abs/path/Cargo.lock"
+          ],
+          "type": "string",
+          "minLength": 1,
+          "pattern": "Cargo\\.lock$",
+          "x-taplo": {
+            "links": {
+              "key": "https://doc.rust-lang.org/cargo/reference/config.html#resolverlockfile-path"
+            }
+          }
+        },
+        "incompatible-rust-versions": {
+          "description": "How dependency versions with incompatible package.rust-version values are treated.\nhttps://doc.rust-lang.org/cargo/reference/config.html#resolverincompatible-rust-versions Default is allow for resolver 1/2 and fallback for resolver 3.",
+          "examples": [
+            "allow",
+            "fallback"
+          ],
+          "type": "string",
+          "enum": [
+            "allow",
+            "fallback"
+          ],
+          "x-taplo": {
+            "docs": {
+              "enumValues": [
+                "Treat rust-version-incompatible versions like any other version.",
+                "Only consider rust-version-incompatible versions if no compatible version matched."
+              ]
+            }
+          },
+          "x-intellij-enum-metadata": {
+            "allow": {
+              "description": "Treat rust-version-incompatible versions like any other version."
+            },
+            "fallback": {
+              "description": "Only consider rust-version-incompatible versions if no compatible version matched."
+            }
+          }
+        },
+        "incompatible-publish-age": {
+          "description": "How to handle versions younger than the minimum publish age. Requires Cargo 1.100+.",
+          "default": "deny",
+          "type": "string",
+          "enum": [
+            "allow",
+            "deny"
+          ]
+        },
+        "feature-unification": {
+          "description": "UNSTABLE: Feature unification scope; requires -Z feature-unification.",
+          "type": "string",
+          "enum": [
+            "package",
+            "selected",
+            "workspace"
+          ]
+        }
+      },
+      "x-taplo": {
+        "links": {
+          "key": "https://doc.rust-lang.org/cargo/reference/config.html#resolver"
+        }
+      },
+      "x-tombi-table-keys-order": {
+        "properties": "schema"
+      }
+    },
+    "sources": {
+      "title": "[source.*]",
+      "description": "Named registry source definitions and source replacement.\nhttps://doc.rust-lang.org/cargo/reference/config.html#source",
+      "examples": [
+        {
+          "crates-io": {
+            "replace-with": "vendored-sources"
+          },
+          "vendored-sources": {
+            "directory": "vendor"
+          }
+        }
+      ],
+      "type": "object",
+      "properties": {
+        "crates-io": {
+          "$ref": "#/$defs/source"
+        }
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/source"
+      },
+      "x-taplo": {
+        "links": {
+          "key": "https://doc.rust-lang.org/cargo/reference/config.html#source"
+        }
+      },
+      "x-tombi-table-keys-order": {
+        "additionalProperties": "ascending"
+      },
+      "x-tombi-additional-key-label": "source"
+    },
+    "source": {
+      "description": "Source definition. At most one source location; crates-io can use its implicit location. Other sources require a location after merging. replace-with redirects the identified source.",
+      "examples": [
+        {
+          "replace-with": "vendored-sources"
+        },
+        {
+          "directory": "vendor"
+        },
+        {
+          "git": "https://example.com/repo.git",
+          "branch": "main"
+        }
+      ],
+      "type": "object",
+      "properties": {
+        "replace-with": {
+          "description": "Replacement source name. The source location still identifies what is replaced.",
+          "examples": [
+            "vendored-sources"
+          ],
+          "type": "string",
+          "minLength": 1
+        },
+        "directory": {
+          "description": "Path to a directory source.\nhttps://doc.rust-lang.org/cargo/reference/config.html#sourcenamedirectory",
+          "examples": [
+            "vendor"
+          ],
+          "type": "string",
+          "minLength": 1
+        },
+        "registry": {
+          "description": "URL of a registry source.\nhttps://doc.rust-lang.org/cargo/reference/config.html#sourcenameregistry",
+          "examples": [
+            "https://example.com/git/index"
+          ],
+          "type": "string",
+          "format": "uri"
+        },
+        "local-registry": {
+          "description": "Path to a local registry source.\nhttps://doc.rust-lang.org/cargo/reference/config.html#sourcenamelocal-registry",
+          "examples": [
+            "local-registry"
+          ],
+          "type": "string",
+          "minLength": 1
+        },
+        "git": {
+          "description": "URL of a git repository source.\nhttps://doc.rust-lang.org/cargo/reference/config.html#sourcenamegit",
+          "examples": [
+            "https://example.com/repo.git"
+          ],
+          "type": "string",
+          "format": "uri"
+        },
+        "branch": {
+          "description": "Git reference selector. Cargo prefers branch, then tag, then rev when multiple are present; otherwise uses the default branch.",
+          "examples": [
+            "main"
+          ],
+          "type": "string",
+          "minLength": 1
+        },
+        "tag": {
+          "description": "Git reference selector. Cargo prefers branch, then tag, then rev when multiple are present; otherwise uses the default branch.",
+          "examples": [
+            "v1.0.0"
+          ],
+          "type": "string",
+          "minLength": 1
+        },
+        "rev": {
+          "description": "Git reference selector. Cargo prefers branch, then tag, then rev when multiple are present; otherwise uses the default branch.",
+          "examples": [
+            "abcdef1234567890"
+          ],
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "allOf": [
+        {
+          "not": {
+            "required": [
+              "local-registry",
+              "registry"
+            ]
+          }
+        },
+        {
+          "not": {
+            "required": [
+              "directory",
+              "registry"
+            ]
+          }
+        },
+        {
+          "not": {
+            "required": [
+              "git",
+              "registry"
+            ]
+          }
+        },
+        {
+          "not": {
+            "required": [
+              "directory",
+              "local-registry"
+            ]
+          }
+        },
+        {
+          "not": {
+            "required": [
+              "git",
+              "local-registry"
+            ]
+          }
+        },
+        {
+          "not": {
+            "required": [
+              "directory",
+              "git"
+            ]
+          }
+        }
+      ],
+      "x-taplo": {
+        "initKeys": [
+          "replace-with"
+        ]
+      },
+      "x-tombi-table-keys-order": {
+        "properties": "schema"
+      }
+    },
+    "targets": {
+      "title": "[target.*]",
+      "description": "Target-specific platform settings. Keys are target triples, cfg expressions, or custom target names.\nhttps://doc.rust-lang.org/cargo/reference/config.html#target",
+      "examples": [
+        {
+          "x86_64-unknown-linux-gnu": {
+            "linker": "clang",
+            "runner": [
+              "qemu-x86_64",
+              "-L",
+              "/usr/x86_64-linux-gnu"
+            ],
+            "rustflags": [
+              "-C",
+              "link-arg=-fuse-ld=lld"
+            ]
+          },
+          "thumbv7m-none-eabi": {
+            "linker": "arm-none-eabi-gcc"
+          }
+        }
+      ],
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/target"
+      },
+      "propertyNames": {
+        "description": "Target triple (e.g. `x86_64-unknown-linux-gnu`), `cfg(...)` expression, or the filename stem of a custom target spec JSON file. Must be non-empty and start with a non-whitespace character.",
+        "type": "string",
+        "minLength": 1,
+        "pattern": "^\\S.*$"
+      },
+      "x-taplo": {
+        "links": {
+          "key": "https://doc.rust-lang.org/cargo/reference/config.html#target"
+        }
+      },
+      "x-tombi-table-keys-order": {
+        "additionalProperties": "ascending"
+      },
+      "x-tombi-additional-key-label": "target"
+    },
+    "hostConfig": {
+      "type": "object",
+      "properties": {
+        "ar": {
+          "description": "DEPRECATED. This option is unused.\nhttps://doc.rust-lang.org/cargo/reference/config.html#targettriplear",
+          "deprecated": true,
+          "type": "string"
+        },
+        "linker": {
+          "description": "Linker passed to rustc for this target.\nhttps://doc.rust-lang.org/cargo/reference/config.html#targettriplelinker",
+          "examples": [
+            "clang",
+            "arm-none-eabi-gcc"
+          ],
+          "type": "string"
+        },
+        "runner": {
+          "$ref": "#/$defs/stringOrStringArray",
+          "description": "Runner command used to execute target binaries.\nhttps://doc.rust-lang.org/cargo/reference/config.html#targettriplerunner"
+        },
+        "rustflags": {
+          "$ref": "#/$defs/stringOrStringArray",
+          "description": "Extra rustc flags for this target.\nhttps://doc.rust-lang.org/cargo/reference/config.html#targettriplerustflags"
+        },
+        "rustdocflags": {
+          "$ref": "#/$defs/stringOrStringArray",
+          "description": "Extra rustdoc flags for this target.\nhttps://doc.rust-lang.org/cargo/reference/config.html#targettriplerustdocflags"
+        }
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/target"
+      },
+      "x-tombi-table-keys-order": {
+        "properties": "schema"
+      }
+    },
+    "target": {
+      "title": "target entry",
+      "description": "Settings applied when building for a single target. The owning key is a target triple (e.g. `x86_64-unknown-linux-gnu`), a `cfg(...)` expression, or a custom JSON target name. Recognised properties configure the linker, runner, and rustc/rustdoc flags; any additional key is treated as a `links` library override (build script metadata).\nhttps://doc.rust-lang.org/cargo/reference/config.html#target",
+      "examples": [
+        {
+          "linker": "clang",
+          "runner": "qemu-x86_64",
+          "rustflags": [
+            "-C",
+            "target-cpu=native"
+          ]
+        },
+        {
+          "runner": [
+            "qemu-arm",
+            "-L",
+            "/usr/arm-linux-gnueabihf"
+          ],
+          "rustdocflags": [
+            "--cfg",
+            "docsrs"
+          ]
+        },
+        {
+          "foo": {
+            "rustc-link-lib": [
+              "foo"
+            ],
+            "rustc-link-search": [
+              "/path/to/foo"
+            ],
+            "rustc-env": {
+              "FOO_SYS_STATIC": "1"
+            },
+            "metadata_version": "1.2.3"
+          }
+        }
+      ],
+      "type": "object",
+      "properties": {
+        "ar": {
+          "description": "DEPRECATED. This option is unused.\nhttps://doc.rust-lang.org/cargo/reference/config.html#targettriplear",
+          "deprecated": true,
+          "type": "string"
+        },
+        "linker": {
+          "description": "Linker passed to rustc for this target.\nhttps://doc.rust-lang.org/cargo/reference/config.html#targettriplelinker",
+          "examples": [
+            "clang",
+            "arm-none-eabi-gcc"
+          ],
+          "type": "string"
+        },
+        "runner": {
+          "$ref": "#/$defs/stringOrStringArray",
+          "description": "Runner command used to execute target binaries.\nhttps://doc.rust-lang.org/cargo/reference/config.html#targettriplerunner"
+        },
+        "rustflags": {
+          "$ref": "#/$defs/stringOrStringArray",
+          "description": "Extra rustc flags for this target.\nhttps://doc.rust-lang.org/cargo/reference/config.html#targettriplerustflags"
+        },
+        "rustdocflags": {
+          "$ref": "#/$defs/stringOrStringArray",
+          "description": "Extra rustdoc flags for this target.\nhttps://doc.rust-lang.org/cargo/reference/config.html#targettriplerustdocflags"
+        }
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/targetLinksOverride"
+      },
+      "x-taplo": {
+        "links": {
+          "key": "https://doc.rust-lang.org/cargo/reference/config.html#target"
+        }
+      },
+      "x-tombi-table-keys-order": {
+        "properties": "schema",
+        "additionalProperties": "ascending"
+      },
+      "x-tombi-additional-key-label": "links"
+    },
+    "targetLinksOverride": {
+      "title": "links library override",
+      "description": "Build script override for a target `links` library. When present, the build script for the named library is skipped and these values are used instead. Arbitrary keys beyond the recognised `rustc-*` set become opaque metadata exposed to dependents as `DEP_<links>_<KEY>` env vars.\nhttps://doc.rust-lang.org/cargo/reference/config.html#targettriplelinks",
+      "examples": [
+        {
+          "rustc-link-lib": [
+            "foo"
+          ],
+          "rustc-link-search": [
+            "/path/to/foo"
+          ],
+          "rustc-env": {
+            "FOO_SYS_STATIC": "1"
+          },
+          "metadata_version": "1.2.3"
+        }
+      ],
+      "type": "object",
+      "properties": {
+        "rustc-link-lib": {
+          "title": "rustc-link-lib",
+          "description": "Libraries to link, equivalent to passing `-l <lib>` to `rustc`. Order is preserved and may affect symbol resolution.",
+          "examples": [
+            [
+              "foo"
+            ]
+          ],
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "rustc-link-search": {
+          "title": "rustc-link-search",
+          "description": "Library search paths, equivalent to passing `-L <path>` to `rustc`. Searched in the listed order.",
+          "examples": [
+            [
+              "/path/to/foo"
+            ]
+          ],
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "rustc-flags": {
+          "title": "rustc-flags",
+          "description": "Extra `rustc` flags. Whitespace-separated string; only `-l` and `-L` flags are accepted.",
+          "examples": [
+            "-L /some/path"
+          ],
+          "type": "string"
+        },
+        "rustc-cfg": {
+          "title": "rustc-cfg",
+          "description": "Custom `--cfg` flags enabled while compiling dependents of this links library. Order is preserved.",
+          "examples": [
+            [
+              "key=\"value\""
+            ]
+          ],
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "rustc-env": {
+          "title": "rustc-env",
+          "description": "Environment variables exposed to `rustc` while compiling dependents of this links library.",
+          "examples": [
+            {
+              "FOO_SYS_STATIC": "1"
+            }
+          ],
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "x-tombi-table-keys-order": {
+            "additionalProperties": "ascending"
+          },
+          "x-tombi-additional-key-label": "variable"
+        },
+        "rustc-cdylib-link-arg": {
+          "title": "rustc-cdylib-link-arg",
+          "description": "Extra link args appended when building a `cdylib` that depends on this links library. Order is preserved (passed to the linker positionally).",
+          "examples": [
+            [
+              "-Wl,--as-needed"
+            ]
+          ],
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "rustc-check-cfg": {
+          "description": "Build-script override for rustc-check-cfg.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "rustc-link-arg": {
+          "description": "Build-script override for rustc-link-arg.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "rustc-link-arg-cdylib": {
+          "description": "Build-script override for rustc-link-arg-cdylib.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "rustc-link-arg-bins": {
+          "description": "Build-script override for rustc-link-arg-bins.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "rustc-link-arg-tests": {
+          "description": "Build-script override for rustc-link-arg-tests.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "rustc-link-arg-benches": {
+          "description": "Build-script override for rustc-link-arg-benches.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "rustc-link-arg-examples": {
+          "description": "Build-script override for rustc-link-arg-examples.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "warning": {
+          "description": "Not supported in build-script overrides.",
+          "not": {}
+        },
+        "rerun-if-changed": {
+          "description": "Not supported in build-script overrides.",
+          "not": {}
+        },
+        "rerun-if-env-changed": {
+          "description": "Not supported in build-script overrides.",
+          "not": {}
+        }
+      },
+      "additionalProperties": {
+        "description": "Build-script metadata value.",
+        "type": "string"
+      },
+      "x-taplo": {
+        "links": {
+          "key": "https://doc.rust-lang.org/cargo/reference/config.html#targettriplelinks"
+        }
+      },
+      "x-tombi-table-keys-order": {
+        "properties": "schema",
+        "additionalProperties": "ascending"
+      },
+      "x-tombi-additional-key-label": "metadata"
+    },
+    "term": {
+      "title": "[term]",
+      "description": "Terminal output and interaction settings.\nhttps://doc.rust-lang.org/cargo/reference/config.html#term",
+      "examples": [
+        {
+          "quiet": false,
+          "verbose": true,
+          "color": "always"
+        },
+        {
+          "unicode": true,
+          "hyperlinks": true,
+          "progress": {
+            "when": "auto",
+            "width": 80,
+            "term-integration": true
+          }
+        }
+      ],
+      "type": "object",
+      "properties": {
+        "quiet": {
+          "description": "Whether Cargo output is quiet.\nhttps://doc.rust-lang.org/cargo/reference/config.html#termquiet",
+          "default": false,
+          "examples": [
+            false,
+            true
+          ],
+          "type": "boolean",
+          "x-taplo": {
+            "docs": {
+              "main": "Controls whether or not log messages are displayed by Cargo.\n\nMutually exclusive with `term.verbose` --- they cannot both be `true`. The `--quiet` CLI flag overrides and forces quiet output; `--verbose` overrides and disables it.\n\nDefault: `false`. Environment: `CARGO_TERM_QUIET`."
+            }
+          }
+        },
+        "verbose": {
+          "description": "Whether Cargo output is verbose.\nhttps://doc.rust-lang.org/cargo/reference/config.html#termverbose",
+          "default": false,
+          "examples": [
+            false,
+            true
+          ],
+          "type": "boolean",
+          "x-taplo": {
+            "docs": {
+              "main": "Controls whether or not extra detailed messages are displayed by Cargo.\n\nMutually exclusive with `term.quiet` --- they cannot both be `true`. The `--verbose` CLI flag overrides and forces verbose output; `--quiet` overrides and disables it.\n\nDefault: `false`. Environment: `CARGO_TERM_VERBOSE`."
+            }
+          }
+        },
+        "color": {
+          "$ref": "#/$defs/terminalWhen",
+          "description": "Whether Cargo colorizes terminal output.\nhttps://doc.rust-lang.org/cargo/reference/config.html#termcolor",
+          "default": "auto",
+          "x-taplo": {
+            "docs": {
+              "main": "Controls whether or not colored output is used in the terminal.\n\n- `\"auto\"` --- automatically detect if color support is available.\n- `\"always\"` --- always display colors.\n- `\"never\"` --- never display colors.\n\nCan be overridden with the `--color` CLI option. Default: `\"auto\"`. Environment: `CARGO_TERM_COLOR`."
+            }
+          }
+        },
+        "hyperlinks": {
+          "description": "Whether Cargo uses hyperlinks in terminal output. Auto-detected when unset.\nhttps://doc.rust-lang.org/cargo/reference/config.html#termhyperlinks",
+          "examples": [
+            true,
+            false
+          ],
+          "type": "boolean",
+          "x-taplo": {
+            "docs": {
+              "main": "Controls whether or not hyperlinks are used in the terminal.\n\nWhen unset, Cargo auto-detects terminal support --- there is no static default. Environment: `CARGO_TERM_HYPERLINKS`."
+            }
+          }
+        },
+        "unicode": {
+          "description": "Whether Cargo can render non-ASCII Unicode characters. Auto-detected when unset.\nhttps://doc.rust-lang.org/cargo/reference/config.html#termunicode",
+          "examples": [
+            true,
+            false
+          ],
+          "type": "boolean",
+          "x-taplo": {
+            "docs": {
+              "main": "Controls whether output can be rendered using non-ASCII Unicode characters.\n\nWhen unset, Cargo auto-detects terminal support --- there is no static default. Environment: `CARGO_TERM_UNICODE`."
+            }
+          }
+        },
+        "progress": {
+          "description": "Progress bar configuration.\nhttps://doc.rust-lang.org/cargo/reference/config.html#termprogresswhen",
+          "examples": [
+            {
+              "when": "auto",
+              "width": 80,
+              "term-integration": true
+            },
+            {
+              "when": "never"
+            }
+          ],
+          "type": "object",
+          "properties": {
+            "when": {
+              "$ref": "#/$defs/terminalWhen",
+              "description": "Whether Cargo shows a progress bar.\nhttps://doc.rust-lang.org/cargo/reference/config.html#termprogresswhen",
+              "default": "auto",
+              "x-taplo": {
+                "docs": {
+                  "main": "Controls whether or not the progress bar is shown in the terminal.\n\n- `\"auto\"` --- intelligently guess whether to show the progress bar.\n- `\"always\"` --- always show the progress bar.\n- `\"never\"` --- never show the progress bar; `term.progress.width` then has no effect.\n\nDefault: `\"auto\"`. Environment: `CARGO_TERM_PROGRESS_WHEN`."
+                }
+              }
+            },
+            "width": {
+              "description": "Progress width in columns (non-negative). Required when when = \"always\".",
+              "examples": [
+                80,
+                100,
+                120
+              ],
+              "type": "integer",
+              "minimum": 0
+            },
+            "term-integration": {
+              "description": "Whether Cargo reports progress to the terminal emulator (e.g. taskbar). Auto-detected when unset.\nhttps://doc.rust-lang.org/cargo/reference/config.html#termprogressterm-integration",
+              "examples": [
+                true,
+                false
+              ],
+              "type": "boolean",
+              "x-taplo": {
+                "docs": {
+                  "main": "Reports progress to the terminal emulator for display in places like the taskbar.\n\nWhen unset, Cargo auto-detects terminal support --- there is no static default. Environment: `CARGO_TERM_PROGRESS_TERM_INTEGRATION`."
+                }
+              }
+            }
+          },
+          "allOf": [
+            {
+              "if": {
+                "required": [
+                  "when"
+                ],
+                "properties": {
+                  "when": {
+                    "const": "always"
+                  }
+                }
+              },
+              "then": {
+                "required": [
+                  "width"
+                ]
+              }
+            }
+          ],
+          "x-taplo": {
+            "links": {
+              "key": "https://doc.rust-lang.org/cargo/reference/config.html#termprogresswhen"
+            }
+          },
+          "x-tombi-table-keys-order": {
+            "properties": "schema"
+          }
+        }
+      },
+      "not": {
+        "required": [
+          "quiet",
+          "verbose"
+        ],
+        "properties": {
+          "quiet": {
+            "const": true
+          },
+          "verbose": {
+            "const": true
+          }
+        }
+      },
+      "x-taplo": {
+        "links": {
+          "key": "https://doc.rust-lang.org/cargo/reference/config.html#term"
+        }
+      },
+      "x-tombi-table-keys-order": {
+        "properties": "schema"
+      }
+    },
+    "terminalWhen": {
+      "examples": [
+        "auto",
+        "always",
+        "never"
+      ],
+      "type": "string",
+      "enum": [
+        "auto",
+        "always",
+        "never"
+      ],
+      "x-taplo": {
+        "docs": {
+          "enumValues": [
+            "Automatically detect behavior.",
+            "Always enable behavior.",
+            "Never enable behavior."
+          ]
+        }
+      },
+      "x-intellij-enum-metadata": {
+        "always": {
+          "description": "Always enable behavior."
+        },
+        "auto": {
+          "description": "Automatically detect behavior."
+        },
+        "never": {
+          "description": "Never enable behavior."
+        }
+      }
+    }
+  },
+  "title": "cargo configuration",
+  "description": "Bundled Cargo configuration schema (auto-generated by cargo-schema-bundle from cargo-config.schema.json + sibling section schemas). Edit the split files, then re-run cargo-schema-bundle.\nhttps://doc.rust-lang.org/cargo/reference/config.html",
+  "examples": [
+    {
+      "build": {
+        "jobs": 4,
+        "target": "x86_64-unknown-linux-gnu",
+        "rustflags": [
+          "-C",
+          "target-cpu=native"
+        ]
+      },
+      "term": {
+        "color": "auto",
+        "progress": {
+          "when": "auto"
+        }
+      }
+    },
+    {
+      "include": [
+        "shared.toml",
+        {
+          "path": "local-overrides.toml",
+          "optional": true
+        }
+      ],
+      "env": {
+        "OPENSSL_DIR": {
+          "value": "vendor/openssl",
+          "relative": true
+        },
+        "RUST_LOG": "info"
+      }
+    },
+    {
+      "registries": {
+        "my-registry": {
+          "index": "https://example.com/git/index",
+          "credential-provider": "cargo:token"
+        },
+        "crates-io": {
+          "protocol": "sparse"
+        }
+      },
+      "registry": {
+        "default": "my-registry",
+        "global-credential-providers": [
+          "cargo:token"
+        ]
+      }
+    },
+    {
+      "target": {
+        "x86_64-unknown-linux-gnu": {
+          "linker": "clang",
+          "runner": [
+            "qemu-x86_64",
+            "-L",
+            "/usr/x86_64-linux-gnu"
+          ],
+          "rustflags": [
+            "-C",
+            "link-arg=-fuse-ld=lld"
+          ]
+        },
+        "thumbv7m-none-eabi": {
+          "linker": "arm-none-eabi-gcc"
+        }
+      }
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "include": {
+      "description": "Additional Cargo configuration files to include. Paths are relative to the including configuration file and must end with .toml.\nhttps://doc.rust-lang.org/cargo/reference/config.html#include",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/includeEntry"
+      }
+    },
+    "paths": {
+      "description": "Local package paths used as dependency overrides.\nhttps://doc.rust-lang.org/cargo/reference/config.html#paths",
+      "examples": [
+        [
+          "../local-crate"
+        ],
+        [
+          "/path/to/override"
+        ]
+      ],
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "alias": {
+      "$ref": "#/$defs/alias"
+    },
+    "build": {
+      "$ref": "#/$defs/build"
+    },
+    "cache": {
+      "$ref": "#/$defs/cache"
+    },
+    "cargo-new": {
+      "$ref": "#/$defs/cargoNew"
+    },
+    "credential-alias": {
+      "$ref": "#/$defs/credentialAlias"
+    },
+    "doc": {
+      "$ref": "#/$defs/doc"
+    },
+    "env": {
+      "$ref": "#/$defs/env"
+    },
+    "future-incompat-report": {
+      "$ref": "#/$defs/futureIncompatReport"
+    },
+    "http": {
+      "$ref": "#/$defs/http"
+    },
+    "install": {
+      "$ref": "#/$defs/install"
+    },
+    "net": {
+      "$ref": "#/$defs/net"
+    },
+    "patch": {
+      "$ref": "#/$defs/patch"
+    },
+    "profile": {
+      "$ref": "#/$defs/profiles"
+    },
+    "registries": {
+      "$ref": "#/$defs/registries"
+    },
+    "registry": {
+      "$ref": "#/$defs/registry"
+    },
+    "resolver": {
+      "$ref": "#/$defs/resolver"
+    },
+    "source": {
+      "$ref": "#/$defs/sources"
+    },
+    "target": {
+      "$ref": "#/$defs/targets"
+    },
+    "term": {
+      "$ref": "#/$defs/term"
+    },
+    "target-applies-to-host": {
+      "description": "UNSTABLE: Apply target settings to host builds; requires -Z target-applies-to-host.",
+      "type": "boolean"
+    },
+    "path-bases": {
+      "description": "UNSTABLE: Named path bases; requires path-bases support.",
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "x-tombi-table-keys-order": {
+        "additionalProperties": "ascending"
+      }
+    },
+    "publish": {
+      "description": "UNSTABLE: Publish settings; timeout requires -Z publish-timeout.",
+      "type": "object",
+      "properties": {
+        "timeout": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "x-tombi-table-keys-order": {
+        "properties": "schema"
+      }
+    },
+    "host": {
+      "$ref": "#/$defs/hostConfig",
+      "description": "UNSTABLE: Host platform overrides; requires -Z host-config and -Z target-applies-to-host."
+    },
+    "unstable": {
+      "description": "Nightly feature switches. Stable Cargo does not enable these. Pinned to cc5596f058e623d22be718adf541a9bd766d9417",
+      "type": "object",
+      "properties": {
+        "allow-features": {
+          "description": "UNSTABLE: allow-features. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "embed-metadata": {
+          "description": "UNSTABLE: embed-metadata. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "type": "boolean"
+        },
+        "print-im-a-teapot": {
+          "description": "UNSTABLE: print-im-a-teapot. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "type": "boolean"
+        },
+        "advanced-env": {
+          "description": "UNSTABLE: advanced-env. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "type": "boolean"
+        },
+        "any-build-script-metadata": {
+          "description": "UNSTABLE: any-build-script-metadata. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "type": "boolean"
+        },
+        "asymmetric-token": {
+          "description": "UNSTABLE: asymmetric-token. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "type": "boolean"
+        },
+        "avoid-dev-deps": {
+          "description": "UNSTABLE: avoid-dev-deps. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "type": "boolean"
+        },
+        "binary-dep-depinfo": {
+          "description": "UNSTABLE: binary-dep-depinfo. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "type": "boolean"
+        },
+        "bindeps": {
+          "description": "UNSTABLE: bindeps. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "type": "boolean"
+        },
+        "build-analysis": {
+          "description": "UNSTABLE: build-analysis. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "type": "boolean"
+        },
+        "build-dir-new-layout": {
+          "description": "UNSTABLE: build-dir-new-layout. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "type": "boolean"
+        },
+        "build-std": {
+          "description": "UNSTABLE: build-std. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "build-std-features": {
+          "description": "UNSTABLE: build-std-features. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "checksum-freshness": {
+          "description": "UNSTABLE: checksum-freshness. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "type": "boolean"
+        },
+        "codegen-backend": {
+          "description": "UNSTABLE: codegen-backend. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "type": "boolean"
+        },
+        "direct-minimal-versions": {
+          "description": "UNSTABLE: direct-minimal-versions. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "type": "boolean"
+        },
+        "dual-proc-macros": {
+          "description": "UNSTABLE: dual-proc-macros. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "type": "boolean"
+        },
+        "feature-unification": {
+          "description": "UNSTABLE: feature-unification. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "type": "boolean"
+        },
+        "features": {
+          "description": "UNSTABLE: features. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "fine-grain-locking": {
+          "description": "UNSTABLE: fine-grain-locking. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "type": "boolean"
+        },
+        "fix-edition": {
+          "description": "UNSTABLE: fix-edition. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "oneOf": [
+            {
+              "type": "object",
+              "required": [
+                "Start"
+              ],
+              "properties": {
+                "Start": {
+                  "enum": [
+                    "2015",
+                    "2018",
+                    "2021",
+                    "2024"
+                  ]
+                }
+              },
+              "additionalProperties": false,
+              "x-tombi-table-keys-order": {
+                "properties": "schema"
+              }
+            },
+            {
+              "type": "object",
+              "required": [
+                "End"
+              ],
+              "properties": {
+                "End": {
+                  "type": "object",
+                  "required": [
+                    "initial",
+                    "next"
+                  ],
+                  "properties": {
+                    "initial": {
+                      "enum": [
+                        "2015",
+                        "2018",
+                        "2021",
+                        "2024"
+                      ]
+                    },
+                    "next": {
+                      "enum": [
+                        "2015",
+                        "2018",
+                        "2021",
+                        "2024"
+                      ]
+                    }
+                  },
+                  "x-tombi-table-keys-order": {
+                    "properties": "schema"
+                  }
+                }
+              },
+              "additionalProperties": false,
+              "x-tombi-table-keys-order": {
+                "properties": "schema"
+              }
+            }
+          ]
+        },
+        "gc": {
+          "description": "UNSTABLE: gc. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "type": "boolean"
+        },
+        "git": {
+          "description": "UNSTABLE: git. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "shallow_index": {
+                  "type": "boolean"
+                },
+                "shallow_deps": {
+                  "type": "boolean"
+                }
+              },
+              "x-tombi-table-keys-order": {
+                "properties": "schema"
+              }
+            }
+          ]
+        },
+        "gitoxide": {
+          "description": "UNSTABLE: gitoxide. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "fetch": {
+                  "type": "boolean"
+                },
+                "checkout": {
+                  "type": "boolean"
+                }
+              },
+              "x-tombi-table-keys-order": {
+                "properties": "schema"
+              }
+            }
+          ]
+        },
+        "hint-msrv": {
+          "description": "UNSTABLE: hint-msrv. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "type": "boolean"
+        },
+        "host-config": {
+          "description": "UNSTABLE: host-config. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "type": "boolean"
+        },
+        "json-target-spec": {
+          "description": "UNSTABLE: json-target-spec. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "type": "boolean"
+        },
+        "minimal-versions": {
+          "description": "UNSTABLE: minimal-versions. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "type": "boolean"
+        },
+        "msrv-policy": {
+          "description": "UNSTABLE: msrv-policy. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "type": "boolean"
+        },
+        "mtime-on-use": {
+          "description": "UNSTABLE: mtime-on-use. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "type": "boolean"
+        },
+        "next-lockfile-bump": {
+          "description": "UNSTABLE: next-lockfile-bump. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "type": "boolean"
+        },
+        "no-index-update": {
+          "description": "UNSTABLE: no-index-update. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "type": "boolean"
+        },
+        "panic-abort-tests": {
+          "description": "UNSTABLE: panic-abort-tests. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "type": "boolean"
+        },
+        "panic-immediate-abort": {
+          "description": "UNSTABLE: panic-immediate-abort. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "type": "boolean"
+        },
+        "profile-hint-mostly-unused": {
+          "description": "UNSTABLE: profile-hint-mostly-unused. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "type": "boolean"
+        },
+        "profile-rustflags": {
+          "description": "UNSTABLE: profile-rustflags. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "type": "boolean"
+        },
+        "public-dependency": {
+          "description": "UNSTABLE: public-dependency. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "type": "boolean"
+        },
+        "publish-timeout": {
+          "description": "UNSTABLE: publish-timeout. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "type": "boolean"
+        },
+        "root-dir": {
+          "description": "UNSTABLE: root-dir. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "type": "string"
+        },
+        "rustc-unicode": {
+          "description": "UNSTABLE: rustc-unicode. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "type": "boolean"
+        },
+        "rustdoc-depinfo": {
+          "description": "UNSTABLE: rustdoc-depinfo. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "type": "boolean"
+        },
+        "rustdoc-map": {
+          "description": "UNSTABLE: rustdoc-map. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "type": "boolean"
+        },
+        "rustdoc-mergeable-info": {
+          "description": "UNSTABLE: rustdoc-mergeable-info. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "type": "boolean"
+        },
+        "rustdoc-scrape-examples": {
+          "description": "UNSTABLE: rustdoc-scrape-examples. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "type": "boolean"
+        },
+        "sbom": {
+          "description": "UNSTABLE: sbom. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "type": "boolean"
+        },
+        "script": {
+          "description": "UNSTABLE: script. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "type": "boolean"
+        },
+        "section-timings": {
+          "description": "UNSTABLE: section-timings. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "type": "boolean"
+        },
+        "separate-nightlies": {
+          "description": "UNSTABLE: separate-nightlies. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "type": "boolean"
+        },
+        "skip-rustdoc-fingerprint": {
+          "description": "UNSTABLE: skip-rustdoc-fingerprint. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "type": "boolean"
+        },
+        "target-applies-to-host": {
+          "description": "UNSTABLE: target-applies-to-host. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "type": "boolean"
+        },
+        "trim-paths": {
+          "description": "UNSTABLE: trim-paths. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "type": "boolean"
+        },
+        "unstable-options": {
+          "description": "UNSTABLE: unstable-options. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "type": "boolean"
+        }
+      },
+      "x-tombi-table-keys-order": {
+        "properties": "ascending",
+        "additionalProperties": "ascending"
+      }
+    }
+  },
+  "x-taplo": {
+    "initKeys": [
+      "build",
+      "target",
+      "registries"
+    ],
+    "links": {
+      "key": "https://doc.rust-lang.org/cargo/reference/config.html"
+    }
+  },
+  "x-tombi-toml-version": "v1.0.0",
+  "x-tombi-table-keys-order": {
+    "properties": "schema"
+  },
+  "x-tombi-string-formats": [
+    "uri",
+    "uri-reference"
+  ]
+}
