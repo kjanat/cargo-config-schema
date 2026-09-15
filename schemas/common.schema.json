@@ -3,7 +3,7 @@
   "$defs": {
     "credentialProvider": {
       "$ref": "#/$defs/stringOrStringArray",
-      "description": "Credential provider name, command string, or command with arguments.\nhttps://doc.rust-lang.org/cargo/reference/registry-authentication.html",
+      "description": "Credential provider name, command string, or command with arguments.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/registry-authentication.html)",
       "examples": [
         "cargo:token",
         [

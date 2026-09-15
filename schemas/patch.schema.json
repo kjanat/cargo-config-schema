@@ -22,7 +22,7 @@
       ],
       "properties": {
         "version": {
-          "description": "Semver requirement matched against the patched package.\nhttps://doc.rust-lang.org/cargo/reference/specifying-dependencies.html",
+          "description": "Semver requirement matched against the patched package.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/specifying-dependencies.html)",
           "examples": [
             "1.0",
             "^1.2.3",
@@ -31,14 +31,14 @@
           "type": "string"
         },
         "path": {
-          "description": "Filesystem path to the replacement crate. Relative paths resolve relative to the config file containing this `[patch]` section.\nhttps://doc.rust-lang.org/cargo/reference/config.html#patch",
+          "description": "Filesystem path to the replacement crate. Relative paths resolve relative to the config file containing this `[patch]` section.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#patch)",
           "examples": [
             "../foo"
           ],
           "type": "string"
         },
         "git": {
-          "description": "Git repository URL providing the replacement crate.\nhttps://doc.rust-lang.org/cargo/reference/specifying-dependencies.html#specifying-dependencies-from-git-repositories",
+          "description": "Git repository URL providing the replacement crate.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/specifying-dependencies.html#specifying-dependencies-from-git-repositories)",
           "examples": [
             "https://github.com/serde-rs/serde.git"
           ],
@@ -68,7 +68,7 @@
           "type": "string"
         },
         "package": {
-          "description": "Real package name when the patch entry's key is a rename. Lets you patch a crate while referring to it under a different name in your manifest.\nhttps://doc.rust-lang.org/cargo/reference/specifying-dependencies.html#renaming-dependencies-in-cargotoml",
+          "description": "Real package name when the patch entry's key is a rename. Lets you patch a crate while referring to it under a different name in your manifest.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/specifying-dependencies.html#renaming-dependencies-in-cargotoml)",
           "type": "string"
         },
         "registry": {
@@ -151,7 +151,7 @@
     }
   },
   "title": "[patch]",
-  "description": "Dependency patch overrides. Outer key is the registry name being patched (typically `crates-io`, or a name from `[registries]`); inner key is the package name being replaced; innermost table is the replacement dependency specification, using the same format as Cargo.toml `[patch]`.\nhttps://doc.rust-lang.org/cargo/reference/config.html#patch",
+  "description": "Dependency patch overrides. Outer key is the registry name being patched (typically `crates-io`, or a name from `[registries]`); inner key is the package name being replaced; innermost table is the replacement dependency specification, using the same format as Cargo.toml `[patch]`.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#patch)",
   "examples": [
     {
       "crates-io": {
@@ -167,7 +167,7 @@
   ],
   "type": "object",
   "additionalProperties": {
-    "description": "Patches keyed by registry name. The conventional key is `crates-io`; user-defined registry names from `[registries]` are also valid.\nhttps://doc.rust-lang.org/cargo/reference/overriding-dependencies.html#the-patch-section",
+    "description": "Patches keyed by registry name. The conventional key is `crates-io`; user-defined registry names from `[registries]` are also valid.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/overriding-dependencies.html#the-patch-section)",
     "type": "object",
     "additionalProperties": {
       "$ref": "#/$defs/dep-spec"

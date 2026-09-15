@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$defs": {
     "buildOverride": {
-      "description": "Override profile settings for build scripts, proc-macros, and their dependencies. Accepts the same keys as a normal profile (excluding nested `package` and `build-override`).\nhttps://doc.rust-lang.org/cargo/reference/profiles.html#overrides",
+      "description": "Override profile settings for build scripts, proc-macros, and their dependencies. Accepts the same keys as a normal profile (excluding nested `package` and `build-override`).\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/profiles.html#overrides)",
       "examples": [
         {
           "opt-level": 0,
@@ -89,7 +89,7 @@
       }
     },
     "builtinProfile": {
-      "description": "Settings for one of the four built-in Cargo profiles. Cargo errors out if `inherits` is set on a built-in profile.\nhttps://doc.rust-lang.org/cargo/reference/profiles.html",
+      "description": "Settings for one of the four built-in Cargo profiles. Cargo errors out if `inherits` is set on a built-in profile.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/profiles.html)",
       "type": "object",
       "properties": {
         "opt-level": {
@@ -181,11 +181,11 @@
       "minimum": 1
     },
     "customProfile": {
-      "description": "Settings for a user-defined Cargo profile. Custom profiles must declare `inherits` naming an existing (built-in or previously-defined) profile.\nhttps://doc.rust-lang.org/cargo/reference/profiles.html#custom-profiles",
+      "description": "Settings for a user-defined Cargo profile. Custom profiles must declare `inherits` naming an existing (built-in or previously-defined) profile.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/profiles.html#custom-profiles)",
       "type": "object",
       "properties": {
         "inherits": {
-          "description": "Name of the profile this one inherits from. Required for every custom profile. The four built-ins (`dev`, `release`, `test`, `bench`) are always valid; you may also inherit from another custom profile.\nhttps://doc.rust-lang.org/cargo/reference/profiles.html#custom-profiles",
+          "description": "Name of the profile this one inherits from. Required for every custom profile. The four built-ins (`dev`, `release`, `test`, `bench`) are always valid; you may also inherit from another custom profile.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/profiles.html#custom-profiles)",
           "examples": [
             "dev",
             "release",
@@ -282,7 +282,7 @@
     },
     "debugAssertions": {
       "title": "debug-assertions",
-      "description": "Whether `debug_assert!` and related checks are compiled in.\nDefaults: `true` for `dev`/`test`, `false` for `release`/`bench`.\nhttps://doc.rust-lang.org/cargo/reference/profiles.html#debug-assertions",
+      "description": "Whether `debug_assert!` and related checks are compiled in.\nDefaults: `true` for `dev`/`test`, `false` for `release`/`bench`.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/profiles.html#debug-assertions)",
       "examples": [
         true,
         false
@@ -344,7 +344,7 @@
     },
     "incremental": {
       "title": "incremental",
-      "description": "Whether incremental compilation is enabled. May be overridden by the `CARGO_INCREMENTAL` env var or `build.incremental`.\nDefaults: `true` for `dev`/`test`, `false` for `release`/`bench`.\nhttps://doc.rust-lang.org/cargo/reference/profiles.html#incremental",
+      "description": "Whether incremental compilation is enabled. May be overridden by the `CARGO_INCREMENTAL` env var or `build.incremental`.\nDefaults: `true` for `dev`/`test`, `false` for `release`/`bench`.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/profiles.html#incremental)",
       "examples": [
         true,
         false
@@ -353,7 +353,7 @@
     },
     "lto": {
       "title": "lto",
-      "description": "Link-time optimization. `false` disables LTO with the local ThinLTO equivalent; `true`/`\"fat\"` performs fat LTO over the full dependency graph; `\"thin\"` is faster cross-crate ThinLTO; `\"off\"` disables LTO entirely (including local ThinLTO).\nDefault: `false`.\nhttps://doc.rust-lang.org/cargo/reference/profiles.html#lto",
+      "description": "Link-time optimization. `false` disables LTO with the local ThinLTO equivalent; `true`/`\"fat\"` performs fat LTO over the full dependency graph; `\"thin\"` is faster cross-crate ThinLTO; `\"off\"` disables LTO entirely (including local ThinLTO).\nDefault: `false`.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/profiles.html#lto)",
       "examples": [
         true,
         false,
@@ -397,7 +397,7 @@
     },
     "optLevel": {
       "title": "opt-level",
-      "description": "Optimization level. Integers `0`-`3` set increasing optimization; `\"s\"` optimizes for binary size; `\"z\"` optimizes for size while disabling loop vectorization.\nDefaults: `0` for `dev`/`test`, `3` for `release`/`bench`.\nhttps://doc.rust-lang.org/cargo/reference/profiles.html#opt-level",
+      "description": "Optimization level. Integers `0`-`3` set increasing optimization; `\"s\"` optimizes for binary size; `\"z\"` optimizes for size while disabling loop vectorization.\nDefaults: `0` for `dev`/`test`, `3` for `release`/`bench`.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/profiles.html#opt-level)",
       "examples": [
         0,
         1,
@@ -439,7 +439,7 @@
     },
     "overflowChecks": {
       "title": "overflow-checks",
-      "description": "Whether runtime integer overflow checks are emitted.\nDefaults: `true` for `dev`/`test`, `false` for `release`/`bench`.\nhttps://doc.rust-lang.org/cargo/reference/profiles.html#overflow-checks",
+      "description": "Whether runtime integer overflow checks are emitted.\nDefaults: `true` for `dev`/`test`, `false` for `release`/`bench`.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/profiles.html#overflow-checks)",
       "examples": [
         true,
         false
@@ -447,7 +447,7 @@
       "type": "boolean"
     },
     "packageOverrides": {
-      "description": "Per-package profile overrides. Each key is a package name (or `\"*\"` for all dependencies, or a [`PackageId` spec](https://doc.rust-lang.org/cargo/reference/pkgid-spec.html) like `\"serde@1.0.0\"`).\nhttps://doc.rust-lang.org/cargo/reference/profiles.html#overrides",
+      "description": "Per-package profile overrides. Each key is a package name (or `\"*\"` for all dependencies, or a [`PackageId` spec](https://doc.rust-lang.org/cargo/reference/pkgid-spec.html) like `\"serde@1.0.0\"`).\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/profiles.html#overrides)",
       "examples": [
         {
           "image": {
@@ -503,7 +503,7 @@
       }
     },
     "profilePackageSettings": {
-      "description": "Per-package profile override. Cargo does not support `panic`, `lto`, or `rpath` here, and nested `build-override`/`package` are not allowed.\nhttps://doc.rust-lang.org/cargo/reference/profiles.html#overrides",
+      "description": "Per-package profile override. Cargo does not support `panic`, `lto`, or `rpath` here, and nested `build-override`/`package` are not allowed.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/profiles.html#overrides)",
       "examples": [
         {
           "opt-level": 3,
@@ -592,7 +592,7 @@
     },
     "rpath": {
       "title": "rpath",
-      "description": "Whether the compiler embeds an `rpath` into the final binary.\nDefault: `false`.\nhttps://doc.rust-lang.org/cargo/reference/profiles.html#rpath",
+      "description": "Whether the compiler embeds an `rpath` into the final binary.\nDefault: `false`.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/profiles.html#rpath)",
       "examples": [
         true,
         false
@@ -601,7 +601,7 @@
     },
     "splitDebuginfo": {
       "title": "split-debuginfo",
-      "description": "Whether and how debug information is split out of the main executable.\nPlatform defaults: `\"unpacked\"` on macOS, `\"packed\"` on Windows MSVC, `\"off\"` elsewhere.\nhttps://doc.rust-lang.org/cargo/reference/profiles.html#split-debuginfo",
+      "description": "Whether and how debug information is split out of the main executable.\nPlatform defaults: `\"unpacked\"` on macOS, `\"packed\"` on Windows MSVC, `\"off\"` elsewhere.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/profiles.html#split-debuginfo)",
       "examples": [
         "off",
         "packed",
@@ -636,7 +636,7 @@
     },
     "strip": {
       "title": "strip",
-      "description": "Whether to strip symbols and/or debug info from the final binary. `true` is equivalent to `\"symbols\"`; `false` to `\"none\"`.\nDefault: `\"none\"`.\nhttps://doc.rust-lang.org/cargo/reference/profiles.html#strip",
+      "description": "Whether to strip symbols and/or debug info from the final binary. `true` is equivalent to `\"symbols\"`; `false` to `\"none\"`.\nDefault: `\"none\"`.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/profiles.html#strip)",
       "examples": [
         true,
         false,
@@ -680,7 +680,7 @@
     }
   },
   "title": "[profile.*]",
-  "description": "Profile configuration overlays workspace/manifest profiles. Custom profiles require inherits after merging, but a configuration overlay may omit it. https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/profiles.rs",
+  "description": "Profile configuration overlays workspace/manifest profiles. Custom profiles require inherits after merging, but a configuration overlay may omit it.\n\n[Cargo source](https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/profiles.rs)",
   "examples": [
     {
       "release": {
@@ -706,19 +706,19 @@
   "properties": {
     "dev": {
       "$ref": "#/$defs/builtinProfile",
-      "description": "Built-in `dev` profile (used by `cargo build` and `cargo run`).\nDefaults: `opt-level = 0`, `debug = true`, `debug-assertions = true`, `overflow-checks = true`, `lto = false`, `panic = \"unwind\"`, `incremental = true`, `codegen-units = 256`, `rpath = false`.\nhttps://doc.rust-lang.org/cargo/reference/profiles.html#dev"
+      "description": "Built-in `dev` profile (used by `cargo build` and `cargo run`).\nDefaults: `opt-level = 0`, `debug = true`, `debug-assertions = true`, `overflow-checks = true`, `lto = false`, `panic = \"unwind\"`, `incremental = true`, `codegen-units = 256`, `rpath = false`.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/profiles.html#dev)"
     },
     "release": {
       "$ref": "#/$defs/builtinProfile",
-      "description": "Built-in `release` profile (used by `cargo build --release`, `cargo install`).\nDefaults: `opt-level = 3`, `debug = false`, `debug-assertions = false`, `overflow-checks = false`, `lto = false`, `panic = \"unwind\"`, `incremental = false`, `codegen-units = 16`, `rpath = false`.\nhttps://doc.rust-lang.org/cargo/reference/profiles.html#release"
+      "description": "Built-in `release` profile (used by `cargo build --release`, `cargo install`).\nDefaults: `opt-level = 3`, `debug = false`, `debug-assertions = false`, `overflow-checks = false`, `lto = false`, `panic = \"unwind\"`, `incremental = false`, `codegen-units = 16`, `rpath = false`.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/profiles.html#release)"
     },
     "test": {
       "$ref": "#/$defs/builtinProfile",
-      "description": "Built-in `test` profile (used by `cargo test`). Inherits from `dev`.\nhttps://doc.rust-lang.org/cargo/reference/profiles.html#test"
+      "description": "Built-in `test` profile (used by `cargo test`). Inherits from `dev`.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/profiles.html#test)"
     },
     "bench": {
       "$ref": "#/$defs/builtinProfile",
-      "description": "Built-in `bench` profile (used by `cargo bench`). Inherits from `release`.\nhttps://doc.rust-lang.org/cargo/reference/profiles.html#bench"
+      "description": "Built-in `bench` profile (used by `cargo bench`). Inherits from `release`.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/profiles.html#bench)"
     }
   },
   "additionalProperties": {

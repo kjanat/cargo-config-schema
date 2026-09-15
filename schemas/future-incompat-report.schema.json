@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "[future-incompat-report]",
-  "description": "Settings for future incompatibility reports.\nhttps://doc.rust-lang.org/cargo/reference/config.html#future-incompat-report",
+  "description": "Settings for future incompatibility reports.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#future-incompat-report)",
   "examples": [
     {
       "frequency": "always"
@@ -13,7 +13,7 @@
   "type": "object",
   "properties": {
     "frequency": {
-      "description": "How often Cargo displays future incompatibility report notifications.\nhttps://doc.rust-lang.org/cargo/reference/config.html#future-incompat-reportfrequency",
+      "description": "How often Cargo displays future incompatibility report notifications.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#future-incompat-reportfrequency)",
       "default": "always",
       "examples": [
         "always",

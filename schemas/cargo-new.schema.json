@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "[cargo-new]",
-  "description": "Defaults for cargo new.\nhttps://doc.rust-lang.org/cargo/reference/config.html#cargo-new",
+  "description": "Defaults for cargo new.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#cargo-new)",
   "examples": [
     {
       "vcs": "git"
@@ -13,17 +13,17 @@
   "type": "object",
   "properties": {
     "name": {
-      "description": "DEPRECATED. This option is unused.\nhttps://doc.rust-lang.org/cargo/reference/config.html#cargo-newname",
+      "description": "DEPRECATED. This option is unused.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#cargo-newname)",
       "deprecated": true,
       "type": "string"
     },
     "email": {
-      "description": "DEPRECATED. This option is unused.\nhttps://doc.rust-lang.org/cargo/reference/config.html#cargo-newemail",
+      "description": "DEPRECATED. This option is unused.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#cargo-newemail)",
       "deprecated": true,
       "type": "string"
     },
     "vcs": {
-      "description": "Source control system used when initializing a new repository.\nDefaults to `git`, or `none` when run inside an existing VCS repository. Overridable via `cargo new --vcs`.\nEnvironment: `CARGO_CARGO_NEW_VCS`.\nhttps://doc.rust-lang.org/cargo/reference/config.html#cargo-newvcs",
+      "description": "Source control system used when initializing a new repository.\nDefaults to `git`, or `none` when run inside an existing VCS repository. Overridable via `cargo new --vcs`.\nEnvironment: `CARGO_CARGO_NEW_VCS`.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#cargo-newvcs)",
       "default": "git",
       "examples": [
         "git",

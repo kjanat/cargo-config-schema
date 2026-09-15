@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "[build]",
-  "description": "Build-time operations and compiler settings.\nhttps://doc.rust-lang.org/cargo/reference/config.html#build",
+  "description": "Build-time operations and compiler settings.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#build)",
   "examples": [
     {
       "jobs": 8,
@@ -24,7 +24,7 @@
   "type": "object",
   "properties": {
     "warnings": {
-      "description": "Adjust the effective level of lint warnings for local packages. MSRV: respected as of Rust 1.97.\nhttps://doc.rust-lang.org/cargo/reference/config.html#buildwarnings",
+      "description": "Adjust the effective level of lint warnings for local packages. MSRV: respected as of Rust 1.97.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#buildwarnings)",
       "default": "warn",
       "examples": [
         "warn",
@@ -62,7 +62,7 @@
       }
     },
     "jobs": {
-      "description": "Maximum number of compiler processes to run in parallel. Negative values are relative to the number of logical CPUs. The string \"default\" resets to Cargo defaults. Defaults to the number of logical CPUs.\nhttps://doc.rust-lang.org/cargo/reference/config.html#buildjobs",
+      "description": "Maximum number of compiler processes to run in parallel. Negative values are relative to the number of logical CPUs. The string \"default\" resets to Cargo defaults. Defaults to the number of logical CPUs.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#buildjobs)",
       "examples": [
         8,
         -1,
@@ -88,7 +88,7 @@
       }
     },
     "rustc": {
-      "description": "Executable to use for rustc.\nhttps://doc.rust-lang.org/cargo/reference/config.html#buildrustc",
+      "description": "Executable to use for rustc.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#buildrustc)",
       "default": "rustc",
       "examples": [
         "rustc",
@@ -127,7 +127,7 @@
       }
     },
     "rustdoc": {
-      "description": "Executable to use for rustdoc.\nhttps://doc.rust-lang.org/cargo/reference/config.html#buildrustdoc",
+      "description": "Executable to use for rustdoc.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#buildrustdoc)",
       "default": "rustdoc",
       "examples": [
         "rustdoc"
@@ -141,7 +141,7 @@
       }
     },
     "target": {
-      "description": "Default target platform triple, custom target spec path, \"host-tuple\", or list of targets. Defaults to the host platform when unset.\nhttps://doc.rust-lang.org/cargo/reference/config.html#buildtarget",
+      "description": "Default target platform triple, custom target spec path, \"host-tuple\", or list of targets. Defaults to the host platform when unset.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#buildtarget)",
       "examples": [
         "x86_64-unknown-linux-gnu",
         "host-tuple",
@@ -171,7 +171,7 @@
       }
     },
     "target-dir": {
-      "description": "Directory where all compiler output is placed. Defaults to a directory named `target` at the workspace root.\nhttps://doc.rust-lang.org/cargo/reference/config.html#buildtarget-dir",
+      "description": "Directory where all compiler output is placed. Defaults to a directory named `target` at the workspace root.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#buildtarget-dir)",
       "default": "target",
       "examples": [
         "target",
@@ -186,7 +186,7 @@
       }
     },
     "build-dir": {
-      "description": "Directory where intermediate build artifacts are stored. Defaults to the value of `build.target-dir`. Supports path templating with `{workspace-root}`, `{cargo-cache-home}`, and `{workspace-path-hash}`.\nhttps://doc.rust-lang.org/cargo/reference/config.html#buildbuild-dir",
+      "description": "Directory where intermediate build artifacts are stored. Defaults to the value of `build.target-dir`. Supports path templating with `{workspace-root}`, `{cargo-cache-home}`, and `{workspace-path-hash}`.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#buildbuild-dir)",
       "examples": [
         "{workspace-root}/target/intermediate",
         "{cargo-cache-home}/build/{workspace-path-hash}"
@@ -201,14 +201,14 @@
     },
     "rustflags": {
       "$ref": "common.schema.json#/$defs/stringOrStringArray",
-      "description": "Extra command-line flags passed to rustc. May be an array of strings or a space-separated string.\nhttps://doc.rust-lang.org/cargo/reference/config.html#buildrustflags"
+      "description": "Extra command-line flags passed to rustc. May be an array of strings or a space-separated string.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#buildrustflags)"
     },
     "rustdocflags": {
       "$ref": "common.schema.json#/$defs/stringOrStringArray",
-      "description": "Extra command-line flags passed to rustdoc. May be an array of strings or a space-separated string.\nhttps://doc.rust-lang.org/cargo/reference/config.html#buildrustdocflags"
+      "description": "Extra command-line flags passed to rustdoc. May be an array of strings or a space-separated string.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#buildrustdocflags)"
     },
     "incremental": {
-      "description": "Whether to enable incremental compilation. When unset, the value from the active profile is used; when set, this overrides every profile.\nhttps://doc.rust-lang.org/cargo/reference/config.html#buildincremental",
+      "description": "Whether to enable incremental compilation. When unset, the value from the active profile is used; when set, this overrides every profile.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#buildincremental)",
       "examples": [
         true,
         false
@@ -221,7 +221,7 @@
       }
     },
     "dep-info-basedir": {
-      "description": "Config-relative path prefix stripped from dep-info file paths, used to convert absolute paths to relative paths for downstream tools.\nhttps://doc.rust-lang.org/cargo/reference/config.html#builddep-info-basedir",
+      "description": "Config-relative path prefix stripped from dep-info file paths, used to convert absolute paths to relative paths for downstream tools.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#builddep-info-basedir)",
       "examples": [
         ".",
         ".."
@@ -235,7 +235,7 @@
       }
     },
     "pipelining": {
-      "description": "DEPRECATED. This option is unused. Cargo always has pipelining enabled.\nhttps://doc.rust-lang.org/cargo/reference/config.html#buildpipelining",
+      "description": "DEPRECATED. This option is unused. Cargo always has pipelining enabled.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#buildpipelining)",
       "deprecated": true,
       "type": "boolean",
       "x-taplo": {

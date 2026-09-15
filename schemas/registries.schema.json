@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$defs": {
     "cratesIoRegistryConfig": {
-      "description": "Settings for the official `crates-io` registry. Adds the `protocol` key (sparse vs. git index) on top of the shared registry properties. The default index URL is built into Cargo, so `index` is rarely set here.\nhttps://doc.rust-lang.org/cargo/reference/config.html#registriescrates-ioprotocol",
+      "description": "Settings for the official `crates-io` registry. Adds the `protocol` key (sparse vs. git index) on top of the shared registry properties. The default index URL is built into Cargo, so `index` is rarely set here.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#registriescrates-ioprotocol)",
       "examples": [
         {
           "protocol": "sparse"
@@ -15,7 +15,7 @@
       "type": "object",
       "properties": {
         "index": {
-          "description": "URL of the registry index. Rarely set under `[registries.crates-io]` because Cargo ships the canonical URL. Environment: `CARGO_REGISTRIES_CRATES_IO_INDEX`.\nhttps://doc.rust-lang.org/cargo/reference/config.html#registriesnameindex",
+          "description": "URL of the registry index. Rarely set under `[registries.crates-io]` because Cargo ships the canonical URL. Environment: `CARGO_REGISTRIES_CRATES_IO_INDEX`.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#registriesnameindex)",
           "examples": [
             "https://github.com/rust-lang/crates.io-index"
           ],
@@ -23,7 +23,7 @@
           "format": "uri"
         },
         "token": {
-          "description": "Authentication token for crates.io. Normally lives in `credentials.toml`, not `config.toml`. Environment: `CARGO_REGISTRIES_CRATES_IO_TOKEN`.\nhttps://doc.rust-lang.org/cargo/reference/config.html#registriesnametoken",
+          "description": "Authentication token for crates.io. Normally lives in `credentials.toml`, not `config.toml`. Environment: `CARGO_REGISTRIES_CRATES_IO_TOKEN`.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#registriesnametoken)",
           "examples": [
             "example-private-registry-token"
           ],
@@ -31,10 +31,10 @@
         },
         "credential-provider": {
           "$ref": "common.schema.json#/$defs/credentialProvider",
-          "description": "Credential provider for crates.io. If unset, falls back to `registry.global-credential-providers`. Environment: `CARGO_REGISTRIES_CRATES_IO_CREDENTIAL_PROVIDER`.\nhttps://doc.rust-lang.org/cargo/reference/config.html#registriesnamecredential-provider"
+          "description": "Credential provider for crates.io. If unset, falls back to `registry.global-credential-providers`. Environment: `CARGO_REGISTRIES_CRATES_IO_CREDENTIAL_PROVIDER`.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#registriesnamecredential-provider)"
         },
         "protocol": {
-          "description": "Protocol used to access crates.io. Only valid under `[registries.crates-io]`; user-defined registries advertise their protocol via the index URL itself (`sparse+https://...` or a git URL). Defaults to `\"sparse\"` since Cargo 1.70.\nhttps://doc.rust-lang.org/cargo/reference/config.html#registriescrates-ioprotocol",
+          "description": "Protocol used to access crates.io. Only valid under `[registries.crates-io]`; user-defined registries advertise their protocol via the index URL itself (`sparse+https://...` or a git URL). Defaults to `\"sparse\"` since Cargo 1.70.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#registriescrates-ioprotocol)",
           "default": "sparse",
           "examples": [
             "sparse",
@@ -80,7 +80,7 @@
       }
     },
     "customRegistryConfig": {
-      "description": "Settings for a user-defined registry (any name other than `crates-io`). `protocol` is omitted: non-crates.io registries select their protocol through the `index` URL scheme (`sparse+https://...` for sparse, plain URL for git).\nhttps://doc.rust-lang.org/cargo/reference/config.html#registriesname",
+      "description": "Settings for a user-defined registry (any name other than `crates-io`). `protocol` is omitted: non-crates.io registries select their protocol through the `index` URL scheme (`sparse+https://...` for sparse, plain URL for git).\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#registriesname)",
       "examples": [
         {
           "index": "https://example.com/git/index",
@@ -94,7 +94,7 @@
       "type": "object",
       "properties": {
         "index": {
-          "description": "URL of the registry index. For sparse registries use `sparse+https://...`; for git registries use a plain `https://...` URL. Environment: `CARGO_REGISTRIES_<NAME>_INDEX`.\nhttps://doc.rust-lang.org/cargo/reference/config.html#registriesnameindex",
+          "description": "URL of the registry index. For sparse registries use `sparse+https://...`; for git registries use a plain `https://...` URL. Environment: `CARGO_REGISTRIES_<NAME>_INDEX`.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#registriesnameindex)",
           "examples": [
             "https://example.com/git/index",
             "sparse+https://example.com/index/"
@@ -103,7 +103,7 @@
           "format": "uri"
         },
         "token": {
-          "description": "Authentication token for the registry. Normally lives in `credentials.toml`, not `config.toml`. Environment: `CARGO_REGISTRIES_<NAME>_TOKEN`.\nhttps://doc.rust-lang.org/cargo/reference/config.html#registriesnametoken",
+          "description": "Authentication token for the registry. Normally lives in `credentials.toml`, not `config.toml`. Environment: `CARGO_REGISTRIES_<NAME>_TOKEN`.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#registriesnametoken)",
           "examples": [
             "example-private-registry-token"
           ],
@@ -111,7 +111,7 @@
         },
         "credential-provider": {
           "$ref": "common.schema.json#/$defs/credentialProvider",
-          "description": "Credential provider for this registry. If unset, falls back to `registry.global-credential-providers`. Environment: `CARGO_REGISTRIES_<NAME>_CREDENTIAL_PROVIDER`.\nhttps://doc.rust-lang.org/cargo/reference/config.html#registriesnamecredential-provider"
+          "description": "Credential provider for this registry. If unset, falls back to `registry.global-credential-providers`. Environment: `CARGO_REGISTRIES_<NAME>_CREDENTIAL_PROVIDER`.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#registriesnamecredential-provider)"
         },
         "min-publish-age": {
           "description": "Minimum publish age, for example \"7 days\" or \"0\". Requires Cargo 1.100+.",
@@ -137,7 +137,7 @@
     }
   },
   "title": "[registries.*]",
-  "description": "Additional registries and crates.io registry protocol settings.\nhttps://doc.rust-lang.org/cargo/reference/config.html#registries",
+  "description": "Additional registries and crates.io registry protocol settings.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#registries)",
   "examples": [
     {
       "my-registry": {

@@ -26,7 +26,7 @@
           "minLength": 1
         },
         "directory": {
-          "description": "Path to a directory source.\nhttps://doc.rust-lang.org/cargo/reference/config.html#sourcenamedirectory",
+          "description": "Path to a directory source.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#sourcenamedirectory)",
           "examples": [
             "vendor"
           ],
@@ -34,7 +34,7 @@
           "minLength": 1
         },
         "registry": {
-          "description": "URL of a registry source.\nhttps://doc.rust-lang.org/cargo/reference/config.html#sourcenameregistry",
+          "description": "URL of a registry source.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#sourcenameregistry)",
           "examples": [
             "https://example.com/git/index"
           ],
@@ -42,7 +42,7 @@
           "format": "uri"
         },
         "local-registry": {
-          "description": "Path to a local registry source.\nhttps://doc.rust-lang.org/cargo/reference/config.html#sourcenamelocal-registry",
+          "description": "Path to a local registry source.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#sourcenamelocal-registry)",
           "examples": [
             "local-registry"
           ],
@@ -50,7 +50,7 @@
           "minLength": 1
         },
         "git": {
-          "description": "URL of a git repository source.\nhttps://doc.rust-lang.org/cargo/reference/config.html#sourcenamegit",
+          "description": "URL of a git repository source.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#sourcenamegit)",
           "examples": [
             "https://example.com/repo.git"
           ],
@@ -143,7 +143,7 @@
     }
   },
   "title": "[source.*]",
-  "description": "Named registry source definitions and source replacement.\nhttps://doc.rust-lang.org/cargo/reference/config.html#source",
+  "description": "Named registry source definitions and source replacement.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#source)",
   "examples": [
     {
       "crates-io": {

@@ -97,7 +97,7 @@
     }
   },
   "title": "[http]",
-  "description": "HTTP behavior for fetching crates and accessing remote git repositories.\nhttps://doc.rust-lang.org/cargo/reference/config.html#http",
+  "description": "HTTP behavior for fetching crates and accessing remote git repositories.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#http)",
   "examples": [
     {
       "timeout": 60,
@@ -116,7 +116,7 @@
   "type": "object",
   "properties": {
     "debug": {
-      "description": "Enable HTTP debugging. Combine with `CARGO_LOG=network=debug` (or `network=trace`) to see request details. Logs may contain authentication tokens, do not share publicly.\nhttps://doc.rust-lang.org/cargo/reference/config.html#httpdebug",
+      "description": "Enable HTTP debugging. Combine with `CARGO_LOG=network=debug` (or `network=trace`) to see request details. Logs may contain authentication tokens, do not share publicly.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#httpdebug)",
       "default": false,
       "examples": [
         false,
@@ -134,7 +134,7 @@
       "type": "string"
     },
     "timeout": {
-      "description": "Timeout for each HTTP request, in seconds.\nhttps://doc.rust-lang.org/cargo/reference/config.html#httptimeout",
+      "description": "Timeout for each HTTP request, in seconds.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#httptimeout)",
       "default": 30,
       "examples": [
         30,
@@ -145,7 +145,7 @@
       "minimum": 0
     },
     "cainfo": {
-      "description": "Path to a Certificate Authority (CA) bundle file used to verify TLS certificates. If unset, Cargo uses the system trust store.\nhttps://doc.rust-lang.org/cargo/reference/config.html#httpcainfo",
+      "description": "Path to a Certificate Authority (CA) bundle file used to verify TLS certificates. If unset, Cargo uses the system trust store.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#httpcainfo)",
       "examples": [
         "certs/ca.pem",
         "/etc/ssl/certs/ca-bundle.crt"
@@ -154,7 +154,7 @@
       "minLength": 1
     },
     "proxy-cainfo": {
-      "description": "Path to a Certificate Authority (CA) bundle file used to verify proxy TLS certificates. Falls back to `http.cainfo` if unset.\nhttps://doc.rust-lang.org/cargo/reference/config.html#httpproxy-cainfo",
+      "description": "Path to a Certificate Authority (CA) bundle file used to verify proxy TLS certificates. Falls back to `http.cainfo` if unset.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#httpproxy-cainfo)",
       "examples": [
         "certs/proxy-ca.pem"
       ],
@@ -162,7 +162,7 @@
       "minLength": 1
     },
     "check-revoke": {
-      "description": "Whether TLS certificate revocation checks are performed. Only works on Windows. Default: `true` on Windows, `false` elsewhere.\nhttps://doc.rust-lang.org/cargo/reference/config.html#httpcheck-revoke",
+      "description": "Whether TLS certificate revocation checks are performed. Only works on Windows. Default: `true` on Windows, `false` elsewhere.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#httpcheck-revoke)",
       "examples": [
         true,
         false
@@ -171,10 +171,10 @@
     },
     "ssl-version": {
       "$ref": "#/$defs/sslVersion",
-      "description": "Minimum TLS version, or a table with `min`/`max` TLS version bounds. Cargo's default range is `min = \"tlsv1.0\"`, `max` = newest supported (typically `tlsv1.3`).\nhttps://doc.rust-lang.org/cargo/reference/config.html#httpssl-version"
+      "description": "Minimum TLS version, or a table with `min`/`max` TLS version bounds. Cargo's default range is `min = \"tlsv1.0\"`, `max` = newest supported (typically `tlsv1.3`).\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#httpssl-version)"
     },
     "low-speed-limit": {
-      "description": "Average transfer speed threshold, in bytes per second. If the transfer rate stays below this for `http.timeout` seconds, Cargo aborts and retries.\nhttps://doc.rust-lang.org/cargo/reference/config.html#httplow-speed-limit",
+      "description": "Average transfer speed threshold, in bytes per second. If the transfer rate stays below this for `http.timeout` seconds, Cargo aborts and retries.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#httplow-speed-limit)",
       "default": 10,
       "examples": [
         10,
@@ -184,7 +184,7 @@
       "minimum": 0
     },
     "multiplexing": {
-      "description": "Whether Cargo attempts to use HTTP/2 with multiplexing. If `false`, falls back to HTTP/1.1 without pipelining.\nhttps://doc.rust-lang.org/cargo/reference/config.html#httpmultiplexing",
+      "description": "Whether Cargo attempts to use HTTP/2 with multiplexing. If `false`, falls back to HTTP/1.1 without pipelining.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#httpmultiplexing)",
       "default": true,
       "examples": [
         true,
@@ -193,7 +193,7 @@
       "type": "boolean"
     },
     "user-agent": {
-      "description": "Custom HTTP user-agent header. Default is a string including Cargo's version.\nhttps://doc.rust-lang.org/cargo/reference/config.html#httpuser-agent",
+      "description": "Custom HTTP user-agent header. Default is a string including Cargo's version.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#httpuser-agent)",
       "examples": [
         "my-cargo-wrapper/1.0",
         "ci-runner (+https://example.com/ci)"

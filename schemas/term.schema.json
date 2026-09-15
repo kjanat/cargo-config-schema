@@ -36,7 +36,7 @@
     }
   },
   "title": "[term]",
-  "description": "Terminal output and interaction settings.\nhttps://doc.rust-lang.org/cargo/reference/config.html#term",
+  "description": "Terminal output and interaction settings.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#term)",
   "examples": [
     {
       "quiet": false,
@@ -56,7 +56,7 @@
   "type": "object",
   "properties": {
     "quiet": {
-      "description": "Whether Cargo output is quiet.\nhttps://doc.rust-lang.org/cargo/reference/config.html#termquiet",
+      "description": "Whether Cargo output is quiet.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#termquiet)",
       "default": false,
       "examples": [
         false,
@@ -70,7 +70,7 @@
       }
     },
     "verbose": {
-      "description": "Whether Cargo output is verbose.\nhttps://doc.rust-lang.org/cargo/reference/config.html#termverbose",
+      "description": "Whether Cargo output is verbose.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#termverbose)",
       "default": false,
       "examples": [
         false,
@@ -85,7 +85,7 @@
     },
     "color": {
       "$ref": "#/$defs/terminalWhen",
-      "description": "Whether Cargo colorizes terminal output.\nhttps://doc.rust-lang.org/cargo/reference/config.html#termcolor",
+      "description": "Whether Cargo colorizes terminal output.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#termcolor)",
       "default": "auto",
       "x-taplo": {
         "docs": {
@@ -94,7 +94,7 @@
       }
     },
     "hyperlinks": {
-      "description": "Whether Cargo uses hyperlinks in terminal output. Auto-detected when unset.\nhttps://doc.rust-lang.org/cargo/reference/config.html#termhyperlinks",
+      "description": "Whether Cargo uses hyperlinks in terminal output. Auto-detected when unset.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#termhyperlinks)",
       "examples": [
         true,
         false
@@ -107,7 +107,7 @@
       }
     },
     "unicode": {
-      "description": "Whether Cargo can render non-ASCII Unicode characters. Auto-detected when unset.\nhttps://doc.rust-lang.org/cargo/reference/config.html#termunicode",
+      "description": "Whether Cargo can render non-ASCII Unicode characters. Auto-detected when unset.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#termunicode)",
       "examples": [
         true,
         false
@@ -120,7 +120,7 @@
       }
     },
     "progress": {
-      "description": "Progress bar configuration.\nhttps://doc.rust-lang.org/cargo/reference/config.html#termprogresswhen",
+      "description": "Progress bar configuration.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#termprogresswhen)",
       "examples": [
         {
           "when": "auto",
@@ -135,7 +135,7 @@
       "properties": {
         "when": {
           "$ref": "#/$defs/terminalWhen",
-          "description": "Whether Cargo shows a progress bar.\nhttps://doc.rust-lang.org/cargo/reference/config.html#termprogresswhen",
+          "description": "Whether Cargo shows a progress bar.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#termprogresswhen)",
           "default": "auto",
           "x-taplo": {
             "docs": {
@@ -154,7 +154,7 @@
           "minimum": 0
         },
         "term-integration": {
-          "description": "Whether Cargo reports progress to the terminal emulator (e.g. taskbar). Auto-detected when unset.\nhttps://doc.rust-lang.org/cargo/reference/config.html#termprogressterm-integration",
+          "description": "Whether Cargo reports progress to the terminal emulator (e.g. taskbar). Auto-detected when unset.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#termprogressterm-integration)",
           "examples": [
             true,
             false

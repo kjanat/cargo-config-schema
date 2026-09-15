@@ -41,7 +41,7 @@
     }
   },
   "title": "cargo configuration",
-  "description": "Cargo configuration file schema for .cargo/config.toml and credentials.toml after TOML parsing. Section-specific subschemas live in sibling files (alias.schema.json, build.schema.json, ..., term.schema.json) and are referenced from this metaschema. A flattened single-file equivalent is generated at ../cargo-config.json by cargo-schema-bundle for validators that do not follow cross-file $refs (e.g. tombi).\nhttps://doc.rust-lang.org/cargo/reference/config.html",
+  "description": "Cargo configuration file schema for .cargo/config.toml and credentials.toml after TOML parsing. Section-specific subschemas live in sibling files (alias.schema.json, build.schema.json, ..., term.schema.json) and are referenced from this metaschema. A flattened single-file equivalent is generated at ../cargo-config.json by cargo-schema-bundle for validators that do not follow cross-file $refs (e.g. tombi).\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html)",
   "examples": [
     {
       "build": {
@@ -115,14 +115,14 @@
   "type": "object",
   "properties": {
     "include": {
-      "description": "Additional Cargo configuration files to include. Paths are relative to the including configuration file and must end with .toml.\nhttps://doc.rust-lang.org/cargo/reference/config.html#include",
+      "description": "Additional Cargo configuration files to include. Paths are relative to the including configuration file and must end with .toml.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#include)",
       "type": "array",
       "items": {
         "$ref": "#/$defs/includeEntry"
       }
     },
     "paths": {
-      "description": "Local package paths used as dependency overrides.\nhttps://doc.rust-lang.org/cargo/reference/config.html#paths",
+      "description": "Local package paths used as dependency overrides.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#paths)",
       "examples": [
         [
           "../local-crate"
@@ -229,99 +229,99 @@
       "type": "object",
       "properties": {
         "allow-features": {
-          "description": "UNSTABLE: allow-features. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "description": "UNSTABLE: allow-features. See\n\n[Cargo source](https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs)",
           "type": "array",
           "items": {
             "type": "string"
           }
         },
         "embed-metadata": {
-          "description": "UNSTABLE: embed-metadata. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "description": "UNSTABLE: embed-metadata. See\n\n[Cargo source](https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs)",
           "type": "boolean"
         },
         "print-im-a-teapot": {
-          "description": "UNSTABLE: print-im-a-teapot. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "description": "UNSTABLE: print-im-a-teapot. See\n\n[Cargo source](https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs)",
           "type": "boolean"
         },
         "advanced-env": {
-          "description": "UNSTABLE: advanced-env. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "description": "UNSTABLE: advanced-env. See\n\n[Cargo source](https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs)",
           "type": "boolean"
         },
         "any-build-script-metadata": {
-          "description": "UNSTABLE: any-build-script-metadata. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "description": "UNSTABLE: any-build-script-metadata. See\n\n[Cargo source](https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs)",
           "type": "boolean"
         },
         "asymmetric-token": {
-          "description": "UNSTABLE: asymmetric-token. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "description": "UNSTABLE: asymmetric-token. See\n\n[Cargo source](https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs)",
           "type": "boolean"
         },
         "avoid-dev-deps": {
-          "description": "UNSTABLE: avoid-dev-deps. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "description": "UNSTABLE: avoid-dev-deps. See\n\n[Cargo source](https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs)",
           "type": "boolean"
         },
         "binary-dep-depinfo": {
-          "description": "UNSTABLE: binary-dep-depinfo. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "description": "UNSTABLE: binary-dep-depinfo. See\n\n[Cargo source](https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs)",
           "type": "boolean"
         },
         "bindeps": {
-          "description": "UNSTABLE: bindeps. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "description": "UNSTABLE: bindeps. See\n\n[Cargo source](https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs)",
           "type": "boolean"
         },
         "build-analysis": {
-          "description": "UNSTABLE: build-analysis. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "description": "UNSTABLE: build-analysis. See\n\n[Cargo source](https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs)",
           "type": "boolean"
         },
         "build-dir-new-layout": {
-          "description": "UNSTABLE: build-dir-new-layout. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "description": "UNSTABLE: build-dir-new-layout. See\n\n[Cargo source](https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs)",
           "type": "boolean"
         },
         "build-std": {
-          "description": "UNSTABLE: build-std. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "description": "UNSTABLE: build-std. See\n\n[Cargo source](https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs)",
           "type": "array",
           "items": {
             "type": "string"
           }
         },
         "build-std-features": {
-          "description": "UNSTABLE: build-std-features. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "description": "UNSTABLE: build-std-features. See\n\n[Cargo source](https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs)",
           "type": "array",
           "items": {
             "type": "string"
           }
         },
         "checksum-freshness": {
-          "description": "UNSTABLE: checksum-freshness. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "description": "UNSTABLE: checksum-freshness. See\n\n[Cargo source](https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs)",
           "type": "boolean"
         },
         "codegen-backend": {
-          "description": "UNSTABLE: codegen-backend. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "description": "UNSTABLE: codegen-backend. See\n\n[Cargo source](https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs)",
           "type": "boolean"
         },
         "direct-minimal-versions": {
-          "description": "UNSTABLE: direct-minimal-versions. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "description": "UNSTABLE: direct-minimal-versions. See\n\n[Cargo source](https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs)",
           "type": "boolean"
         },
         "dual-proc-macros": {
-          "description": "UNSTABLE: dual-proc-macros. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "description": "UNSTABLE: dual-proc-macros. See\n\n[Cargo source](https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs)",
           "type": "boolean"
         },
         "feature-unification": {
-          "description": "UNSTABLE: feature-unification. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "description": "UNSTABLE: feature-unification. See\n\n[Cargo source](https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs)",
           "type": "boolean"
         },
         "features": {
-          "description": "UNSTABLE: features. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "description": "UNSTABLE: features. See\n\n[Cargo source](https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs)",
           "type": "array",
           "items": {
             "type": "string"
           }
         },
         "fine-grain-locking": {
-          "description": "UNSTABLE: fine-grain-locking. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "description": "UNSTABLE: fine-grain-locking. See\n\n[Cargo source](https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs)",
           "type": "boolean"
         },
         "fix-edition": {
-          "description": "UNSTABLE: fix-edition. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "description": "UNSTABLE: fix-edition. See\n\n[Cargo source](https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs)",
           "oneOf": [
             {
               "type": "object",
@@ -386,11 +386,11 @@
           ]
         },
         "gc": {
-          "description": "UNSTABLE: gc. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "description": "UNSTABLE: gc. See\n\n[Cargo source](https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs)",
           "type": "boolean"
         },
         "git": {
-          "description": "UNSTABLE: git. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "description": "UNSTABLE: git. See\n\n[Cargo source](https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs)",
           "oneOf": [
             {
               "type": "boolean"
@@ -415,7 +415,7 @@
           ]
         },
         "gitoxide": {
-          "description": "UNSTABLE: gitoxide. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "description": "UNSTABLE: gitoxide. See\n\n[Cargo source](https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs)",
           "oneOf": [
             {
               "type": "boolean"
@@ -440,115 +440,115 @@
           ]
         },
         "hint-msrv": {
-          "description": "UNSTABLE: hint-msrv. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "description": "UNSTABLE: hint-msrv. See\n\n[Cargo source](https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs)",
           "type": "boolean"
         },
         "host-config": {
-          "description": "UNSTABLE: host-config. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "description": "UNSTABLE: host-config. See\n\n[Cargo source](https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs)",
           "type": "boolean"
         },
         "json-target-spec": {
-          "description": "UNSTABLE: json-target-spec. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "description": "UNSTABLE: json-target-spec. See\n\n[Cargo source](https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs)",
           "type": "boolean"
         },
         "minimal-versions": {
-          "description": "UNSTABLE: minimal-versions. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "description": "UNSTABLE: minimal-versions. See\n\n[Cargo source](https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs)",
           "type": "boolean"
         },
         "msrv-policy": {
-          "description": "UNSTABLE: msrv-policy. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "description": "UNSTABLE: msrv-policy. See\n\n[Cargo source](https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs)",
           "type": "boolean"
         },
         "mtime-on-use": {
-          "description": "UNSTABLE: mtime-on-use. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "description": "UNSTABLE: mtime-on-use. See\n\n[Cargo source](https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs)",
           "type": "boolean"
         },
         "next-lockfile-bump": {
-          "description": "UNSTABLE: next-lockfile-bump. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "description": "UNSTABLE: next-lockfile-bump. See\n\n[Cargo source](https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs)",
           "type": "boolean"
         },
         "no-index-update": {
-          "description": "UNSTABLE: no-index-update. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "description": "UNSTABLE: no-index-update. See\n\n[Cargo source](https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs)",
           "type": "boolean"
         },
         "panic-abort-tests": {
-          "description": "UNSTABLE: panic-abort-tests. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "description": "UNSTABLE: panic-abort-tests. See\n\n[Cargo source](https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs)",
           "type": "boolean"
         },
         "panic-immediate-abort": {
-          "description": "UNSTABLE: panic-immediate-abort. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "description": "UNSTABLE: panic-immediate-abort. See\n\n[Cargo source](https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs)",
           "type": "boolean"
         },
         "profile-hint-mostly-unused": {
-          "description": "UNSTABLE: profile-hint-mostly-unused. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "description": "UNSTABLE: profile-hint-mostly-unused. See\n\n[Cargo source](https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs)",
           "type": "boolean"
         },
         "profile-rustflags": {
-          "description": "UNSTABLE: profile-rustflags. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "description": "UNSTABLE: profile-rustflags. See\n\n[Cargo source](https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs)",
           "type": "boolean"
         },
         "public-dependency": {
-          "description": "UNSTABLE: public-dependency. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "description": "UNSTABLE: public-dependency. See\n\n[Cargo source](https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs)",
           "type": "boolean"
         },
         "publish-timeout": {
-          "description": "UNSTABLE: publish-timeout. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "description": "UNSTABLE: publish-timeout. See\n\n[Cargo source](https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs)",
           "type": "boolean"
         },
         "root-dir": {
-          "description": "UNSTABLE: root-dir. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "description": "UNSTABLE: root-dir. See\n\n[Cargo source](https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs)",
           "type": "string"
         },
         "rustc-unicode": {
-          "description": "UNSTABLE: rustc-unicode. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "description": "UNSTABLE: rustc-unicode. See\n\n[Cargo source](https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs)",
           "type": "boolean"
         },
         "rustdoc-depinfo": {
-          "description": "UNSTABLE: rustdoc-depinfo. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "description": "UNSTABLE: rustdoc-depinfo. See\n\n[Cargo source](https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs)",
           "type": "boolean"
         },
         "rustdoc-map": {
-          "description": "UNSTABLE: rustdoc-map. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "description": "UNSTABLE: rustdoc-map. See\n\n[Cargo source](https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs)",
           "type": "boolean"
         },
         "rustdoc-mergeable-info": {
-          "description": "UNSTABLE: rustdoc-mergeable-info. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "description": "UNSTABLE: rustdoc-mergeable-info. See\n\n[Cargo source](https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs)",
           "type": "boolean"
         },
         "rustdoc-scrape-examples": {
-          "description": "UNSTABLE: rustdoc-scrape-examples. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "description": "UNSTABLE: rustdoc-scrape-examples. See\n\n[Cargo source](https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs)",
           "type": "boolean"
         },
         "sbom": {
-          "description": "UNSTABLE: sbom. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "description": "UNSTABLE: sbom. See\n\n[Cargo source](https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs)",
           "type": "boolean"
         },
         "script": {
-          "description": "UNSTABLE: script. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "description": "UNSTABLE: script. See\n\n[Cargo source](https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs)",
           "type": "boolean"
         },
         "section-timings": {
-          "description": "UNSTABLE: section-timings. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "description": "UNSTABLE: section-timings. See\n\n[Cargo source](https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs)",
           "type": "boolean"
         },
         "separate-nightlies": {
-          "description": "UNSTABLE: separate-nightlies. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "description": "UNSTABLE: separate-nightlies. See\n\n[Cargo source](https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs)",
           "type": "boolean"
         },
         "skip-rustdoc-fingerprint": {
-          "description": "UNSTABLE: skip-rustdoc-fingerprint. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "description": "UNSTABLE: skip-rustdoc-fingerprint. See\n\n[Cargo source](https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs)",
           "type": "boolean"
         },
         "target-applies-to-host": {
-          "description": "UNSTABLE: target-applies-to-host. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "description": "UNSTABLE: target-applies-to-host. See\n\n[Cargo source](https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs)",
           "type": "boolean"
         },
         "trim-paths": {
-          "description": "UNSTABLE: trim-paths. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "description": "UNSTABLE: trim-paths. See\n\n[Cargo source](https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs)",
           "type": "boolean"
         },
         "unstable-options": {
-          "description": "UNSTABLE: unstable-options. See https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs",
+          "description": "UNSTABLE: unstable-options. See\n\n[Cargo source](https://github.com/rust-lang/cargo/blob/cc5596f058e623d22be718adf541a9bd766d9417/src/workspace/features.rs)",
           "type": "boolean"
         }
       },

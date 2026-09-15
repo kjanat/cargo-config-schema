@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "[registry]",
-  "description": "Default registry and crates.io credential settings.\nhttps://doc.rust-lang.org/cargo/reference/config.html#registry",
+  "description": "Default registry and crates.io credential settings.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#registry)",
   "examples": [
     {
       "default": "my-registry"
@@ -36,7 +36,7 @@
     },
     "credential-provider": {
       "$ref": "common.schema.json#/$defs/credentialProvider",
-      "description": "Credential provider for crates.io. If unset, falls back to `registry.global-credential-providers`. If the value matches a key in `[credential-alias]`, the alias is used. Environment: `CARGO_REGISTRY_CREDENTIAL_PROVIDER`.\nhttps://doc.rust-lang.org/cargo/reference/config.html#registrycredential-provider",
+      "description": "Credential provider for crates.io. If unset, falls back to `registry.global-credential-providers`. If the value matches a key in `[credential-alias]`, the alias is used. Environment: `CARGO_REGISTRY_CREDENTIAL_PROVIDER`.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#registrycredential-provider)",
       "x-taplo": {
         "links": {
           "key": "https://doc.rust-lang.org/cargo/reference/config.html#registrycredential-provider"
@@ -44,7 +44,7 @@
       }
     },
     "token": {
-      "description": "Authentication token for crates.io. Should normally only appear in `credentials.toml`. Can be overridden with `--token`. Environment: `CARGO_REGISTRY_TOKEN`.\nhttps://doc.rust-lang.org/cargo/reference/config.html#registrytoken",
+      "description": "Authentication token for crates.io. Should normally only appear in `credentials.toml`. Can be overridden with `--token`. Environment: `CARGO_REGISTRY_TOKEN`.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#registrytoken)",
       "examples": [
         "example-crates-io-token"
       ],
@@ -56,7 +56,7 @@
       }
     },
     "global-credential-providers": {
-      "description": "Ordered list of global credential providers used when a registry does not configure its own. Order is significant: providers toward the END of the list have precedence. Path and arguments split on spaces; for paths/args containing spaces, define an alias in `[credential-alias]` and reference it here. Environment: `CARGO_REGISTRY_GLOBAL_CREDENTIAL_PROVIDERS`.\nhttps://doc.rust-lang.org/cargo/reference/config.html#registryglobal-credential-providers",
+      "description": "Ordered list of global credential providers used when a registry does not configure its own. Order is significant: providers toward the END of the list have precedence. Path and arguments split on spaces; for paths/args containing spaces, define an alias in `[credential-alias]` and reference it here. Environment: `CARGO_REGISTRY_GLOBAL_CREDENTIAL_PROVIDERS`.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#registryglobal-credential-providers)",
       "default": [
         "cargo:token"
       ],

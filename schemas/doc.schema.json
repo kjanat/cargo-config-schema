@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "[doc]",
-  "description": "Options for cargo doc.\nhttps://doc.rust-lang.org/cargo/reference/config.html#doc",
+  "description": "Options for cargo doc.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#doc)",
   "examples": [
     {
       "browser": "chromium"
@@ -17,7 +17,7 @@
   "properties": {
     "browser": {
       "$ref": "common.schema.json#/$defs/stringOrStringArray",
-      "description": "Browser command used by cargo doc --open, overriding the BROWSER environment variable. Either a single program path or an array of [program, ...args].\nhttps://doc.rust-lang.org/cargo/reference/config.html#docbrowser",
+      "description": "Browser command used by cargo doc --open, overriding the BROWSER environment variable. Either a single program path or an array of [program, ...args].\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#docbrowser)",
       "examples": [
         "firefox",
         "chromium",

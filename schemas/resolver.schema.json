@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "[resolver]",
-  "description": "Dependency resolver behavior for local development.\nhttps://doc.rust-lang.org/cargo/reference/config.html#resolver",
+  "description": "Dependency resolver behavior for local development.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#resolver)",
   "examples": [
     {
       "incompatible-rust-versions": "fallback"
@@ -13,7 +13,7 @@
   "type": "object",
   "properties": {
     "lockfile-path": {
-      "description": "Path to the lockfile to use when resolving dependencies. Useful with read-only source directories. The path must end with `Cargo.lock`. Requires Cargo 1.97+. Environment: `CARGO_RESOLVER_LOCKFILE_PATH`.\nhttps://doc.rust-lang.org/cargo/reference/config.html#resolverlockfile-path",
+      "description": "Path to the lockfile to use when resolving dependencies. Useful with read-only source directories. The path must end with `Cargo.lock`. Requires Cargo 1.97+. Environment: `CARGO_RESOLVER_LOCKFILE_PATH`.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#resolverlockfile-path)",
       "examples": [
         "Cargo.lock",
         "locks/Cargo.lock",

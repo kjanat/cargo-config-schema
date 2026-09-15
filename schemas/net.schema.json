@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "[net]",
-  "description": "Networking configuration.\nhttps://doc.rust-lang.org/cargo/reference/config.html#net",
+  "description": "Networking configuration.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#net)",
   "examples": [
     {
       "retry": 3,
@@ -19,7 +19,7 @@
   "type": "object",
   "properties": {
     "retry": {
-      "description": "Number of times to retry possibly spurious network errors.\nhttps://doc.rust-lang.org/cargo/reference/config.html#netretry",
+      "description": "Number of times to retry possibly spurious network errors.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#netretry)",
       "default": 3,
       "examples": [
         3
@@ -28,21 +28,21 @@
       "minimum": 0
     },
     "git-fetch-with-cli": {
-      "description": "Use the git executable for fetching registry indexes and git dependencies.\nhttps://doc.rust-lang.org/cargo/reference/config.html#netgit-fetch-with-cli",
+      "description": "Use the git executable for fetching registry indexes and git dependencies.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#netgit-fetch-with-cli)",
       "default": false,
       "type": "boolean"
     },
     "offline": {
-      "description": "Avoid accessing the network and use locally cached data where possible.\nhttps://doc.rust-lang.org/cargo/reference/config.html#netoffline",
+      "description": "Avoid accessing the network and use locally cached data where possible.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#netoffline)",
       "default": false,
       "type": "boolean"
     },
     "ssh": {
-      "description": "SSH connection settings.\nhttps://doc.rust-lang.org/cargo/reference/config.html#netssh",
+      "description": "SSH connection settings.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#netssh)",
       "type": "object",
       "properties": {
         "known-hosts": {
-          "description": "SSH host keys accepted by Cargo.\nhttps://doc.rust-lang.org/cargo/reference/config.html#netsshknown-hosts",
+          "description": "SSH host keys accepted by Cargo.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#netsshknown-hosts)",
           "examples": [
             [
               "example.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFO4Q5T0UV0SQevair9PFwoxY9dl4pQl3u5phoqJH3cF"
