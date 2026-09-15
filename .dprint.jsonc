@@ -1,0 +1,22 @@
+{
+  "includes": ["cargo-config.json", "schemas/**/*.schema.json", "**/*.toml", "src/**/*.py"],
+  "excludes": [".venv/**"],
+  "exec": {
+    "cwd": "${configDir}",
+    "commands": [
+      {
+        "command": "uv run tombi format - --stdin-filename {{file_path}}",
+        "exts": ["toml"]
+      }
+    ]
+  },
+  "jsonSchemaSort": {
+    "preservePropertyOrder": true,
+    "associations": ["cargo-config.json", "schemas/**/*.schema.json"]
+  },
+  "plugins": [
+    "https://github.com/kjanat/dprint-plugin-json-schema-sort/releases/download/0.1.2/plugin.wasm",
+    "npm:@dprint/exec@0.7.3/plugin.json@704701df449dd7e942a71144773778ac529d68c2e4657bfc236d393b898b9a67",
+    "npm:@dprint/ruff@0.8.7"
+  ]
+}

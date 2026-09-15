@@ -1,0 +1,246 @@
+[
+  {
+    "valid": true,
+    "config": {}
+  },
+  {
+    "valid": true,
+    "config": {
+      "build": {
+        "rustc-wrapper": "",
+        "rustc-workspace-wrapper": "",
+        "jobs": -1,
+        "target": []
+      }
+    }
+  },
+  {
+    "valid": true,
+    "config": {
+      "http": {
+        "proxy": "localhost:8080",
+        "timeout": 0,
+        "ssl-version": {}
+      }
+    }
+  },
+  {
+    "valid": true,
+    "config": {
+      "profile": {
+        "release": {
+          "debug": "limited"
+        },
+        "42custom": {
+          "opt-level": 2
+        }
+      }
+    }
+  },
+  {
+    "valid": true,
+    "config": {
+      "source": {
+        "crates-io": {
+          "replace-with": "vendor"
+        },
+        "vendor": {
+          "directory": "vendor"
+        }
+      }
+    }
+  },
+  {
+    "valid": true,
+    "config": {
+      "source": {
+        "parent-source": {
+          "replace-with": "vendor"
+        }
+      }
+    }
+  },
+  {
+    "valid": true,
+    "config": {
+      "target": {
+        "x86_64-unknown-linux-gnu": {
+          "mylib": {
+            "metadata": "hello",
+            "rustc-check-cfg": [
+              "cfg(foo)"
+            ],
+            "rustc-link-arg": [
+              "-lfoo"
+            ]
+          }
+        }
+      }
+    }
+  },
+  {
+    "valid": true,
+    "config": {
+      "term": {
+        "progress": {
+          "when": "always",
+          "width": 0
+        }
+      }
+    }
+  },
+  {
+    "valid": true,
+    "config": {
+      "unstable": {
+        "build-std": [
+          "core"
+        ],
+        "git": {
+          "shallow_index": true
+        }
+      },
+      "build": {
+        "sbom": true,
+        "analysis": {
+          "enabled": true
+        }
+      }
+    }
+  },
+  {
+    "valid": true,
+    "config": {
+      "host": {
+        "linker": "cc",
+        "x86_64-unknown-linux-gnu": {
+          "rustflags": [
+            "-C",
+            "opt-level=1"
+          ]
+        }
+      }
+    }
+  },
+  {
+    "valid": true,
+    "config": {
+      "patch": {
+        "crates-io": {
+          "foo": "2",
+          "bar": {
+            "path": "foo",
+            "base": "workspace"
+          }
+        }
+      }
+    }
+  },
+  {
+    "valid": false,
+    "config": {
+      "build": {
+        "jobs": "4"
+      }
+    }
+  },
+  {
+    "valid": false,
+    "config": {
+      "http": {
+        "timeout": -1
+      }
+    }
+  },
+  {
+    "valid": false,
+    "config": {
+      "term": {
+        "progress": {
+          "when": "always"
+        }
+      }
+    }
+  },
+  {
+    "valid": false,
+    "config": {
+      "target": {
+        "x86_64-unknown-linux-gnu": {
+          "mylib": {
+            "metadata": 123
+          }
+        }
+      }
+    }
+  },
+  {
+    "valid": false,
+    "config": {
+      "target": {
+        "x86_64-unknown-linux-gnu": {
+          "mylib": {
+            "warning": "message"
+          }
+        }
+      }
+    }
+  },
+  {
+    "valid": false,
+    "config": {
+      "profile": {
+        "release": {
+          "build-override": {
+            "panic": "abort"
+          }
+        }
+      }
+    }
+  },
+  {
+    "valid": false,
+    "config": {
+      "profile": {
+        "release": {
+          "dir-name": "custom"
+        }
+      }
+    }
+  },
+  {
+    "valid": false,
+    "config": {
+      "registry": {
+        "index": "https://example.com"
+      }
+    }
+  },
+  {
+    "valid": false,
+    "config": {
+      "source": {
+        "vendor": {
+          "directory": "vendor",
+          "git": "https://example.com/repo"
+        }
+      }
+    }
+  },
+  {
+    "valid": false,
+    "config": {
+      "build": {
+        "fingerprint": "other"
+      }
+    }
+  },
+  {
+    "valid": false,
+    "config": {
+      "unstable": {
+        "build-std": true
+      }
+    }
+  }
+]

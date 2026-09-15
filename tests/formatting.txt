@@ -1,0 +1,19 @@
+#:schema ../cargo-config.json
+
+[net]
+offline = false
+git-fetch-with-cli = true
+retry = 3
+
+[http]
+ssl-version = { max = "tlsv1.3", min = "tlsv1.2" }
+
+[env]
+TEST = { relative = true, force = true, value = "path" }
+
+[alias]
+zzz = ["run", "--release", "--", "z", "a"]
+aaa = "check"
+
+[build]
+rustflags = ["-C", "target-cpu=native", "-L", "z", "-L", "a"]
