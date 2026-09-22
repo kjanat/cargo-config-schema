@@ -79,6 +79,12 @@ def main() -> None:
             errors = list(validator.iter_errors(case["config"]))
             if (not errors) != case["valid"]:
                 raise SystemExit(f"Case {index}, {label}: unexpected result: {errors}")
+    sample_path = root / "tests/sample.toml"
+    sample = tomllib.loads(sample_path.read_text(encoding="utf-8"))
+    for label, validator in validators.items():
+        errors = list(validator.iter_errors(sample))
+        if errors:
+            raise SystemExit(f"{sample_path.name}, {label}: {errors}")
     for name, schema in schemas.items():
         check_references(schema, registry.resolver(uri + name))
     with TemporaryDirectory(prefix="cargo-schema-") as directory:
@@ -96,7 +102,7 @@ def main() -> None:
         if generated.read_bytes() != bundle_bytes:
             raise SystemExit("Bundle is stale: run uv run cargo-schema-bundle")
     print(
-        f"{len(cases)} cases x modules/bundle; references, {len(schemas) + 1} metaschemas, generation and Tombi ordering passed"
+        f"{len(cases)} cases + sample.toml x modules/bundle; references, {len(schemas) + 1} metaschemas, generation and Tombi ordering passed"
     )
 
 

@@ -16,7 +16,6 @@
   "type": "object",
   "properties": {
     "browser": {
-      "$ref": "common.schema.json#/$defs/stringOrStringArray",
       "description": "Browser command used by cargo doc --open, overriding the BROWSER environment variable. Either a single program path or an array of [program, ...args].\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#docbrowser)",
       "examples": [
         "firefox",
@@ -29,6 +28,11 @@
           "google-chrome",
           "--incognito"
         ]
+      ],
+      "allOf": [
+        {
+          "$ref": "common.schema.json#/$defs/stringOrStringArray"
+        }
       ]
     },
     "extern-map": {

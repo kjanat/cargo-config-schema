@@ -35,8 +35,12 @@
       }
     },
     "credential-provider": {
-      "$ref": "common.schema.json#/$defs/credentialProvider",
       "description": "Credential provider for crates.io. If unset, falls back to `registry.global-credential-providers`. If the value matches a key in `[credential-alias]`, the alias is used. Environment: `CARGO_REGISTRY_CREDENTIAL_PROVIDER`.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#registrycredential-provider)",
+      "allOf": [
+        {
+          "$ref": "common.schema.json#/$defs/credentialProvider"
+        }
+      ],
       "x-taplo": {
         "links": {
           "key": "https://doc.rust-lang.org/cargo/reference/config.html#registrycredential-provider"

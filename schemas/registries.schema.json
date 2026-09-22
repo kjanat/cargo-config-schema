@@ -30,8 +30,12 @@
           "type": "string"
         },
         "credential-provider": {
-          "$ref": "common.schema.json#/$defs/credentialProvider",
-          "description": "Credential provider for crates.io. If unset, falls back to `registry.global-credential-providers`. Environment: `CARGO_REGISTRIES_CRATES_IO_CREDENTIAL_PROVIDER`.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#registriesnamecredential-provider)"
+          "description": "Credential provider for crates.io. If unset, falls back to `registry.global-credential-providers`. Environment: `CARGO_REGISTRIES_CRATES_IO_CREDENTIAL_PROVIDER`.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#registriesnamecredential-provider)",
+          "allOf": [
+            {
+              "$ref": "common.schema.json#/$defs/credentialProvider"
+            }
+          ]
         },
         "protocol": {
           "description": "Protocol used to access crates.io. Only valid under `[registries.crates-io]`; user-defined registries advertise their protocol via the index URL itself (`sparse+https://...` or a git URL). Defaults to `\"sparse\"` since Cargo 1.70.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#registriescrates-ioprotocol)",
@@ -110,8 +114,12 @@
           "type": "string"
         },
         "credential-provider": {
-          "$ref": "common.schema.json#/$defs/credentialProvider",
-          "description": "Credential provider for this registry. If unset, falls back to `registry.global-credential-providers`. Environment: `CARGO_REGISTRIES_<NAME>_CREDENTIAL_PROVIDER`.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#registriesnamecredential-provider)"
+          "description": "Credential provider for this registry. If unset, falls back to `registry.global-credential-providers`. Environment: `CARGO_REGISTRIES_<NAME>_CREDENTIAL_PROVIDER`.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#registriesnamecredential-provider)",
+          "allOf": [
+            {
+              "$ref": "common.schema.json#/$defs/credentialProvider"
+            }
+          ]
         },
         "min-publish-age": {
           "description": "Minimum publish age, for example \"7 days\" or \"0\". Requires Cargo 1.100+.",

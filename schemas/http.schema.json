@@ -170,8 +170,12 @@
       "type": "boolean"
     },
     "ssl-version": {
-      "$ref": "#/$defs/sslVersion",
-      "description": "Minimum TLS version, or a table with `min`/`max` TLS version bounds. Cargo's default range is `min = \"tlsv1.0\"`, `max` = newest supported (typically `tlsv1.3`).\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#httpssl-version)"
+      "description": "Minimum TLS version, or a table with `min`/`max` TLS version bounds. Cargo's default range is `min = \"tlsv1.0\"`, `max` = newest supported (typically `tlsv1.3`).\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#httpssl-version)",
+      "allOf": [
+        {
+          "$ref": "#/$defs/sslVersion"
+        }
+      ]
     },
     "low-speed-limit": {
       "description": "Average transfer speed threshold, in bytes per second. If the transfer rate stays below this for `http.timeout` seconds, Cargo aborts and retries.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#httplow-speed-limit)",

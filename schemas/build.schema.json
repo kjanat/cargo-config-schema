@@ -200,12 +200,20 @@
       }
     },
     "rustflags": {
-      "$ref": "common.schema.json#/$defs/stringOrStringArray",
-      "description": "Extra command-line flags passed to rustc. May be an array of strings or a space-separated string.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#buildrustflags)"
+      "description": "Extra command-line flags passed to rustc. May be an array of strings or a space-separated string.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#buildrustflags)",
+      "allOf": [
+        {
+          "$ref": "common.schema.json#/$defs/stringOrStringArray"
+        }
+      ]
     },
     "rustdocflags": {
-      "$ref": "common.schema.json#/$defs/stringOrStringArray",
-      "description": "Extra command-line flags passed to rustdoc. May be an array of strings or a space-separated string.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#buildrustdocflags)"
+      "description": "Extra command-line flags passed to rustdoc. May be an array of strings or a space-separated string.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#buildrustdocflags)",
+      "allOf": [
+        {
+          "$ref": "common.schema.json#/$defs/stringOrStringArray"
+        }
+      ]
     },
     "incremental": {
       "description": "Whether to enable incremental compilation. When unset, the value from the active profile is used; when set, this overrides every profile.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#buildincremental)",

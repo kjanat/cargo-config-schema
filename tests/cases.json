@@ -498,5 +498,108 @@
         }
       }
     }
+  },
+  {
+    "valid": true,
+    "config": {
+      "alias": {
+        "my": {
+          "foo": "check"
+        }
+      }
+    }
+  },
+  {
+    "valid": true,
+    "config": {
+      "alias": {
+        "a": {
+          "b": {
+            "c": [
+              "run",
+              "--release"
+            ]
+          }
+        }
+      }
+    }
+  },
+  {
+    "valid": true,
+    "config": {
+      "alias": {
+        "build": {
+          "foo": "check"
+        },
+        "run": {
+          "x": "check"
+        }
+      }
+    }
+  },
+  {
+    "valid": false,
+    "config": {
+      "alias": {
+        "my": {
+          "foo": "cargo run"
+        }
+      }
+    }
+  },
+  {
+    "valid": false,
+    "config": {
+      "alias": {
+        "a": {
+          "b": {
+            "c": [
+              "cargo-nextest",
+              "run"
+            ]
+          }
+        }
+      }
+    }
+  },
+  {
+    "valid": false,
+    "config": {
+      "alias": {
+        "my": {
+          "foo": "--release"
+        }
+      }
+    }
+  },
+  {
+    "valid": false,
+    "config": {
+      "alias": {
+        "my": {
+          "foo": ""
+        }
+      }
+    }
+  },
+  {
+    "valid": false,
+    "config": {
+      "alias": {
+        "my": {
+          "-x": "check"
+        }
+      }
+    }
+  },
+  {
+    "valid": false,
+    "config": {
+      "alias": {
+        "my": {
+          "q.r": "check"
+        }
+      }
+    }
   }
 ]

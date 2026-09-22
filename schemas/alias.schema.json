@@ -1,6 +1,200 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$defs": {
+    "aliasCommandArray": {
+      "title": "argument list",
+      "description": "Subcommand followed by arguments, passed through verbatim. Use this form to preserve arguments containing spaces.",
+      "type": "array",
+      "minItems": 1,
+      "prefixItems": [
+        {
+          "description": "Subcommand the alias expands to: a single token, with no embedded whitespace.",
+          "type": "string",
+          "pattern": "^\\S+$",
+          "allOf": [
+            {
+              "$comment": "The expansion is appended to `cargo`, so a leading `cargo` produces `cargo cargo ...` and fails with a `no such command` error. A leading `cargo-<name>` fails the same way, because Cargo resolves external subcommands by searching for `cargo-cargo-<name>`.",
+              "not": {
+                "$ref": "#/$defs/cargoInvocationToken"
+              }
+            },
+            {
+              "$comment": "The expansion must start with a subcommand. A leading option fails with `unexpected argument`, and a leading `+toolchain` fails with `no such command`, since rustup, not Cargo, resolves toolchain directives.",
+              "not": {
+                "$ref": "#/$defs/toolchainOrOptionToken"
+              }
+            }
+          ]
+        }
+      ],
+      "items": {
+        "type": "string"
+      }
+    },
+    "aliasCommandString": {
+      "title": "command string",
+      "description": "Subcommand and arguments, split on whitespace.",
+      "type": "string",
+      "pattern": "\\S",
+      "allOf": [
+        {
+          "$comment": "The expansion is appended to `cargo`, so a leading `cargo` produces `cargo cargo ...` and fails with a `no such command` error. A leading `cargo-<name>` fails the same way, because Cargo resolves external subcommands by searching for `cargo-cargo-<name>`.",
+          "not": {
+            "$ref": "#/$defs/cargoInvocationToken"
+          }
+        },
+        {
+          "$comment": "The expansion must start with a subcommand. A leading option fails with `unexpected argument`, and a leading `+toolchain` fails with `no such command`, since rustup, not Cargo, resolves toolchain directives.",
+          "not": {
+            "$ref": "#/$defs/toolchainOrOptionToken"
+          }
+        }
+      ]
+    },
+    "aliasName": {
+      "$comment": "One segment of an alias name. Cargo addresses an alias by configuration path, so a dotted key spans several segments: `[alias] my.foo = \"check\"` defines `cargo my.foo`, while a quoted `\"my.foo\"` key is a single segment Cargo can never reach.",
+      "description": "Cargo subcommand name, or one dot-separated segment of one: a non-empty token with no whitespace. `.` is the configuration path separator, and a leading `-` or `+` can never be typed as a subcommand.",
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[^\\s.+-][^\\s.]*$"
+    },
+    "aliasNode1": {
+      "$comment": "An alias entry: the command it expands to, or a subtable of further name segments. Nesting is unrolled to 6 levels (aliasNode1..aliasNode6) rather than written as a recursive $ref, because Tombi stops following a cyclic $ref after one level and would reject a valid `a.b.c` alias. Cargo itself imposes no depth limit; an alias nested more than 6 deep is accepted by Cargo and rejected here.",
+      "oneOf": [
+        {
+          "$ref": "#/$defs/aliasCommandString"
+        },
+        {
+          "$ref": "#/$defs/aliasCommandArray"
+        },
+        {
+          "title": "alias name segments",
+          "description": "Subtable grouping further alias name segments. Cargo addresses an alias by configuration path and joins the segments with dots, so `[alias] my.foo = \"check\"` defines `cargo my.foo`.",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/aliasNode2"
+          },
+          "propertyNames": {
+            "$ref": "#/$defs/aliasName"
+          },
+          "x-tombi-table-keys-order": {
+            "additionalProperties": "ascending"
+          },
+          "x-tombi-additional-key-label": "alias"
+        }
+      ]
+    },
+    "aliasNode2": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/aliasCommandString"
+        },
+        {
+          "$ref": "#/$defs/aliasCommandArray"
+        },
+        {
+          "title": "alias name segments",
+          "description": "Subtable grouping further alias name segments. Cargo addresses an alias by configuration path and joins the segments with dots, so `[alias] my.foo = \"check\"` defines `cargo my.foo`.",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/aliasNode3"
+          },
+          "propertyNames": {
+            "$ref": "#/$defs/aliasName"
+          },
+          "x-tombi-table-keys-order": {
+            "additionalProperties": "ascending"
+          },
+          "x-tombi-additional-key-label": "alias"
+        }
+      ]
+    },
+    "aliasNode3": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/aliasCommandString"
+        },
+        {
+          "$ref": "#/$defs/aliasCommandArray"
+        },
+        {
+          "title": "alias name segments",
+          "description": "Subtable grouping further alias name segments. Cargo addresses an alias by configuration path and joins the segments with dots, so `[alias] my.foo = \"check\"` defines `cargo my.foo`.",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/aliasNode4"
+          },
+          "propertyNames": {
+            "$ref": "#/$defs/aliasName"
+          },
+          "x-tombi-table-keys-order": {
+            "additionalProperties": "ascending"
+          },
+          "x-tombi-additional-key-label": "alias"
+        }
+      ]
+    },
+    "aliasNode4": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/aliasCommandString"
+        },
+        {
+          "$ref": "#/$defs/aliasCommandArray"
+        },
+        {
+          "title": "alias name segments",
+          "description": "Subtable grouping further alias name segments. Cargo addresses an alias by configuration path and joins the segments with dots, so `[alias] my.foo = \"check\"` defines `cargo my.foo`.",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/aliasNode5"
+          },
+          "propertyNames": {
+            "$ref": "#/$defs/aliasName"
+          },
+          "x-tombi-table-keys-order": {
+            "additionalProperties": "ascending"
+          },
+          "x-tombi-additional-key-label": "alias"
+        }
+      ]
+    },
+    "aliasNode5": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/aliasCommandString"
+        },
+        {
+          "$ref": "#/$defs/aliasCommandArray"
+        },
+        {
+          "title": "alias name segments",
+          "description": "Subtable grouping further alias name segments. Cargo addresses an alias by configuration path and joins the segments with dots, so `[alias] my.foo = \"check\"` defines `cargo my.foo`.",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/aliasNode6"
+          },
+          "propertyNames": {
+            "$ref": "#/$defs/aliasName"
+          },
+          "x-tombi-table-keys-order": {
+            "additionalProperties": "ascending"
+          },
+          "x-tombi-additional-key-label": "alias"
+        }
+      ]
+    },
+    "aliasNode6": {
+      "$comment": "Deepest unrolled level: leaves only, so nesting stops at 6 segments.",
+      "oneOf": [
+        {
+          "$ref": "#/$defs/aliasCommandString"
+        },
+        {
+          "$ref": "#/$defs/aliasCommandArray"
+        }
+      ]
+    },
     "builtinCommands": {
       "$comment": "Built-in Cargo commands (`commands::builtin_exec`). An alias with one of these names is discarded at startup with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. The built-in aliases `b`, `c`, `d`, `t`, `r` and `rm` are deliberately absent: a user alias takes precedence over those. Referenced from `propertyNames` under `not`.",
       "enum": [
@@ -57,7 +251,7 @@
     }
   },
   "title": "[alias]",
-  "description": "Cargo command aliases. Each key is a subcommand name; the value is the command to run, either a single string (split on whitespace) or an array of arguments. Aliases are recursive and may not redefine existing built-in Cargo commands. Per-alias values can also be set via the `CARGO_ALIAS_<name>` environment variable.\n\nThe value continues the `cargo` command line, so it must not repeat `cargo` itself: write `run --release`, not `cargo run --release`.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#alias)",
+  "description": "Cargo command aliases. Each key is a subcommand name; the value is the command to run, either a single string (split on whitespace) or an array of arguments. Aliases are recursive and may not redefine existing built-in Cargo commands. Per-alias values can also be set via the `CARGO_ALIAS_<name>` environment variable.\n\nThe value continues the `cargo` command line, so it must not repeat `cargo` itself: write `run --release`, not `cargo run --release`.\n\nAliases may also be grouped into subtables: `[alias] my.foo = \"check\"` defines `cargo my.foo`, since Cargo addresses an alias by its configuration path.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#alias)",
   "default": {
     "b": "build",
     "c": "check",
@@ -76,83 +270,488 @@
         "--release",
         "--",
         "argument with spaces"
-      ]
+      ],
+      "xtask": {
+        "ci": "run --package xtask -- ci"
+      }
     }
   ],
   "type": "object",
-  "additionalProperties": {
-    "title": "alias expansion",
-    "description": "Command the alias expands to, written as it appears after `cargo`. The first token is the subcommand and may be a built-in command, another alias, or an external `cargo-<name>` subcommand.\n\nThe leading `cargo` is implied: write `run --release`, not `cargo run --release`.",
-    "examples": [
-      "run --release",
-      [
-        "run",
-        "--release",
-        "--",
-        "argument with spaces"
-      ]
-    ],
-    "oneOf": [
-      {
-        "title": "command string",
-        "description": "Subcommand and arguments, split on whitespace.",
-        "type": "string",
-        "pattern": "\\S",
-        "allOf": [
-          {
-            "$comment": "The expansion is appended to `cargo`, so a leading `cargo` produces `cargo cargo ...` and fails with a `no such command` error. A leading `cargo-<name>` fails the same way, because Cargo resolves external subcommands by searching for `cargo-cargo-<name>`.",
-            "not": {
-              "$ref": "#/$defs/cargoInvocationToken"
-            }
-          },
-          {
-            "$comment": "The expansion must start with a subcommand. A leading option fails with `unexpected argument`, and a leading `+toolchain` fails with `no such command`, since rustup, not Cargo, resolves toolchain directives.",
-            "not": {
-              "$ref": "#/$defs/toolchainOrOptionToken"
-            }
-          }
-        ]
+  "properties": {
+    "add": {
+      "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
+      "title": "alias name segments",
+      "description": "`add` is a built-in Cargo command, so it cannot be a leaf alias. It may hold a subtable, which defines `cargo add.<segment>`.",
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/aliasNode2"
       },
-      {
-        "title": "argument list",
-        "description": "Subcommand followed by arguments, passed through verbatim. Use this form to preserve arguments containing spaces.",
-        "type": "array",
-        "minItems": 1,
-        "prefixItems": [
-          {
-            "description": "Subcommand the alias expands to: a single token, with no embedded whitespace.",
-            "type": "string",
-            "pattern": "^\\S+$",
-            "allOf": [
-              {
-                "$comment": "The expansion is appended to `cargo`, so a leading `cargo` produces `cargo cargo ...` and fails with a `no such command` error. A leading `cargo-<name>` fails the same way, because Cargo resolves external subcommands by searching for `cargo-cargo-<name>`.",
-                "not": {
-                  "$ref": "#/$defs/cargoInvocationToken"
-                }
-              },
-              {
-                "$comment": "The expansion must start with a subcommand. A leading option fails with `unexpected argument`, and a leading `+toolchain` fails with `no such command`, since rustup, not Cargo, resolves toolchain directives.",
-                "not": {
-                  "$ref": "#/$defs/toolchainOrOptionToken"
-                }
-              }
-            ]
-          }
-        ],
-        "items": {
-          "type": "string"
-        }
+      "propertyNames": {
+        "$ref": "#/$defs/aliasName"
       }
-    ]
+    },
+    "bench": {
+      "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
+      "title": "alias name segments",
+      "description": "`bench` is a built-in Cargo command, so it cannot be a leaf alias. It may hold a subtable, which defines `cargo bench.<segment>`.",
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/aliasNode2"
+      },
+      "propertyNames": {
+        "$ref": "#/$defs/aliasName"
+      }
+    },
+    "build": {
+      "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
+      "title": "alias name segments",
+      "description": "`build` is a built-in Cargo command, so it cannot be a leaf alias. It may hold a subtable, which defines `cargo build.<segment>`.",
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/aliasNode2"
+      },
+      "propertyNames": {
+        "$ref": "#/$defs/aliasName"
+      }
+    },
+    "check": {
+      "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
+      "title": "alias name segments",
+      "description": "`check` is a built-in Cargo command, so it cannot be a leaf alias. It may hold a subtable, which defines `cargo check.<segment>`.",
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/aliasNode2"
+      },
+      "propertyNames": {
+        "$ref": "#/$defs/aliasName"
+      }
+    },
+    "clean": {
+      "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
+      "title": "alias name segments",
+      "description": "`clean` is a built-in Cargo command, so it cannot be a leaf alias. It may hold a subtable, which defines `cargo clean.<segment>`.",
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/aliasNode2"
+      },
+      "propertyNames": {
+        "$ref": "#/$defs/aliasName"
+      }
+    },
+    "config": {
+      "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
+      "title": "alias name segments",
+      "description": "`config` is a built-in Cargo command, so it cannot be a leaf alias. It may hold a subtable, which defines `cargo config.<segment>`.",
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/aliasNode2"
+      },
+      "propertyNames": {
+        "$ref": "#/$defs/aliasName"
+      }
+    },
+    "doc": {
+      "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
+      "title": "alias name segments",
+      "description": "`doc` is a built-in Cargo command, so it cannot be a leaf alias. It may hold a subtable, which defines `cargo doc.<segment>`.",
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/aliasNode2"
+      },
+      "propertyNames": {
+        "$ref": "#/$defs/aliasName"
+      }
+    },
+    "fetch": {
+      "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
+      "title": "alias name segments",
+      "description": "`fetch` is a built-in Cargo command, so it cannot be a leaf alias. It may hold a subtable, which defines `cargo fetch.<segment>`.",
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/aliasNode2"
+      },
+      "propertyNames": {
+        "$ref": "#/$defs/aliasName"
+      }
+    },
+    "fix": {
+      "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
+      "title": "alias name segments",
+      "description": "`fix` is a built-in Cargo command, so it cannot be a leaf alias. It may hold a subtable, which defines `cargo fix.<segment>`.",
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/aliasNode2"
+      },
+      "propertyNames": {
+        "$ref": "#/$defs/aliasName"
+      }
+    },
+    "generate-lockfile": {
+      "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
+      "title": "alias name segments",
+      "description": "`generate-lockfile` is a built-in Cargo command, so it cannot be a leaf alias. It may hold a subtable, which defines `cargo generate-lockfile.<segment>`.",
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/aliasNode2"
+      },
+      "propertyNames": {
+        "$ref": "#/$defs/aliasName"
+      }
+    },
+    "git-checkout": {
+      "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
+      "title": "alias name segments",
+      "description": "`git-checkout` is a built-in Cargo command, so it cannot be a leaf alias. It may hold a subtable, which defines `cargo git-checkout.<segment>`.",
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/aliasNode2"
+      },
+      "propertyNames": {
+        "$ref": "#/$defs/aliasName"
+      }
+    },
+    "help": {
+      "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
+      "title": "alias name segments",
+      "description": "`help` is a built-in Cargo command, so it cannot be a leaf alias. It may hold a subtable, which defines `cargo help.<segment>`.",
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/aliasNode2"
+      },
+      "propertyNames": {
+        "$ref": "#/$defs/aliasName"
+      }
+    },
+    "info": {
+      "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
+      "title": "alias name segments",
+      "description": "`info` is a built-in Cargo command, so it cannot be a leaf alias. It may hold a subtable, which defines `cargo info.<segment>`.",
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/aliasNode2"
+      },
+      "propertyNames": {
+        "$ref": "#/$defs/aliasName"
+      }
+    },
+    "init": {
+      "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
+      "title": "alias name segments",
+      "description": "`init` is a built-in Cargo command, so it cannot be a leaf alias. It may hold a subtable, which defines `cargo init.<segment>`.",
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/aliasNode2"
+      },
+      "propertyNames": {
+        "$ref": "#/$defs/aliasName"
+      }
+    },
+    "install": {
+      "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
+      "title": "alias name segments",
+      "description": "`install` is a built-in Cargo command, so it cannot be a leaf alias. It may hold a subtable, which defines `cargo install.<segment>`.",
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/aliasNode2"
+      },
+      "propertyNames": {
+        "$ref": "#/$defs/aliasName"
+      }
+    },
+    "locate-project": {
+      "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
+      "title": "alias name segments",
+      "description": "`locate-project` is a built-in Cargo command, so it cannot be a leaf alias. It may hold a subtable, which defines `cargo locate-project.<segment>`.",
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/aliasNode2"
+      },
+      "propertyNames": {
+        "$ref": "#/$defs/aliasName"
+      }
+    },
+    "login": {
+      "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
+      "title": "alias name segments",
+      "description": "`login` is a built-in Cargo command, so it cannot be a leaf alias. It may hold a subtable, which defines `cargo login.<segment>`.",
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/aliasNode2"
+      },
+      "propertyNames": {
+        "$ref": "#/$defs/aliasName"
+      }
+    },
+    "logout": {
+      "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
+      "title": "alias name segments",
+      "description": "`logout` is a built-in Cargo command, so it cannot be a leaf alias. It may hold a subtable, which defines `cargo logout.<segment>`.",
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/aliasNode2"
+      },
+      "propertyNames": {
+        "$ref": "#/$defs/aliasName"
+      }
+    },
+    "metadata": {
+      "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
+      "title": "alias name segments",
+      "description": "`metadata` is a built-in Cargo command, so it cannot be a leaf alias. It may hold a subtable, which defines `cargo metadata.<segment>`.",
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/aliasNode2"
+      },
+      "propertyNames": {
+        "$ref": "#/$defs/aliasName"
+      }
+    },
+    "new": {
+      "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
+      "title": "alias name segments",
+      "description": "`new` is a built-in Cargo command, so it cannot be a leaf alias. It may hold a subtable, which defines `cargo new.<segment>`.",
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/aliasNode2"
+      },
+      "propertyNames": {
+        "$ref": "#/$defs/aliasName"
+      }
+    },
+    "owner": {
+      "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
+      "title": "alias name segments",
+      "description": "`owner` is a built-in Cargo command, so it cannot be a leaf alias. It may hold a subtable, which defines `cargo owner.<segment>`.",
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/aliasNode2"
+      },
+      "propertyNames": {
+        "$ref": "#/$defs/aliasName"
+      }
+    },
+    "package": {
+      "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
+      "title": "alias name segments",
+      "description": "`package` is a built-in Cargo command, so it cannot be a leaf alias. It may hold a subtable, which defines `cargo package.<segment>`.",
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/aliasNode2"
+      },
+      "propertyNames": {
+        "$ref": "#/$defs/aliasName"
+      }
+    },
+    "pkgid": {
+      "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
+      "title": "alias name segments",
+      "description": "`pkgid` is a built-in Cargo command, so it cannot be a leaf alias. It may hold a subtable, which defines `cargo pkgid.<segment>`.",
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/aliasNode2"
+      },
+      "propertyNames": {
+        "$ref": "#/$defs/aliasName"
+      }
+    },
+    "publish": {
+      "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
+      "title": "alias name segments",
+      "description": "`publish` is a built-in Cargo command, so it cannot be a leaf alias. It may hold a subtable, which defines `cargo publish.<segment>`.",
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/aliasNode2"
+      },
+      "propertyNames": {
+        "$ref": "#/$defs/aliasName"
+      }
+    },
+    "read-manifest": {
+      "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
+      "title": "alias name segments",
+      "description": "`read-manifest` is a built-in Cargo command, so it cannot be a leaf alias. It may hold a subtable, which defines `cargo read-manifest.<segment>`.",
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/aliasNode2"
+      },
+      "propertyNames": {
+        "$ref": "#/$defs/aliasName"
+      }
+    },
+    "remove": {
+      "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
+      "title": "alias name segments",
+      "description": "`remove` is a built-in Cargo command, so it cannot be a leaf alias. It may hold a subtable, which defines `cargo remove.<segment>`.",
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/aliasNode2"
+      },
+      "propertyNames": {
+        "$ref": "#/$defs/aliasName"
+      }
+    },
+    "report": {
+      "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
+      "title": "alias name segments",
+      "description": "`report` is a built-in Cargo command, so it cannot be a leaf alias. It may hold a subtable, which defines `cargo report.<segment>`.",
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/aliasNode2"
+      },
+      "propertyNames": {
+        "$ref": "#/$defs/aliasName"
+      }
+    },
+    "run": {
+      "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
+      "title": "alias name segments",
+      "description": "`run` is a built-in Cargo command, so it cannot be a leaf alias. It may hold a subtable, which defines `cargo run.<segment>`.",
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/aliasNode2"
+      },
+      "propertyNames": {
+        "$ref": "#/$defs/aliasName"
+      }
+    },
+    "rustc": {
+      "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
+      "title": "alias name segments",
+      "description": "`rustc` is a built-in Cargo command, so it cannot be a leaf alias. It may hold a subtable, which defines `cargo rustc.<segment>`.",
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/aliasNode2"
+      },
+      "propertyNames": {
+        "$ref": "#/$defs/aliasName"
+      }
+    },
+    "rustdoc": {
+      "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
+      "title": "alias name segments",
+      "description": "`rustdoc` is a built-in Cargo command, so it cannot be a leaf alias. It may hold a subtable, which defines `cargo rustdoc.<segment>`.",
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/aliasNode2"
+      },
+      "propertyNames": {
+        "$ref": "#/$defs/aliasName"
+      }
+    },
+    "search": {
+      "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
+      "title": "alias name segments",
+      "description": "`search` is a built-in Cargo command, so it cannot be a leaf alias. It may hold a subtable, which defines `cargo search.<segment>`.",
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/aliasNode2"
+      },
+      "propertyNames": {
+        "$ref": "#/$defs/aliasName"
+      }
+    },
+    "test": {
+      "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
+      "title": "alias name segments",
+      "description": "`test` is a built-in Cargo command, so it cannot be a leaf alias. It may hold a subtable, which defines `cargo test.<segment>`.",
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/aliasNode2"
+      },
+      "propertyNames": {
+        "$ref": "#/$defs/aliasName"
+      }
+    },
+    "tree": {
+      "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
+      "title": "alias name segments",
+      "description": "`tree` is a built-in Cargo command, so it cannot be a leaf alias. It may hold a subtable, which defines `cargo tree.<segment>`.",
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/aliasNode2"
+      },
+      "propertyNames": {
+        "$ref": "#/$defs/aliasName"
+      }
+    },
+    "uninstall": {
+      "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
+      "title": "alias name segments",
+      "description": "`uninstall` is a built-in Cargo command, so it cannot be a leaf alias. It may hold a subtable, which defines `cargo uninstall.<segment>`.",
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/aliasNode2"
+      },
+      "propertyNames": {
+        "$ref": "#/$defs/aliasName"
+      }
+    },
+    "update": {
+      "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
+      "title": "alias name segments",
+      "description": "`update` is a built-in Cargo command, so it cannot be a leaf alias. It may hold a subtable, which defines `cargo update.<segment>`.",
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/aliasNode2"
+      },
+      "propertyNames": {
+        "$ref": "#/$defs/aliasName"
+      }
+    },
+    "vendor": {
+      "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
+      "title": "alias name segments",
+      "description": "`vendor` is a built-in Cargo command, so it cannot be a leaf alias. It may hold a subtable, which defines `cargo vendor.<segment>`.",
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/aliasNode2"
+      },
+      "propertyNames": {
+        "$ref": "#/$defs/aliasName"
+      }
+    },
+    "verify-project": {
+      "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
+      "title": "alias name segments",
+      "description": "`verify-project` is a built-in Cargo command, so it cannot be a leaf alias. It may hold a subtable, which defines `cargo verify-project.<segment>`.",
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/aliasNode2"
+      },
+      "propertyNames": {
+        "$ref": "#/$defs/aliasName"
+      }
+    },
+    "version": {
+      "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
+      "title": "alias name segments",
+      "description": "`version` is a built-in Cargo command, so it cannot be a leaf alias. It may hold a subtable, which defines `cargo version.<segment>`.",
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/aliasNode2"
+      },
+      "propertyNames": {
+        "$ref": "#/$defs/aliasName"
+      }
+    },
+    "yank": {
+      "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
+      "title": "alias name segments",
+      "description": "`yank` is a built-in Cargo command, so it cannot be a leaf alias. It may hold a subtable, which defines `cargo yank.<segment>`.",
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/aliasNode2"
+      },
+      "propertyNames": {
+        "$ref": "#/$defs/aliasName"
+      }
+    }
+  },
+  "additionalProperties": {
+    "$ref": "#/$defs/aliasNode1"
   },
   "propertyNames": {
-    "description": "Cargo subcommand name: a non-empty token with no whitespace. `.` is the configuration path separator and cannot appear in an addressable alias name, and a leading `-` or `+` can never be typed as a subcommand. Names of built-in Cargo commands are rejected because Cargo ignores aliases that shadow them.",
-    "type": "string",
-    "minLength": 1,
-    "pattern": "^[^\\s.+-][^\\s.]*$",
-    "not": {
-      "$ref": "#/$defs/builtinCommands"
-    }
+    "$ref": "#/$defs/aliasName"
   },
   "x-taplo": {
     "docs": {
