@@ -19,9 +19,9 @@
               }
             },
             {
-              "$comment": "The expansion must start with a subcommand. A leading option fails with `unexpected argument`, and a leading `+toolchain` fails with `no such command`, since rustup, not Cargo, resolves toolchain directives.",
+              "$comment": "The expansion must start with a subcommand or a global option. A leading `+toolchain` fails with `no such command`, since rustup resolves toolchain directives before Cargo starts.",
               "not": {
-                "$ref": "#/$defs/toolchainOrOptionToken"
+                "$ref": "#/$defs/toolchainDirectiveToken"
               }
             }
           ]
@@ -44,9 +44,9 @@
           }
         },
         {
-          "$comment": "The expansion must start with a subcommand. A leading option fails with `unexpected argument`, and a leading `+toolchain` fails with `no such command`, since rustup, not Cargo, resolves toolchain directives.",
+          "$comment": "The expansion must start with a subcommand or a global option. A leading `+toolchain` fails with `no such command`, since rustup resolves toolchain directives before Cargo starts.",
           "not": {
-            "$ref": "#/$defs/toolchainOrOptionToken"
+            "$ref": "#/$defs/toolchainDirectiveToken"
           }
         }
       ]
@@ -243,10 +243,10 @@
       "type": "string",
       "pattern": "^\\s*(?:\\S*[\\\\/])?cargo(?:\\.exe|-\\S*)?(?:\\s|$)"
     },
-    "toolchainOrOptionToken": {
-      "$comment": "A first token starting with `-` (parsed as an unexpected argument, since the subcommand must come first) or `+` (a rustup toolchain directive that Cargo itself cannot resolve).",
+    "toolchainDirectiveToken": {
+      "$comment": "A first token starting with `+`, which Cargo reports as `no such command`: rustup, not Cargo, resolves toolchain directives, and it has already done so by the time alias expansion runs. A leading `-` is deliberately NOT matched: Cargo's global options are accepted in this position, so `-v version`, `--offline check`, `--locked build` and `-- <alias>` all run. Only a non-global option such as `--release` fails, and enumerating the global set here would rot against Cargo's own argument definitions.",
       "type": "string",
-      "pattern": "^\\s*[-+]"
+      "pattern": "^\\s*\\+"
     }
   },
   "title": "[alias]",
@@ -287,7 +287,11 @@
       },
       "propertyNames": {
         "$ref": "#/$defs/aliasName"
-      }
+      },
+      "x-tombi-table-keys-order": {
+        "additionalProperties": "ascending"
+      },
+      "x-tombi-additional-key-label": "alias"
     },
     "bench": {
       "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
@@ -299,7 +303,11 @@
       },
       "propertyNames": {
         "$ref": "#/$defs/aliasName"
-      }
+      },
+      "x-tombi-table-keys-order": {
+        "additionalProperties": "ascending"
+      },
+      "x-tombi-additional-key-label": "alias"
     },
     "build": {
       "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
@@ -311,7 +319,11 @@
       },
       "propertyNames": {
         "$ref": "#/$defs/aliasName"
-      }
+      },
+      "x-tombi-table-keys-order": {
+        "additionalProperties": "ascending"
+      },
+      "x-tombi-additional-key-label": "alias"
     },
     "check": {
       "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
@@ -323,7 +335,11 @@
       },
       "propertyNames": {
         "$ref": "#/$defs/aliasName"
-      }
+      },
+      "x-tombi-table-keys-order": {
+        "additionalProperties": "ascending"
+      },
+      "x-tombi-additional-key-label": "alias"
     },
     "clean": {
       "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
@@ -335,7 +351,11 @@
       },
       "propertyNames": {
         "$ref": "#/$defs/aliasName"
-      }
+      },
+      "x-tombi-table-keys-order": {
+        "additionalProperties": "ascending"
+      },
+      "x-tombi-additional-key-label": "alias"
     },
     "config": {
       "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
@@ -347,7 +367,11 @@
       },
       "propertyNames": {
         "$ref": "#/$defs/aliasName"
-      }
+      },
+      "x-tombi-table-keys-order": {
+        "additionalProperties": "ascending"
+      },
+      "x-tombi-additional-key-label": "alias"
     },
     "doc": {
       "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
@@ -359,7 +383,11 @@
       },
       "propertyNames": {
         "$ref": "#/$defs/aliasName"
-      }
+      },
+      "x-tombi-table-keys-order": {
+        "additionalProperties": "ascending"
+      },
+      "x-tombi-additional-key-label": "alias"
     },
     "fetch": {
       "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
@@ -371,7 +399,11 @@
       },
       "propertyNames": {
         "$ref": "#/$defs/aliasName"
-      }
+      },
+      "x-tombi-table-keys-order": {
+        "additionalProperties": "ascending"
+      },
+      "x-tombi-additional-key-label": "alias"
     },
     "fix": {
       "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
@@ -383,7 +415,11 @@
       },
       "propertyNames": {
         "$ref": "#/$defs/aliasName"
-      }
+      },
+      "x-tombi-table-keys-order": {
+        "additionalProperties": "ascending"
+      },
+      "x-tombi-additional-key-label": "alias"
     },
     "generate-lockfile": {
       "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
@@ -395,7 +431,11 @@
       },
       "propertyNames": {
         "$ref": "#/$defs/aliasName"
-      }
+      },
+      "x-tombi-table-keys-order": {
+        "additionalProperties": "ascending"
+      },
+      "x-tombi-additional-key-label": "alias"
     },
     "git-checkout": {
       "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
@@ -407,7 +447,11 @@
       },
       "propertyNames": {
         "$ref": "#/$defs/aliasName"
-      }
+      },
+      "x-tombi-table-keys-order": {
+        "additionalProperties": "ascending"
+      },
+      "x-tombi-additional-key-label": "alias"
     },
     "help": {
       "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
@@ -419,7 +463,11 @@
       },
       "propertyNames": {
         "$ref": "#/$defs/aliasName"
-      }
+      },
+      "x-tombi-table-keys-order": {
+        "additionalProperties": "ascending"
+      },
+      "x-tombi-additional-key-label": "alias"
     },
     "info": {
       "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
@@ -431,7 +479,11 @@
       },
       "propertyNames": {
         "$ref": "#/$defs/aliasName"
-      }
+      },
+      "x-tombi-table-keys-order": {
+        "additionalProperties": "ascending"
+      },
+      "x-tombi-additional-key-label": "alias"
     },
     "init": {
       "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
@@ -443,7 +495,11 @@
       },
       "propertyNames": {
         "$ref": "#/$defs/aliasName"
-      }
+      },
+      "x-tombi-table-keys-order": {
+        "additionalProperties": "ascending"
+      },
+      "x-tombi-additional-key-label": "alias"
     },
     "install": {
       "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
@@ -455,7 +511,11 @@
       },
       "propertyNames": {
         "$ref": "#/$defs/aliasName"
-      }
+      },
+      "x-tombi-table-keys-order": {
+        "additionalProperties": "ascending"
+      },
+      "x-tombi-additional-key-label": "alias"
     },
     "locate-project": {
       "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
@@ -467,7 +527,11 @@
       },
       "propertyNames": {
         "$ref": "#/$defs/aliasName"
-      }
+      },
+      "x-tombi-table-keys-order": {
+        "additionalProperties": "ascending"
+      },
+      "x-tombi-additional-key-label": "alias"
     },
     "login": {
       "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
@@ -479,7 +543,11 @@
       },
       "propertyNames": {
         "$ref": "#/$defs/aliasName"
-      }
+      },
+      "x-tombi-table-keys-order": {
+        "additionalProperties": "ascending"
+      },
+      "x-tombi-additional-key-label": "alias"
     },
     "logout": {
       "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
@@ -491,7 +559,11 @@
       },
       "propertyNames": {
         "$ref": "#/$defs/aliasName"
-      }
+      },
+      "x-tombi-table-keys-order": {
+        "additionalProperties": "ascending"
+      },
+      "x-tombi-additional-key-label": "alias"
     },
     "metadata": {
       "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
@@ -503,7 +575,11 @@
       },
       "propertyNames": {
         "$ref": "#/$defs/aliasName"
-      }
+      },
+      "x-tombi-table-keys-order": {
+        "additionalProperties": "ascending"
+      },
+      "x-tombi-additional-key-label": "alias"
     },
     "new": {
       "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
@@ -515,7 +591,11 @@
       },
       "propertyNames": {
         "$ref": "#/$defs/aliasName"
-      }
+      },
+      "x-tombi-table-keys-order": {
+        "additionalProperties": "ascending"
+      },
+      "x-tombi-additional-key-label": "alias"
     },
     "owner": {
       "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
@@ -527,7 +607,11 @@
       },
       "propertyNames": {
         "$ref": "#/$defs/aliasName"
-      }
+      },
+      "x-tombi-table-keys-order": {
+        "additionalProperties": "ascending"
+      },
+      "x-tombi-additional-key-label": "alias"
     },
     "package": {
       "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
@@ -539,7 +623,11 @@
       },
       "propertyNames": {
         "$ref": "#/$defs/aliasName"
-      }
+      },
+      "x-tombi-table-keys-order": {
+        "additionalProperties": "ascending"
+      },
+      "x-tombi-additional-key-label": "alias"
     },
     "pkgid": {
       "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
@@ -551,7 +639,11 @@
       },
       "propertyNames": {
         "$ref": "#/$defs/aliasName"
-      }
+      },
+      "x-tombi-table-keys-order": {
+        "additionalProperties": "ascending"
+      },
+      "x-tombi-additional-key-label": "alias"
     },
     "publish": {
       "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
@@ -563,7 +655,11 @@
       },
       "propertyNames": {
         "$ref": "#/$defs/aliasName"
-      }
+      },
+      "x-tombi-table-keys-order": {
+        "additionalProperties": "ascending"
+      },
+      "x-tombi-additional-key-label": "alias"
     },
     "read-manifest": {
       "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
@@ -575,7 +671,11 @@
       },
       "propertyNames": {
         "$ref": "#/$defs/aliasName"
-      }
+      },
+      "x-tombi-table-keys-order": {
+        "additionalProperties": "ascending"
+      },
+      "x-tombi-additional-key-label": "alias"
     },
     "remove": {
       "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
@@ -587,7 +687,11 @@
       },
       "propertyNames": {
         "$ref": "#/$defs/aliasName"
-      }
+      },
+      "x-tombi-table-keys-order": {
+        "additionalProperties": "ascending"
+      },
+      "x-tombi-additional-key-label": "alias"
     },
     "report": {
       "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
@@ -599,7 +703,11 @@
       },
       "propertyNames": {
         "$ref": "#/$defs/aliasName"
-      }
+      },
+      "x-tombi-table-keys-order": {
+        "additionalProperties": "ascending"
+      },
+      "x-tombi-additional-key-label": "alias"
     },
     "run": {
       "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
@@ -611,7 +719,11 @@
       },
       "propertyNames": {
         "$ref": "#/$defs/aliasName"
-      }
+      },
+      "x-tombi-table-keys-order": {
+        "additionalProperties": "ascending"
+      },
+      "x-tombi-additional-key-label": "alias"
     },
     "rustc": {
       "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
@@ -623,7 +735,11 @@
       },
       "propertyNames": {
         "$ref": "#/$defs/aliasName"
-      }
+      },
+      "x-tombi-table-keys-order": {
+        "additionalProperties": "ascending"
+      },
+      "x-tombi-additional-key-label": "alias"
     },
     "rustdoc": {
       "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
@@ -635,7 +751,11 @@
       },
       "propertyNames": {
         "$ref": "#/$defs/aliasName"
-      }
+      },
+      "x-tombi-table-keys-order": {
+        "additionalProperties": "ascending"
+      },
+      "x-tombi-additional-key-label": "alias"
     },
     "search": {
       "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
@@ -647,7 +767,11 @@
       },
       "propertyNames": {
         "$ref": "#/$defs/aliasName"
-      }
+      },
+      "x-tombi-table-keys-order": {
+        "additionalProperties": "ascending"
+      },
+      "x-tombi-additional-key-label": "alias"
     },
     "test": {
       "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
@@ -659,7 +783,11 @@
       },
       "propertyNames": {
         "$ref": "#/$defs/aliasName"
-      }
+      },
+      "x-tombi-table-keys-order": {
+        "additionalProperties": "ascending"
+      },
+      "x-tombi-additional-key-label": "alias"
     },
     "tree": {
       "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
@@ -671,7 +799,11 @@
       },
       "propertyNames": {
         "$ref": "#/$defs/aliasName"
-      }
+      },
+      "x-tombi-table-keys-order": {
+        "additionalProperties": "ascending"
+      },
+      "x-tombi-additional-key-label": "alias"
     },
     "uninstall": {
       "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
@@ -683,7 +815,11 @@
       },
       "propertyNames": {
         "$ref": "#/$defs/aliasName"
-      }
+      },
+      "x-tombi-table-keys-order": {
+        "additionalProperties": "ascending"
+      },
+      "x-tombi-additional-key-label": "alias"
     },
     "update": {
       "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
@@ -695,7 +831,11 @@
       },
       "propertyNames": {
         "$ref": "#/$defs/aliasName"
-      }
+      },
+      "x-tombi-table-keys-order": {
+        "additionalProperties": "ascending"
+      },
+      "x-tombi-additional-key-label": "alias"
     },
     "vendor": {
       "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
@@ -707,7 +847,11 @@
       },
       "propertyNames": {
         "$ref": "#/$defs/aliasName"
-      }
+      },
+      "x-tombi-table-keys-order": {
+        "additionalProperties": "ascending"
+      },
+      "x-tombi-additional-key-label": "alias"
     },
     "verify-project": {
       "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
@@ -719,7 +863,11 @@
       },
       "propertyNames": {
         "$ref": "#/$defs/aliasName"
-      }
+      },
+      "x-tombi-table-keys-order": {
+        "additionalProperties": "ascending"
+      },
+      "x-tombi-additional-key-label": "alias"
     },
     "version": {
       "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
@@ -731,7 +879,11 @@
       },
       "propertyNames": {
         "$ref": "#/$defs/aliasName"
-      }
+      },
+      "x-tombi-table-keys-order": {
+        "additionalProperties": "ascending"
+      },
+      "x-tombi-additional-key-label": "alias"
     },
     "yank": {
       "$comment": "Cargo discards a leaf alias named after a built-in command with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. A subtable is still valid: it defines `cargo <name>.<segment>`, which shadows nothing.",
@@ -743,7 +895,11 @@
       },
       "propertyNames": {
         "$ref": "#/$defs/aliasName"
-      }
+      },
+      "x-tombi-table-keys-order": {
+        "additionalProperties": "ascending"
+      },
+      "x-tombi-additional-key-label": "alias"
     }
   },
   "additionalProperties": {

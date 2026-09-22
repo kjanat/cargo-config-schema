@@ -321,25 +321,6 @@
     "valid": false,
     "config": {
       "alias": {
-        "lr": "--release"
-      }
-    }
-  },
-  {
-    "valid": false,
-    "config": {
-      "alias": {
-        "lr": [
-          "--release",
-          "--locked"
-        ]
-      }
-    }
-  },
-  {
-    "valid": false,
-    "config": {
-      "alias": {
         "lr": "+nightly build"
       }
     }
@@ -539,7 +520,7 @@
     }
   },
   {
-    "valid": false,
+    "valid": true,
     "config": {
       "alias": {
         "my": {
@@ -623,6 +604,135 @@
     "config": {
       "credential-alias": {
         "cargo:libsecret": "/usr/bin/p"
+      }
+    }
+  },
+  {
+    "valid": true,
+    "config": {
+      "alias": {
+        "gv": "-v version"
+      }
+    }
+  },
+  {
+    "valid": true,
+    "config": {
+      "alias": {
+        "gva": [
+          "-v",
+          "version"
+        ]
+      }
+    }
+  },
+  {
+    "valid": true,
+    "config": {
+      "alias": {
+        "goff": "--offline check"
+      }
+    }
+  },
+  {
+    "valid": true,
+    "config": {
+      "alias": {
+        "gcfg": [
+          "--config",
+          "net.offline=true",
+          "version"
+        ]
+      }
+    }
+  },
+  {
+    "valid": true,
+    "config": {
+      "alias": {
+        "dash": [
+          "--",
+          "-x"
+        ],
+        "-x": "version"
+      }
+    }
+  },
+  {
+    "valid": false,
+    "config": {
+      "alias": {
+        "tc": "+nightly build"
+      }
+    }
+  },
+  {
+    "valid": false,
+    "config": {
+      "alias": {
+        "tc": [
+          "+nightly",
+          "build"
+        ]
+      }
+    }
+  },
+  {
+    "valid": true,
+    "config": {
+      "credential-alias": {
+        "": [
+          "/tmp/provider"
+        ]
+      },
+      "registries": {
+        "r": {
+          "credential-provider": [
+            ""
+          ]
+        }
+      }
+    }
+  },
+  {
+    "valid": false,
+    "config": {
+      "registries": {
+        "r": {
+          "credential-provider": ""
+        }
+      }
+    }
+  },
+  {
+    "valid": true,
+    "config": {
+      "registries": {
+        "r": {
+          "credential-provider": [
+            ""
+          ]
+        }
+      }
+    }
+  },
+  {
+    "valid": true,
+    "config": {
+      "alias": {
+        "my": {
+          "foo": "-v version"
+        }
+      }
+    }
+  },
+  {
+    "valid": false,
+    "config": {
+      "alias": {
+        "my": {
+          "foo": "+nightly build"
+        }
       }
     }
   }

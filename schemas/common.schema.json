@@ -43,9 +43,9 @@
           "minItems": 1,
           "prefixItems": [
             {
+              "$comment": "No non-blank requirement: the array form passes element 0 verbatim to the alias lookup, so a `[credential-alias]` entry with an empty or whitespace name is referenced as `credential-provider = [\"\"]` and resolves. The string form is split on spaces and still requires a non-blank value.",
               "description": "Provider name or executable path.",
               "type": "string",
-              "pattern": "\\S",
               "allOf": [
                 {
                   "$comment": "Guards the reserved `cargo:` namespace so that a misspelled built-in provider is reported here instead of failing at authentication time as a missing executable.",
