@@ -1,15 +1,50 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$defs": {
+    "builtinCredentialProviders": {
+      "$comment": "Credential providers built into Cargo (`BUILT_IN_PROVIDERS`). The `cargo:` prefix is reserved for these; any other `cargo:` name is executed as a program of that literal name. A `[credential-alias]` entry named after one of these is ignored with `credential-alias <name> ... will be ignored because it would shadow a built-in credential-provider`.",
+      "enum": [
+        "cargo:libsecret",
+        "cargo:macos-keychain",
+        "cargo:token",
+        "cargo:token-from-stdout",
+        "cargo:wincred"
+      ]
+    },
     "credentialProvider": {
-      "$ref": "#/$defs/stringOrStringArray",
-      "description": "Credential provider name, command string, or command with arguments.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/registry-authentication.html)",
+      "$comment": "No restriction on the `cargo:` namespace. An unknown `cargo:` name is not invalid: Cargo falls through to `CredentialProcessCredential::new` and executes a program of that literal name, which resolves wherever `:` is a legal filename character. Rejecting it would catch a typo'd built-in at the cost of rejecting a working configuration, and this schema rejects only what Cargo cannot run. The built-in names are still listed in `builtinCredentialProviders`, which backs the `[credential-alias]` shadowing rule and serves as editor completions.",
+      "title": "credential provider",
+      "description": "Credential provider name, command string, or command with arguments: a built-in `cargo:` provider, a `[credential-alias]` name, or the path to a credential provider executable.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/registry-authentication.html)",
       "examples": [
         "cargo:token",
         [
           "cargo-credential-example",
           "--flag"
         ]
+      ],
+      "oneOf": [
+        {
+          "title": "provider name or command string",
+          "description": "Provider name, or executable path and arguments split on spaces.",
+          "type": "string",
+          "pattern": "\\S"
+        },
+        {
+          "title": "path and arguments",
+          "description": "Executable path followed by arguments, passed through verbatim. Use this form for a path or argument containing spaces.",
+          "type": "array",
+          "minItems": 1,
+          "prefixItems": [
+            {
+              "$comment": "No non-blank requirement: the array form passes element 0 verbatim to the alias lookup, so a `[credential-alias]` entry with an empty or whitespace name is referenced as `credential-provider = [\"\"]` and resolves. The string form is split on spaces and still requires a non-blank value.",
+              "description": "Provider name or executable path.",
+              "type": "string"
+            }
+          ],
+          "items": {
+            "type": "string"
+          }
+        }
       ]
     },
     "stringOrStringArray": {

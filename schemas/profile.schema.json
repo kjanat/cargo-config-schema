@@ -333,7 +333,7 @@
               "description": "Line info directives only (useful for profilers)."
             },
             "line-tables-only": {
-              "description": "Line tables only — backtraces with file/line, no variables/types."
+              "description": "Line tables only: backtraces with file/line, no variables/types."
             },
             "none": {
               "description": "No debug info."
@@ -376,20 +376,20 @@
             "docs": {
               "enumValues": [
                 "Disable link-time optimization (including local ThinLTO).",
-                "Thin LTO across crates — faster than fat, similar runtime gains.",
-                "Fat LTO across the whole dependency graph — slowest build, smallest/fastest binary."
+                "Thin LTO across crates: faster than fat, similar runtime gains.",
+                "Fat LTO across the whole dependency graph: slowest build, smallest/fastest binary."
               ]
             }
           },
           "x-intellij-enum-metadata": {
             "fat": {
-              "description": "Fat LTO across the whole dependency graph — slowest build, smallest/fastest binary."
+              "description": "Fat LTO across the whole dependency graph: slowest build, smallest/fastest binary."
             },
             "off": {
               "description": "Disable link-time optimization (including local ThinLTO)."
             },
             "thin": {
-              "description": "Thin LTO across crates — faster than fat, similar runtime gains."
+              "description": "Thin LTO across crates: faster than fat, similar runtime gains."
             }
           }
         }

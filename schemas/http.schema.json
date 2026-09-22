@@ -67,8 +67,8 @@
           "enumValues": [
             "System-default TLS version selection (cargo's built-in defaults: min `tlsv1.0`, max newest supported).",
             "TLS 1.x family (system-chosen minor version). Prefer an explicit `tlsv1.2` or `tlsv1.3`.",
-            "TLS 1.0 (deprecated by RFC 8996; insecure — avoid).",
-            "TLS 1.1 (deprecated by RFC 8996; insecure — avoid).",
+            "TLS 1.0 (deprecated by RFC 8996; insecure, avoid).",
+            "TLS 1.1 (deprecated by RFC 8996; insecure, avoid).",
             "TLS 1.2 (recommended minimum).",
             "TLS 1.3 (recommended)."
           ]
@@ -82,10 +82,10 @@
           "description": "TLS 1.x family (system-chosen minor version). Prefer an explicit `tlsv1.2` or `tlsv1.3`."
         },
         "tlsv1.0": {
-          "description": "TLS 1.0 (deprecated by RFC 8996; insecure — avoid)."
+          "description": "TLS 1.0 (deprecated by RFC 8996; insecure, avoid)."
         },
         "tlsv1.1": {
-          "description": "TLS 1.1 (deprecated by RFC 8996; insecure — avoid)."
+          "description": "TLS 1.1 (deprecated by RFC 8996; insecure, avoid)."
         },
         "tlsv1.2": {
           "description": "TLS 1.2 (recommended minimum)."
@@ -170,8 +170,12 @@
       "type": "boolean"
     },
     "ssl-version": {
-      "$ref": "#/$defs/sslVersion",
-      "description": "Minimum TLS version, or a table with `min`/`max` TLS version bounds. Cargo's default range is `min = \"tlsv1.0\"`, `max` = newest supported (typically `tlsv1.3`).\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#httpssl-version)"
+      "description": "Minimum TLS version, or a table with `min`/`max` TLS version bounds. Cargo's default range is `min = \"tlsv1.0\"`, `max` = newest supported (typically `tlsv1.3`).\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#httpssl-version)",
+      "allOf": [
+        {
+          "$ref": "#/$defs/sslVersion"
+        }
+      ]
     },
     "low-speed-limit": {
       "description": "Average transfer speed threshold, in bytes per second. If the transfer rate stays below this for `http.timeout` seconds, Cargo aborts and retries.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#httplow-speed-limit)",

@@ -18,16 +18,28 @@
           "type": "string"
         },
         "runner": {
-          "$ref": "common.schema.json#/$defs/stringOrStringArray",
-          "description": "Runner command used to execute target binaries.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#targettriplerunner)"
+          "description": "Runner command used to execute target binaries.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#targettriplerunner)",
+          "allOf": [
+            {
+              "$ref": "common.schema.json#/$defs/stringOrStringArray"
+            }
+          ]
         },
         "rustflags": {
-          "$ref": "common.schema.json#/$defs/stringOrStringArray",
-          "description": "Extra rustc flags for this target.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#targettriplerustflags)"
+          "description": "Extra rustc flags for this target.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#targettriplerustflags)",
+          "allOf": [
+            {
+              "$ref": "common.schema.json#/$defs/stringOrStringArray"
+            }
+          ]
         },
         "rustdocflags": {
-          "$ref": "common.schema.json#/$defs/stringOrStringArray",
-          "description": "Extra rustdoc flags for this target.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#targettriplerustdocflags)"
+          "description": "Extra rustdoc flags for this target.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#targettriplerustdocflags)",
+          "allOf": [
+            {
+              "$ref": "common.schema.json#/$defs/stringOrStringArray"
+            }
+          ]
         }
       },
       "additionalProperties": {
@@ -91,16 +103,28 @@
           "type": "string"
         },
         "runner": {
-          "$ref": "common.schema.json#/$defs/stringOrStringArray",
-          "description": "Runner command used to execute target binaries.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#targettriplerunner)"
+          "description": "Runner command used to execute target binaries.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#targettriplerunner)",
+          "allOf": [
+            {
+              "$ref": "common.schema.json#/$defs/stringOrStringArray"
+            }
+          ]
         },
         "rustflags": {
-          "$ref": "common.schema.json#/$defs/stringOrStringArray",
-          "description": "Extra rustc flags for this target.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#targettriplerustflags)"
+          "description": "Extra rustc flags for this target.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#targettriplerustflags)",
+          "allOf": [
+            {
+              "$ref": "common.schema.json#/$defs/stringOrStringArray"
+            }
+          ]
         },
         "rustdocflags": {
-          "$ref": "common.schema.json#/$defs/stringOrStringArray",
-          "description": "Extra rustdoc flags for this target.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#targettriplerustdocflags)"
+          "description": "Extra rustdoc flags for this target.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#targettriplerustdocflags)",
+          "allOf": [
+            {
+              "$ref": "common.schema.json#/$defs/stringOrStringArray"
+            }
+          ]
         }
       },
       "additionalProperties": {
