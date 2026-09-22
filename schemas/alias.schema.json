@@ -1,7 +1,63 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$defs": {
+    "builtinCommands": {
+      "$comment": "Built-in Cargo commands (`commands::builtin_exec`). An alias with one of these names is discarded at startup with `user-defined alias <name> is ignored, because it is shadowed by a built-in command`. The built-in aliases `b`, `c`, `d`, `t`, `r` and `rm` are deliberately absent: a user alias takes precedence over those. Referenced from `propertyNames` under `not`.",
+      "enum": [
+        "add",
+        "bench",
+        "build",
+        "check",
+        "clean",
+        "config",
+        "doc",
+        "fetch",
+        "fix",
+        "generate-lockfile",
+        "git-checkout",
+        "help",
+        "info",
+        "init",
+        "install",
+        "locate-project",
+        "login",
+        "logout",
+        "metadata",
+        "new",
+        "owner",
+        "package",
+        "pkgid",
+        "publish",
+        "read-manifest",
+        "remove",
+        "report",
+        "run",
+        "rustc",
+        "rustdoc",
+        "search",
+        "test",
+        "tree",
+        "uninstall",
+        "update",
+        "vendor",
+        "verify-project",
+        "version",
+        "yank"
+      ]
+    },
+    "cargoInvocationToken": {
+      "$comment": "A first token that names the `cargo` binary (bare, `.exe`-suffixed or path-qualified) or a `cargo-<name>` subcommand binary. `cargofmt` and other tokens that merely begin with the letters `cargo` are not matched, since those are legitimate alias or subcommand names.",
+      "type": "string",
+      "pattern": "^\\s*(?:\\S*[\\\\/])?cargo(?:\\.exe|-\\S*)?(?:\\s|$)"
+    },
+    "toolchainOrOptionToken": {
+      "$comment": "A first token starting with `-` (parsed as an unexpected argument, since the subcommand must come first) or `+` (a rustup toolchain directive that Cargo itself cannot resolve).",
+      "type": "string",
+      "pattern": "^\\s*[-+]"
+    }
+  },
   "title": "[alias]",
-  "description": "Cargo command aliases. Each key is a subcommand name; the value is the command to run, either a single string (split on whitespace) or an array of arguments. Aliases are recursive and may not redefine existing built-in Cargo commands. Per-alias values can also be set via the `CARGO_ALIAS_<name>` environment variable.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#alias)",
+  "description": "Cargo command aliases. Each key is a subcommand name; the value is the command to run, either a single string (split on whitespace) or an array of arguments. Aliases are recursive and may not redefine existing built-in Cargo commands. Per-alias values can also be set via the `CARGO_ALIAS_<name>` environment variable.\n\nThe value continues the `cargo` command line, so it must not repeat `cargo` itself: write `run --release`, not `cargo run --release`.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/config.html#alias)",
   "default": {
     "b": "build",
     "c": "check",
@@ -25,19 +81,82 @@
   ],
   "type": "object",
   "additionalProperties": {
-    "$ref": "common.schema.json#/$defs/stringOrStringArray",
     "title": "alias expansion",
-    "description": "Command the alias expands to. A string is split on whitespace; an array is passed through verbatim (use the array form to preserve arguments containing spaces)."
+    "description": "Command the alias expands to, written as it appears after `cargo`. The first token is the subcommand and may be a built-in command, another alias, or an external `cargo-<name>` subcommand.\n\nThe leading `cargo` is implied: write `run --release`, not `cargo run --release`.",
+    "examples": [
+      "run --release",
+      [
+        "run",
+        "--release",
+        "--",
+        "argument with spaces"
+      ]
+    ],
+    "oneOf": [
+      {
+        "title": "command string",
+        "description": "Subcommand and arguments, split on whitespace.",
+        "type": "string",
+        "pattern": "\\S",
+        "allOf": [
+          {
+            "$comment": "The expansion is appended to `cargo`, so a leading `cargo` produces `cargo cargo ...` and fails with a `no such command` error. A leading `cargo-<name>` fails the same way, because Cargo resolves external subcommands by searching for `cargo-cargo-<name>`.",
+            "not": {
+              "$ref": "#/$defs/cargoInvocationToken"
+            }
+          },
+          {
+            "$comment": "The expansion must start with a subcommand. A leading option fails with `unexpected argument`, and a leading `+toolchain` fails with `no such command`, since rustup, not Cargo, resolves toolchain directives.",
+            "not": {
+              "$ref": "#/$defs/toolchainOrOptionToken"
+            }
+          }
+        ]
+      },
+      {
+        "title": "argument list",
+        "description": "Subcommand followed by arguments, passed through verbatim. Use this form to preserve arguments containing spaces.",
+        "type": "array",
+        "minItems": 1,
+        "prefixItems": [
+          {
+            "description": "Subcommand the alias expands to: a single token, with no embedded whitespace.",
+            "type": "string",
+            "pattern": "^\\S+$",
+            "allOf": [
+              {
+                "$comment": "The expansion is appended to `cargo`, so a leading `cargo` produces `cargo cargo ...` and fails with a `no such command` error. A leading `cargo-<name>` fails the same way, because Cargo resolves external subcommands by searching for `cargo-cargo-<name>`.",
+                "not": {
+                  "$ref": "#/$defs/cargoInvocationToken"
+                }
+              },
+              {
+                "$comment": "The expansion must start with a subcommand. A leading option fails with `unexpected argument`, and a leading `+toolchain` fails with `no such command`, since rustup, not Cargo, resolves toolchain directives.",
+                "not": {
+                  "$ref": "#/$defs/toolchainOrOptionToken"
+                }
+              }
+            ]
+          }
+        ],
+        "items": {
+          "type": "string"
+        }
+      }
+    ]
   },
   "propertyNames": {
-    "description": "Cargo subcommand name. Must be a non-empty token containing no whitespace.",
+    "description": "Cargo subcommand name: a non-empty token with no whitespace. `.` is the configuration path separator and cannot appear in an addressable alias name, and a leading `-` or `+` can never be typed as a subcommand. Names of built-in Cargo commands are rejected because Cargo ignores aliases that shadow them.",
     "type": "string",
     "minLength": 1,
-    "pattern": "^[^\\s]+$"
+    "pattern": "^[^\\s.+-][^\\s.]*$",
+    "not": {
+      "$ref": "#/$defs/builtinCommands"
+    }
   },
   "x-taplo": {
     "docs": {
-      "main": "Defines [Cargo command aliases](https://doc.rust-lang.org/cargo/reference/config.html#alias).\n\nEach key is the subcommand name and the value is what `cargo <key>` expands to. Use a string (split on whitespace) or an array (preserves whitespace inside arguments).\n\n**Built-in aliases** (may be overridden): `b` → `build`, `c` → `check`, `d` → `doc`, `t` → `test`, `r` → `run`, `rm` → `remove`.\n\nAliases are recursive — one alias may invoke another. Aliases may **not** redefine existing built-in Cargo commands.\n\nEach alias may also be set via the `CARGO_ALIAS_<name>` environment variable."
+      "main": "Defines [Cargo command aliases](https://doc.rust-lang.org/cargo/reference/config.html#alias).\n\nEach key is the subcommand name and the value is what `cargo <key>` expands to. Use a string (split on whitespace) or an array (preserves whitespace inside arguments).\n\n**Built-in aliases** (may be overridden): `b` → `build`, `c` → `check`, `d` → `doc`, `t` → `test`, `r` → `run`, `rm` → `remove`.\n\nAliases are recursive — one alias may invoke another. Aliases may **not** redefine existing built-in Cargo commands.\n\nThe value continues the command line after `cargo`, so it must not start with `cargo` or `cargo-<name>`, with an option, or with a `+toolchain` directive.\n\nEach alias may also be set via the `CARGO_ALIAS_<name>` environment variable."
     },
     "links": {
       "key": "https://doc.rust-lang.org/cargo/reference/config.html#alias"

@@ -242,5 +242,261 @@
         "build-std": true
       }
     }
+  },
+  {
+    "valid": true,
+    "config": {
+      "alias": {
+        "rr": "run --release",
+        "recursive_example": "rr --example recursions",
+        "space_example": [
+          "run",
+          "--release",
+          "--",
+          "argument with spaces"
+        ],
+        "r": "run --offline",
+        "cargofmt": "fmt --all",
+        "chain": "cargofmt"
+      }
+    }
+  },
+  {
+    "valid": false,
+    "config": {
+      "alias": {
+        "locked-release": "cargo run --release --locked"
+      }
+    }
+  },
+  {
+    "valid": false,
+    "config": {
+      "alias": {
+        "locked-release": [
+          "cargo",
+          "run",
+          "--release",
+          "--locked"
+        ]
+      }
+    }
+  },
+  {
+    "valid": false,
+    "config": {
+      "alias": {
+        "lr": "cargo.exe run"
+      }
+    }
+  },
+  {
+    "valid": false,
+    "config": {
+      "alias": {
+        "lr": "/usr/local/bin/cargo build"
+      }
+    }
+  },
+  {
+    "valid": false,
+    "config": {
+      "alias": {
+        "nt": "cargo-nextest run"
+      }
+    }
+  },
+  {
+    "valid": false,
+    "config": {
+      "alias": {
+        "nt": [
+          "cargo-nextest",
+          "run"
+        ]
+      }
+    }
+  },
+  {
+    "valid": false,
+    "config": {
+      "alias": {
+        "lr": "--release"
+      }
+    }
+  },
+  {
+    "valid": false,
+    "config": {
+      "alias": {
+        "lr": [
+          "--release",
+          "--locked"
+        ]
+      }
+    }
+  },
+  {
+    "valid": false,
+    "config": {
+      "alias": {
+        "lr": "+nightly build"
+      }
+    }
+  },
+  {
+    "valid": false,
+    "config": {
+      "alias": {
+        "lr": ""
+      }
+    }
+  },
+  {
+    "valid": false,
+    "config": {
+      "alias": {
+        "lr": "   "
+      }
+    }
+  },
+  {
+    "valid": false,
+    "config": {
+      "alias": {
+        "lr": []
+      }
+    }
+  },
+  {
+    "valid": false,
+    "config": {
+      "alias": {
+        "lr": [
+          "",
+          "check"
+        ]
+      }
+    }
+  },
+  {
+    "valid": false,
+    "config": {
+      "alias": {
+        "lr": [
+          "run --release"
+        ]
+      }
+    }
+  },
+  {
+    "valid": false,
+    "config": {
+      "alias": {
+        "build": "check --workspace"
+      }
+    }
+  },
+  {
+    "valid": false,
+    "config": {
+      "alias": {
+        "test": "nextest run"
+      }
+    }
+  },
+  {
+    "valid": false,
+    "config": {
+      "alias": {
+        "-x": "check"
+      }
+    }
+  },
+  {
+    "valid": false,
+    "config": {
+      "alias": {
+        "+nightly": "check"
+      }
+    }
+  },
+  {
+    "valid": false,
+    "config": {
+      "alias": {
+        "my.rs": "check"
+      }
+    }
+  },
+  {
+    "valid": true,
+    "config": {
+      "credential-alias": {
+        "my-alias": [
+          "/usr/bin/cargo-credential-example",
+          "--argument",
+          "value"
+        ]
+      },
+      "registry": {
+        "global-credential-providers": [
+          "cargo:token",
+          "my-alias"
+        ]
+      }
+    }
+  },
+  {
+    "valid": false,
+    "config": {
+      "credential-alias": {
+        "cargo:token": "/usr/bin/cargo-credential-example"
+      }
+    }
+  },
+  {
+    "valid": false,
+    "config": {
+      "credential-alias": {
+        "my alias": "/usr/bin/cargo-credential-example"
+      }
+    }
+  },
+  {
+    "valid": false,
+    "config": {
+      "credential-alias": {
+        "my-alias": ""
+      }
+    }
+  },
+  {
+    "valid": false,
+    "config": {
+      "credential-alias": {
+        "my-alias": []
+      }
+    }
+  },
+  {
+    "valid": false,
+    "config": {
+      "registry": {
+        "global-credential-providers": [
+          "cargo:tokne"
+        ]
+      }
+    }
+  },
+  {
+    "valid": false,
+    "config": {
+      "registries": {
+        "my-registry": {
+          "credential-provider": "cargo:keychain"
+        }
+      }
+    }
   }
 ]

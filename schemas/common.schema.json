@@ -1,16 +1,74 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$defs": {
+    "builtinCredentialProviders": {
+      "$comment": "Credential providers built into Cargo (`BUILT_IN_PROVIDERS`). The `cargo:` prefix is reserved for these; any other `cargo:` name is executed as a program of that literal name. A `[credential-alias]` entry named after one of these is ignored with `credential-alias <name> ... will be ignored because it would shadow a built-in credential-provider`.",
+      "enum": [
+        "cargo:libsecret",
+        "cargo:macos-keychain",
+        "cargo:token",
+        "cargo:token-from-stdout",
+        "cargo:wincred"
+      ]
+    },
     "credentialProvider": {
-      "$ref": "#/$defs/stringOrStringArray",
-      "description": "Credential provider name, command string, or command with arguments.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/registry-authentication.html)",
+      "title": "credential provider",
+      "description": "Credential provider name, command string, or command with arguments: a built-in `cargo:` provider, a `[credential-alias]` name, or the path to a credential provider executable.\n\n[Cargo documentation](https://doc.rust-lang.org/cargo/reference/registry-authentication.html)",
       "examples": [
         "cargo:token",
         [
           "cargo-credential-example",
           "--flag"
         ]
+      ],
+      "oneOf": [
+        {
+          "title": "provider name or command string",
+          "description": "Provider name, or executable path and arguments split on spaces.",
+          "type": "string",
+          "pattern": "\\S",
+          "allOf": [
+            {
+              "$comment": "Guards the reserved `cargo:` namespace so that a misspelled built-in provider is reported here instead of failing at authentication time as a missing executable.",
+              "not": {
+                "$ref": "#/$defs/reservedCredentialProviderToken"
+              }
+            }
+          ]
+        },
+        {
+          "title": "path and arguments",
+          "description": "Executable path followed by arguments, passed through verbatim. Use this form for a path or argument containing spaces.",
+          "type": "array",
+          "minItems": 1,
+          "prefixItems": [
+            {
+              "description": "Provider name or executable path.",
+              "type": "string",
+              "pattern": "\\S",
+              "allOf": [
+                {
+                  "$comment": "Guards the reserved `cargo:` namespace so that a misspelled built-in provider is reported here instead of failing at authentication time as a missing executable.",
+                  "not": {
+                    "$ref": "#/$defs/reservedCredentialProviderToken"
+                  }
+                }
+              ]
+            }
+          ],
+          "items": {
+            "type": "string"
+          }
+        }
       ]
+    },
+    "reservedCredentialProviderToken": {
+      "$comment": "A first token in the `cargo:` namespace that is not a built-in provider. The alternation lists `token-from-stdout` before `token` so the longer name matches first.",
+      "type": "string",
+      "pattern": "^\\s*cargo:",
+      "not": {
+        "pattern": "^\\s*cargo:(?:token-from-stdout|token|wincred|macos-keychain|libsecret)(?:\\s|$)"
+      }
     },
     "stringOrStringArray": {
       "examples": [
