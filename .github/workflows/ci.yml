@@ -1,8 +1,8 @@
 name: CI
 on: [pull_request, push]
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+  group: ${{ github.workflow }}-${{ github.head_ref && format('refs/heads/{0}', github.head_ref) || github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/master' }}
 jobs:
   style:
     runs-on: ubuntu-latest
