@@ -636,7 +636,7 @@
       },
       "x-taplo": {
         "docs": {
-          "main": "Defines [Cargo command aliases](https://doc.rust-lang.org/cargo/reference/config.html#alias).\n\nEach key is the subcommand name and the value is what `cargo <key>` expands to. Use a string (split on whitespace) or an array (preserves whitespace inside arguments).\n\n**Built-in aliases** (may be overridden): `b` → `build`, `c` → `check`, `d` → `doc`, `t` → `test`, `r` → `run`, `rm` → `remove`.\n\nAliases are recursive — one alias may invoke another. Aliases may **not** redefine existing built-in Cargo commands.\n\nThe value continues the command line after `cargo`, so it must not start with `cargo` or `cargo-<name>`, with an option, or with a `+toolchain` directive.\n\nEach alias may also be set via the `CARGO_ALIAS_<name>` environment variable."
+          "main": "Defines [Cargo command aliases](https://doc.rust-lang.org/cargo/reference/config.html#alias).\n\nEach key is the subcommand name and the value is what `cargo <key>` expands to. Use a string (split on whitespace) or an array (preserves whitespace inside arguments).\n\n**Built-in aliases** (may be overridden): `b` → `build`, `c` → `check`, `d` → `doc`, `t` → `test`, `r` → `run`, `rm` → `remove`.\n\nAliases are recursive: one alias may invoke another. Aliases may **not** redefine existing built-in Cargo commands.\n\nThe value continues the command line after `cargo`, so it must not start with `cargo` or `cargo-<name>`, with an option, or with a `+toolchain` directive.\n\nEach alias may also be set via the `CARGO_ALIAS_<name>` environment variable."
         },
         "links": {
           "key": "https://doc.rust-lang.org/cargo/reference/config.html#alias"
@@ -1574,7 +1574,7 @@
       ],
       "x-taplo": {
         "docs": {
-          "main": "Environment variable value.\n\nUse a bare string for a literal value, or an inline table to opt into:\n\n- `force = true` — override an existing variable in the parent environment (default leaves it untouched).\n- `relative = true` — resolve `value` as a path relative to the parent directory of the `.cargo/` directory containing this config file; the exported variable holds the resulting absolute path.\n\n[Cargo reference](https://doc.rust-lang.org/cargo/reference/config.html#env)"
+          "main": "Environment variable value.\n\nUse a bare string for a literal value, or an inline table to opt into:\n\n- `force = true`: override an existing variable in the parent environment (default leaves it untouched).\n- `relative = true`: resolve `value` as a path relative to the parent directory of the `.cargo/` directory containing this config file; the exported variable holds the resulting absolute path.\n\n[Cargo reference](https://doc.rust-lang.org/cargo/reference/config.html#env)"
         }
       },
       "x-tombi-table-keys-order": {
@@ -1823,8 +1823,8 @@
           "enumValues": [
             "System-default TLS version selection (cargo's built-in defaults: min `tlsv1.0`, max newest supported).",
             "TLS 1.x family (system-chosen minor version). Prefer an explicit `tlsv1.2` or `tlsv1.3`.",
-            "TLS 1.0 (deprecated by RFC 8996; insecure — avoid).",
-            "TLS 1.1 (deprecated by RFC 8996; insecure — avoid).",
+            "TLS 1.0 (deprecated by RFC 8996; insecure, avoid).",
+            "TLS 1.1 (deprecated by RFC 8996; insecure, avoid).",
             "TLS 1.2 (recommended minimum).",
             "TLS 1.3 (recommended)."
           ]
@@ -1838,10 +1838,10 @@
           "description": "TLS 1.x family (system-chosen minor version). Prefer an explicit `tlsv1.2` or `tlsv1.3`."
         },
         "tlsv1.0": {
-          "description": "TLS 1.0 (deprecated by RFC 8996; insecure — avoid)."
+          "description": "TLS 1.0 (deprecated by RFC 8996; insecure, avoid)."
         },
         "tlsv1.1": {
-          "description": "TLS 1.1 (deprecated by RFC 8996; insecure — avoid)."
+          "description": "TLS 1.1 (deprecated by RFC 8996; insecure, avoid)."
         },
         "tlsv1.2": {
           "description": "TLS 1.2 (recommended minimum)."
@@ -2538,7 +2538,7 @@
               "description": "Line info directives only (useful for profilers)."
             },
             "line-tables-only": {
-              "description": "Line tables only — backtraces with file/line, no variables/types."
+              "description": "Line tables only: backtraces with file/line, no variables/types."
             },
             "none": {
               "description": "No debug info."
@@ -2581,20 +2581,20 @@
             "docs": {
               "enumValues": [
                 "Disable link-time optimization (including local ThinLTO).",
-                "Thin LTO across crates — faster than fat, similar runtime gains.",
-                "Fat LTO across the whole dependency graph — slowest build, smallest/fastest binary."
+                "Thin LTO across crates: faster than fat, similar runtime gains.",
+                "Fat LTO across the whole dependency graph: slowest build, smallest/fastest binary."
               ]
             }
           },
           "x-intellij-enum-metadata": {
             "fat": {
-              "description": "Fat LTO across the whole dependency graph — slowest build, smallest/fastest binary."
+              "description": "Fat LTO across the whole dependency graph: slowest build, smallest/fastest binary."
             },
             "off": {
               "description": "Disable link-time optimization (including local ThinLTO)."
             },
             "thin": {
-              "description": "Thin LTO across crates — faster than fat, similar runtime gains."
+              "description": "Thin LTO across crates: faster than fat, similar runtime gains."
             }
           }
         }

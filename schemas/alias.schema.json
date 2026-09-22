@@ -754,7 +754,7 @@
   },
   "x-taplo": {
     "docs": {
-      "main": "Defines [Cargo command aliases](https://doc.rust-lang.org/cargo/reference/config.html#alias).\n\nEach key is the subcommand name and the value is what `cargo <key>` expands to. Use a string (split on whitespace) or an array (preserves whitespace inside arguments).\n\n**Built-in aliases** (may be overridden): `b` → `build`, `c` → `check`, `d` → `doc`, `t` → `test`, `r` → `run`, `rm` → `remove`.\n\nAliases are recursive — one alias may invoke another. Aliases may **not** redefine existing built-in Cargo commands.\n\nThe value continues the command line after `cargo`, so it must not start with `cargo` or `cargo-<name>`, with an option, or with a `+toolchain` directive.\n\nEach alias may also be set via the `CARGO_ALIAS_<name>` environment variable."
+      "main": "Defines [Cargo command aliases](https://doc.rust-lang.org/cargo/reference/config.html#alias).\n\nEach key is the subcommand name and the value is what `cargo <key>` expands to. Use a string (split on whitespace) or an array (preserves whitespace inside arguments).\n\n**Built-in aliases** (may be overridden): `b` → `build`, `c` → `check`, `d` → `doc`, `t` → `test`, `r` → `run`, `rm` → `remove`.\n\nAliases are recursive: one alias may invoke another. Aliases may **not** redefine existing built-in Cargo commands.\n\nThe value continues the command line after `cargo`, so it must not start with `cargo` or `cargo-<name>`, with an option, or with a `+toolchain` directive.\n\nEach alias may also be set via the `CARGO_ALIAS_<name>` environment variable."
     },
     "links": {
       "key": "https://doc.rust-lang.org/cargo/reference/config.html#alias"
