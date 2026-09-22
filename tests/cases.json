@@ -437,7 +437,7 @@
     }
   },
   {
-    "valid": false,
+    "valid": true,
     "config": {
       "registry": {
         "global-credential-providers": [
@@ -447,7 +447,7 @@
     }
   },
   {
-    "valid": false,
+    "valid": true,
     "config": {
       "registries": {
         "my-registry": {
@@ -733,6 +733,16 @@
         "my": {
           "foo": "+nightly build"
         }
+      }
+    }
+  },
+  {
+    "valid": true,
+    "config": {
+      "registry": {
+        "global-credential-providers": [
+          "cargo:corp"
+        ]
       }
     }
   }
