@@ -409,22 +409,6 @@
     "valid": false,
     "config": {
       "alias": {
-        "-x": "check"
-      }
-    }
-  },
-  {
-    "valid": false,
-    "config": {
-      "alias": {
-        "+nightly": "check"
-      }
-    }
-  },
-  {
-    "valid": false,
-    "config": {
-      "alias": {
         "my.rs": "check"
       }
     }
@@ -452,14 +436,6 @@
     "config": {
       "credential-alias": {
         "cargo:token": "/usr/bin/cargo-credential-example"
-      }
-    }
-  },
-  {
-    "valid": false,
-    "config": {
-      "credential-alias": {
-        "my alias": "/usr/bin/cargo-credential-example"
       }
     }
   },
@@ -587,8 +563,50 @@
     "config": {
       "alias": {
         "my": {
+          "q.r": "check"
+        }
+      }
+    }
+  },
+  {
+    "valid": true,
+    "config": {
+      "alias": {
+        "-x": "version"
+      }
+    }
+  },
+  {
+    "valid": true,
+    "config": {
+      "alias": {
+        "+tc": "version"
+      }
+    }
+  },
+  {
+    "valid": true,
+    "config": {
+      "alias": {
+        "my alias": "version"
+      }
+    }
+  },
+  {
+    "valid": true,
+    "config": {
+      "alias": {
+        "my": {
           "-x": "check"
         }
+      }
+    }
+  },
+  {
+    "valid": true,
+    "config": {
+      "credential-alias": {
+        "my alias": "/usr/bin/cargo-credential-example"
       }
     }
   },
@@ -596,9 +614,15 @@
     "valid": false,
     "config": {
       "alias": {
-        "my": {
-          "q.r": "check"
-        }
+        "my.foo": "check"
+      }
+    }
+  },
+  {
+    "valid": false,
+    "config": {
+      "credential-alias": {
+        "cargo:libsecret": "/usr/bin/p"
       }
     }
   }

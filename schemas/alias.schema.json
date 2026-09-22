@@ -52,11 +52,10 @@
       ]
     },
     "aliasName": {
-      "$comment": "One segment of an alias name. Cargo addresses an alias by configuration path, so a dotted key spans several segments: `[alias] my.foo = \"check\"` defines `cargo my.foo`, while a quoted `\"my.foo\"` key is a single segment Cargo can never reach.",
-      "description": "Cargo subcommand name, or one dot-separated segment of one: a non-empty token with no whitespace. `.` is the configuration path separator, and a leading `-` or `+` can never be typed as a subcommand.",
+      "$comment": "Cargo builds the lookup key by splitting on `.`, so a key containing a dot is unreachable: `\"my.foo\" = \"check\"` can never be invoked, while the subtable form `my.foo = \"check\"` defines `cargo my.foo`. Every other name is reachable, including names with whitespace and names starting with `-` or `+`, which are invocable as `cargo -- -x` (verified against cargo 1.98.1), so they are not restricted here.",
+      "description": "Cargo subcommand name, or one dot-separated segment of one. Any string without a `.`; a dot is the configuration path separator, so use a subtable to define `cargo <a>.<b>`.",
       "type": "string",
-      "minLength": 1,
-      "pattern": "^[^\\s.+-][^\\s.]*$"
+      "pattern": "^[^.]*$"
     },
     "aliasNode1": {
       "$comment": "An alias entry: the command it expands to, or a subtable of further name segments. Nesting is unrolled to 6 levels (aliasNode1..aliasNode6) rather than written as a recursive $ref, because Tombi stops following a cyclic $ref after one level and would reject a valid `a.b.c` alias. Cargo itself imposes no depth limit; an alias nested more than 6 deep is accepted by Cargo and rejected here.",
